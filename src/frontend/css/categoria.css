@@ -1,0 +1,328 @@
+
+/* =====================================================
+   WEBLUE BEAUTY - PÁGINA DE CATEGORIAS
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f9fc;
+    color: #202b3c;
+}
+
+/* CABEÇALHO */
+
+.cabecalho {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #e8edf5;
+    box-shadow: 0 3px 15px rgba(20, 40, 80, 0.04);
+}
+
+.container-cabecalho {
+    max-width: 1250px;
+    min-height: 85px;
+    margin: auto;
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.logo {
+    text-decoration: none;
+    color: #174b91;
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: #2696dc;
+    font-size: 13px;
+    display: block;
+    letter-spacing: 5px;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.menu a {
+    color: #34445c;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    color: #258bd0;
+}
+
+/* BOTÃO DA SACOLA */
+
+.botao-sacola {
+    border: none;
+    background: #174b91;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.botao-sacola:hover {
+    background: #237ac1;
+    transform: translateY(-2px);
+}
+
+#contadorCarrinho {
+    background: #ffffff;
+    color: #174b91;
+    padding: 3px 7px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+/* CONTEÚDO PRINCIPAL */
+
+.container-principal {
+    max-width: 1250px;
+    margin: auto;
+    padding: 30px 25px 60px;
+}
+
+/* BREADCRUMB */
+
+.breadcrumb {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #8b98a9;
+    font-size: 13px;
+    margin-bottom: 35px;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #258bd0;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* TÍTULO DA CATEGORIA */
+
+.titulo-categoria {
+    margin-bottom: 35px;
+}
+
+.subtitulo {
+    color: #258bd0;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.titulo-categoria h1 {
+    font-size: 34px;
+    color: #173d70;
+    margin: 12px 0;
+}
+
+.titulo-categoria p {
+    color: #7b8797;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ÁREA DO CATÁLOGO */
+
+.area-catalogo {
+    display: grid;
+    grid-template-columns: 245px 1fr;
+    gap: 35px;
+    align-items: start;
+}
+
+/* BARRA LATERAL */
+
+.barra-lateral {
+    background: #ffffff;
+    padding: 25px 20px;
+    border-radius: 13px;
+    border: 1px solid #e8edf5;
+    box-shadow: 0 5px 20px rgba(30, 60, 100, 0.04);
+}
+
+.barra-lateral h2 {
+    color: #173d70;
+    font-size: 18px;
+    margin-bottom: 22px;
+}
+
+.lista-subcategorias {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subcategoria {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #65758b;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.subcategoria:hover {
+    background: #eff7ff;
+    color: #1978bd;
+}
+
+.subcategoria.ativa {
+    background: #eaf4ff;
+    color: #175b9e;
+    font-weight: bold;
+}
+
+/* CONTEÚDO DOS PRODUTOS */
+
+.conteudo-produtos {
+    min-width: 0;
+}
+
+.topo-produtos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.topo-produtos h2 {
+    color: #173d70;
+    font-size: 22px;
+    margin-bottom: 7px;
+}
+
+.topo-produtos p {
+    color: #8793a3;
+    font-size: 13px;
+}
+
+#ordenacaoProdutos {
+    padding: 11px 14px;
+    border: 1px solid #dce4ee;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #45566d;
+    outline: none;
+    cursor: pointer;
+}
+
+/* GRADE DE PRODUTOS */
+
+.lista-produtos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+/* MENSAGENS */
+
+.mensagem-produtos {
+    color: #8190a3;
+    font-size: 14px;
+    padding: 15px 0;
+}
+
+/* RODAPÉ */
+
+.rodape {
+    background: #102f59;
+    color: #dceaff;
+    text-align: center;
+    padding: 25px;
+    font-size: 13px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+
+    .area-catalogo {
+        grid-template-columns: 200px 1fr;
+        gap: 20px;
+    }
+
+    .lista-produtos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .menu {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .container-cabecalho {
+        flex-wrap: wrap;
+    }
+
+    .menu {
+        width: 100%;
+        order: 3;
+        overflow-x: auto;
+        padding: 10px 0;
+    }
+
+    .area-catalogo {
+        grid-template-columns: 1fr;
+    }
+
+    .lista-subcategorias {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lista-produtos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .titulo-categoria h1 {
+        font-size: 27px;
+    }
+
+    .topo-produtos {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .lista-produtos {
+        grid-template-columns: 1fr;
+    }
+
+}

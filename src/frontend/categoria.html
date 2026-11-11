@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Categorias | WeBlue Beauty</title>
+
+    <link rel="stylesheet" href="/css/categoria.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="cabecalho">
+        <div class="container-cabecalho">
+
+            <a href="/home.html" class="logo">
+                WEBLUE <span>BEAUTY</span>
+            </a>
+
+            <nav class="menu">
+                <a href="/home.html">Início</a>
+                <a href="/home.html#categorias">Categorias</a>
+                <a href="/home.html#produtos">Produtos</a>
+                <a href="/home.html#cupons">Ofertas</a>
+            </nav>
+
+            <button class="botao-sacola" id="botaoCarrinho">
+                🛍️ Sacola
+                <span id="contadorCarrinho">0</span>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container-principal">
+
+        <!-- CAMINHO DA PÁGINA -->
+        <div class="breadcrumb">
+            <a href="/home.html">Início</a>
+            <span>/</span>
+            <span id="breadcrumbCategoria">Categorias</span>
+        </div>
+
+        <!-- TÍTULO -->
+        <section class="titulo-categoria">
+            <span class="subtitulo">DESCUBRA SUA BELEZA</span>
+
+            <h1 id="tituloCategoria">Nossas categorias</h1>
+
+            <p id="descricaoCategoria">
+                Encontre seus produtos favoritos em um só lugar.
+            </p>
+        </section>
+
+        <!-- ÁREA DE CATEGORIAS E PRODUTOS -->
+        <section class="area-catalogo">
+
+            <!-- LATERAL -->
+            <aside class="barra-lateral">
+
+                <h2>Categorias</h2>
+
+                <div id="listaSubcategorias" class="lista-subcategorias">
+
+                    <button class="subcategoria ativa" data-subcategoria="Todas">
+                        Todas
+                    </button>
+
+                </div>
+
+            </aside>
+
+            <!-- PRODUTOS -->
+            <section class="conteudo-produtos">
+
+                <div class="topo-produtos">
+
+                    <div>
+                        <h2 id="tituloProdutos">Produtos</h2>
+
+                        <p id="quantidadeProdutos">
+                            Carregando produtos...
+                        </p>
+                    </div>
+
+                    <select id="ordenacaoProdutos">
+                        <option value="padrao">Ordenar por</option>
+                        <option value="menor-preco">Menor preço</option>
+                        <option value="maior-preco">Maior preço</option>
+                        <option value="nome">Nome</option>
+                    </select>
+
+                </div>
+
+                <div id="mensagemProdutos" class="mensagem-produtos">
+                    Carregando produtos...
+                </div>
+
+                <div id="listaProdutos" class="lista-produtos"></div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="rodape">
+        <p>© 2026 WeBlue Beauty. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="/js/categoria.js"></script>
+
+</body>
+</html>

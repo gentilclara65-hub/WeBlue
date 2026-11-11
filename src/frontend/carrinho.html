@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeBlue | Meu Carrinho</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef5fc;
+            color: #082653;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        .container {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 35px 0 60px;
+        }
+
+        /* CABEÇALHO */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            color: #082653;
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #1686ed;
+        }
+
+        .topbar-links {
+            display: flex;
+            gap: 22px;
+        }
+
+        .topbar a {
+            color: #1266bd;
+            font-size: 14px;
+            font-weight: 700;
+            transition: color .2s;
+        }
+
+        .topbar a:hover {
+            color: #031b48;
+        }
+
+        /* TÍTULO */
+
+        .titulo {
+            margin-bottom: 28px;
+        }
+
+        .titulo h1 {
+            font-size: clamp(27px, 4vw, 36px);
+            color: #082653;
+            margin-bottom: 9px;
+        }
+
+        .titulo p {
+            color: #71829a;
+            font-size: 14px;
+        }
+
+        /* ORGANIZAÇÃO */
+
+        .cart-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(300px, .9fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .coluna-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .panel {
+            background: #ffffff;
+            border: 1px solid #dce9f7;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(8, 38, 83, .06);
+        }
+
+        .panel h2 {
+            color: #082653;
+            font-size: 19px;
+            margin-bottom: 18px;
+        }
+
+        /* PRODUTOS */
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 20px 0;
+            border-bottom: 1px solid #e7eef7;
+            animation: aparecer .3s ease;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item h3 {
+            color: #082653;
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .item p {
+            color: #75849a;
+            font-size: 13px;
+        }
+
+        .item strong {
+            color: #0869dc;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .controls button {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 9px;
+            border: 1px solid #c9e1fa;
+            border-radius: 9px;
+            background: #eaf4ff;
+            color: #0754a5;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .controls button:hover {
+            background: #0869dc;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .controls span {
+            min-width: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .controls .btn-secondary {
+            width: auto;
+            padding: 0 12px;
+            margin-left: 5px;
+            background: #fff0f0;
+            border-color: #ffd5d5;
+            color: #c03939;
+            font-size: 12px;
+        }
+
+        .controls .btn-secondary:hover {
+            background: #c03939;
+            color: #ffffff;
+        }
+
+        .empty {
+            padding: 35px 10px;
+            text-align: center;
+            color: #75849a;
+            line-height: 1.6;
+        }
+
+        /* CUPOM */
+
+        .coupon-box {
+            padding: 20px;
+            border-radius: 14px;
+            background: #f1f8ff;
+            border: 1px solid #d9eaff;
+        }
+
+        .coupon-box label {
+            display: block;
+            margin-bottom: 12px;
+            color: #082653;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .coupon-input {
+            display: flex;
+            gap: 9px;
+        }
+
+        .coupon-input input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid #cbdced;
+            border-radius: 9px;
+            outline: none;
+            color: #082653;
+            background: #ffffff;
+        }
+
+        .coupon-input input:focus {
+            border-color: #1686ed;
+            box-shadow: 0 0 0 3px rgba(22, 134, 237, .12);
+        }
+
+        .btn-coupon {
+            padding: 0 17px;
+            border: none;
+            border-radius: 9px;
+            background: #0869dc;
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-coupon:hover {
+            background: #031b48;
+            transform: translateY(-1px);
+        }
+
+        .coupon-message {
+            margin-top: 11px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #526984;
+        }
+
+        .coupon-message.erro {
+            color: #c03939;
+        }
+
+        .coupon-message.sucesso {
+            color: #16804a;
+        }
+
+        .btn-remove-coupon {
+            display: none;
+            margin-top: 10px;
+            padding: 7px 11px;
+            border: 1px solid #cbdced;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #0754a5;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* PAGAMENTO */
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .payment-option {
+            position: relative;
+        }
+
+        .payment-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .payment-option label {
+            min-height: 90px;
+            padding: 13px 8px;
+            border: 1px solid #dce6f2;
+            border-radius: 12px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            text-align: center;
+            color: #536781;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .payment-icon {
+            font-size: 24px;
+        }
+
+        .payment-option label:hover {
+            border-color: #1686ed;
+            background: #f1f8ff;
+            transform: translateY(-2px);
+        }
+
+        .payment-option input:checked + label {
+            border: 2px solid #0869dc;
+            background: #eaf4ff;
+            color: #0754a5;
+            box-shadow: 0 4px 14px rgba(8, 105, 220, .12);
+        }
+
+        .payment-option input:focus-visible + label {
+            outline: 3px solid #80bdff;
+            outline-offset: 3px;
+        }
+
+        .payment-message {
+            margin-top: 12px;
+            color: #75849a;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* RESUMO */
+
+        .summary {
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary h2 {
+            margin-bottom: 20px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 14px 0;
+            color: #667991;
+            font-size: 14px;
+        }
+
+        .summary-line strong {
+            color: #082653;
+        }
+
+        .summary-divider {
+            height: 1px;
+            margin: 18px 0;
+            background: #e5edf6;
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .total-line span {
+            color: #082653;
+            font-weight: 800;
+        }
+
+        .total {
+            color: #0869dc;
+            font-size: 26px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .frete-info {
+            margin-top: 12px;
+            color: #75849a;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* BOTÕES */
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            margin-top: 25px;
+        }
+
+        .btn-link {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(110deg, #0869dc, #03469c);
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(8, 105, 220, .2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(8, 105, 220, .28);
+        }
+
+        .btn-secondary {
+            background: #eaf4ff;
+            color: #0754a5;
+            border: 1px solid #d2e7fc;
+        }
+
+        .btn-secondary:hover {
+            background: #d5eaff;
+            transform: translateY(-2px);
+        }
+
+        .secure-info {
+            margin-top: 18px;
+            color: #75849a;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        /* ANIMAÇÃO */
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* CELULAR */
+
+        @media (max-width: 850px) {
+            .cart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .container {
+                width: calc(100% - 24px);
+                padding-top: 22px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .topbar-links {
+                flex-direction: column;
+                gap: 9px;
+                text-align: right;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            .item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .item > strong {
+                align-self: flex-end;
+            }
+
+            .coupon-input {
+                flex-direction: column;
+            }
+
+            .btn-coupon {
+                min-height: 43px;
+            }
+
+            .payment-options {
+                gap: 6px;
+            }
+
+            .payment-option label {
+                min-height: 82px;
+                font-size: 11px;
+            }
+
+            .total {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header class="topbar">
+            <a href="/home" class="logo">WE<span>BLUE</span></a>
+
+            <nav class="topbar-links">
+                <a href="/home">← Voltar para a loja</a>
+                <a href="/pedidos">Meus pedidos</a>
+            </nav>
+        </header>
+
+        <section class="titulo">
+            <h1>Meu carrinho 🛒</h1>
+            <p>Confira seus produtos antes de finalizar sua compra.</p>
+        </section>
+
+        <div class="cart-grid">
+
+            <div class="coluna-principal">
+
+                <section class="panel">
+                    <h2>Seus produtos</h2>
+
+                    <div id="listaCarrinho"></div>
+
+                    <div id="mensagemCarrinho" class="empty"></div>
+                </section>
+
+                <section class="panel">
+                    <h2>🎟️ Cupom de desconto</h2>
+
+                    <div class="coupon-box">
+                        <label for="codigoCupom">
+                            Você tem um cupom promocional?
+                        </label>
+
+                        <div class="coupon-input">
+                            <input
+                                type="text"
+                                id="codigoCupom"
+                                placeholder="Digite seu cupom"
+                                maxlength="40"
+                                autocomplete="off"
+                            >
+
+                            <button
+                                type="button"
+                                class="btn-coupon"
+                                id="botaoAplicarCupom"
+                            >
+                                Aplicar
+                            </button>
+                        </div>
+
+                        <p
+                            id="mensagemCupom"
+                            class="coupon-message"
+                            aria-live="polite"
+                        ></p>
+
+                        <button
+                            type="button"
+                            id="removerCupom"
+                            class="btn-remove-coupon"
+                        >
+                            Remover cupom
+                        </button>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2>💳 Forma de pagamento</h2>
+
+                    <div class="payment-options">
+
+                        <div class="payment-option">
+                            <input
+                                type="radio"
+                                id="pagamentoCredito"
+                                name="formaPagamento"
+                                value="credito"
+                            >
+                            <label for="pagamentoCredito">
+                                <span class="payment-icon">💳</span>
+                                Crédito
+                            </label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input
+                                type="radio"
+                                id="pagamentoDebito"
+                                name="formaPagamento"
+                                value="debito"
+                            >
+                            <label for="pagamentoDebito">
+                                <span class="payment-icon">💳</span>
+                                Débito
+                            </label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input
+                                type="radio"
+                                id="pagamentoPix"
+                                name="formaPagamento"
+                                value="pix"
+                            >
+                            <label for="pagamentoPix">
+                                <span class="payment-icon">⚡</span>
+                                Pix
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <p class="payment-message" id="mensagemPagamento">
+                        Selecione a forma de pagamento desejada.
+                    </p>
+                </section>
+
+            </div>
+
+            <aside class="panel summary">
+
+                <h2>Resumo do pedido</h2>
+
+                <div class="summary-line">
+                    <span>Quantidade</span>
+                    <strong id="quantidadeItens">0 itens</strong>
+                </div>
+
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <strong id="subtotalCarrinho">R$ 0,00</strong>
+                </div>
+
+                <div class="summary-line">
+                    <span>Desconto</span>
+                    <strong id="descontoCarrinho">R$ 0,00</strong>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="total-line">
+                    <span>Total</span>
+                    <strong class="total" id="totalCarrinho">
+                        R$ 0,00
+                    </strong>
+                </div>
+
+                <p class="frete-info">
+                    O valor do frete será calculado na finalização da compra.
+                </p>
+
+                <div class="actions">
+                    <a
+                        class="btn-link btn-primary"
+                        href="/checkout"
+                        id="botaoCheckout"
+                    >
+                        Continuar para o checkout →
+                    </a>
+
+                    <a class="btn-link btn-secondary" href="/home">
+                        Continuar comprando
+                    </a>
+                </div>
+
+                <p class="secure-info">
+                    🔒 Seus dados serão tratados com segurança.
+                </p>
+
+            </aside>
+
+        </div>
+    </main>
+
+    <script src="/js/carrinho.js"></script>
+</body>
+</html>

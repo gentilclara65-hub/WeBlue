@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Weblue Beauty: produtos de beleza, cosméticos, cuidados e ofertas para você.">
+
+    <title>Weblue | Beleza e Cosméticos</title>
+
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="cabecalho">
+        <div class="cabecalho-container">
+
+            <a href="/home.html" class="logo" aria-label="Página inicial da Weblue">
+                <span class="logo-nome">WEBLUE</span>
+                <span class="logo-subtitulo">BEAUTY</span>
+            </a>
+
+            <nav class="menu" aria-label="Menu principal">
+                <a href="/home.html" class="menu-link ativo">Produtos</a>
+                <a href="#categorias" class="menu-link">Categorias</a>
+                <a href="#ofertas" class="menu-link">Ofertas</a>
+                <a href="#produtos" class="menu-link">Novidades</a>
+                <a href="#cupons" class="menu-link">Cupons</a>
+                <a href="#vale-compras" class="menu-link">Vale-compras</a>
+            </nav>
+
+            <form id="formBusca" class="busca">
+                <input
+                    id="campoBusca"
+                    type="search"
+                    placeholder="Busque por produtos, marcas..."
+                    autocomplete="off"
+                    aria-label="Pesquisar produtos"
+                >
+
+                <button class="botao-busca" type="submit" aria-label="Pesquisar">
+                    🔍
+                </button>
+            </form>
+
+            <div class="acoes">
+
+                <a href="/login" class="acao"
+                   aria-label="Entrar na conta"
+                   title="Entrar na conta">🔐</a>
+
+                <a href="/admin-login.html" class="acao"
+                   aria-label="Painel administrativo"
+                   title="Painel administrativo">⚙</a>
+
+                <a href="/cliente" class="acao"
+                   aria-label="Minha conta"
+                   title="Minha conta">♟</a>
+
+                <a href="/pedidos" class="acao"
+                   aria-label="Meus pedidos"
+                   title="Meus pedidos">🧾</a>
+
+                <button type="button" class="acao"
+                        aria-label="Favoritos" title="Favoritos">
+                    ♡
+                </button>
+
+                <button id="botaoCarrinho" type="button" class="acao"
+                        aria-label="Carrinho" title="Carrinho">
+                    🛒
+                    <span id="contadorCarrinho" class="contador-carrinho">0</span>
+                </button>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- CATEGORIAS -->
+        <section id="categorias" class="secao-categorias">
+
+            <div class="categorias">
+
+                <button type="button" class="categoria" data-categoria="Skincare" aria-pressed="false">
+                    Skincare
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Maquiagem" aria-pressed="false">
+                    Maquiagem
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Cabelos" aria-pressed="false">
+                    Cabelos
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Corpo e Banho" aria-pressed="false">
+                    Corpo e Banho
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Fragrâncias" aria-pressed="false">
+                    Fragrâncias
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Masculino" aria-pressed="false">
+                    Masculino
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Infantil" aria-pressed="false">
+                    Infantil
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Kits e Presentes" aria-pressed="false">
+                    Kits e Presentes
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Ofertas" aria-pressed="false">
+                    Ofertas
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Cupons" aria-pressed="false">
+                    Cupons
+                </button>
+
+                <button type="button" class="categoria" data-categoria="Vale-compras" aria-pressed="false">
+                    Vale-compras
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- BANNER / CARROSSEL -->
+        <section class="hero">
+
+            <div class="hero-conteudo">
+
+                <span class="hero-tag">BELEZA DO SEU JEITO</span>
+
+                <h1>
+                    Sua beleza.
+                    <span>Sua essência.</span>
+                </h1>
+
+                <p>
+                    Descubra produtos selecionados para cuidar
+                    de você todos os dias.
+                </p>
+
+                <a href="#produtos" class="botao-principal">
+                    Ver produtos
+                    <span>→</span>
+                </a>
+
+                <a href="/login" class="botao-secundario">
+                    Entrar
+                </a>
+
+            </div>
+
+            <div class="hero-arte">
+
+                <img
+                    id="imagemBanner"
+                    src="/img/hero-weblue.png"
+                    alt="Banner principal Weblue"
+                    class="hero-imagem"
+                >
+
+                <button
+                    type="button"
+                    id="bannerAnterior"
+                    class="carrossel-seta carrossel-anterior"
+                    aria-label="Banner anterior"
+                >
+                    &#10094;
+                </button>
+
+                <button
+                    type="button"
+                    id="bannerProximo"
+                    class="carrossel-seta carrossel-proximo"
+                    aria-label="Próximo banner"
+                >
+                    &#10095;
+                </button>
+
+                <div id="indicadoresBanner" class="carrossel-indicadores">
+
+                    <button
+                        type="button"
+                        class="indicador-banner ativo"
+                        data-slide="0"
+                        aria-label="Banner 1"
+                        aria-current="true"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="indicador-banner"
+                        data-slide="1"
+                        aria-label="Banner 2"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="indicador-banner"
+                        data-slide="2"
+                        aria-label="Banner 3"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="indicador-banner"
+                        data-slide="3"
+                        aria-label="Banner 4 - Barba masculina"
+                    ></button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- OFERTAS E PRODUTOS -->
+        <section id="produtos" class="secao-produtos">
+
+            <div class="titulo-secao" id="ofertas">
+                <div>
+                    <span class="titulo-pequeno">WEBLUE</span>
+
+                    <h2>Ofertas e novidades</h2>
+
+                    <p>
+                        Confira os produtos disponíveis
+                        e as novidades do catálogo Weblue.
+                    </p>
+                </div>
+            </div>
+
+            <p id="mensagemProdutos" class="mensagem-produtos">
+                Carregando produtos...
+            </p>
+
+            <div id="listaProdutos" class="lista-produtos"></div>
+
+        </section>
+
+        <!-- INFORMAÇÕES DE CUPONS E VALE-COMPRAS -->
+        <section class="secao-beneficios" id="beneficios">
+
+            <div class="titulo-secao">
+                <div>
+                    <span class="titulo-pequeno">VANTAGENS WEBLUE</span>
+
+                    <h2>Benefícios para você</h2>
+
+                    <p>
+                        Aproveite as vantagens disponíveis
+                        para suas compras.
+                    </p>
+                </div>
+            </div>
+
+            <div class="beneficios-container">
+
+                <article class="beneficio-card" id="cupons">
+
+                    <span class="beneficio-icone">🎟️</span>
+
+                    <h3>Cupons</h3>
+
+                    <p>
+                        Confira os cupons disponíveis e aproveite
+                        condições especiais em suas compras.
+                    </p>
+
+                    <a href="/cupons" class="botao-beneficio">
+                        Ver cupons
+                    </a>
+
+                </article>
+
+                <article class="beneficio-card" id="vale-compras">
+
+                    <span class="beneficio-icone">🎁</span>
+
+                    <h3>Vale-compras</h3>
+
+                    <p>
+                        Conheça as opções de vale-compras
+                        disponíveis na Weblue.
+                    </p>
+
+                    <a href="/vale-compras" class="botao-beneficio">
+                        Ver vale-compras
+                    </a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="rodape">
+
+        <div class="rodape-container">
+
+            <div class="rodape-marca">
+                <span class="rodape-logo">WEBLUE</span>
+                <span class="rodape-subtitulo">BEAUTY</span>
+            </div>
+
+            <p class="rodape-texto">
+                Beleza do seu jeito.
+            </p>
+
+            <a
+                href="/admin-login.html"
+                class="rodape-admin"
+                title="Acesso administrativo"
+            >
+                Área Administrativa
+            </a>
+
+        </div>
+
+    </footer>
+
+    <!-- JANELA DE CONFIRMAÇÃO DA SACOLA -->
+    <div
+        id="modalSacola"
+        class="modal-sacola"
+        aria-hidden="true"
+    >
+
+        <div class="modal-sacola__conteudo">
+
+            <button
+                type="button"
+                id="fecharModalSacola"
+                class="modal-sacola__fechar"
+                aria-label="Fechar"
+            >
+                &times;
+            </button>
+
+            <div class="modal-sacola__sucesso">
+                ✓
+            </div>
+
+            <h2>Produto adicionado!</h2>
+
+            <p class="modal-sacola__mensagem">
+                Seu produto foi adicionado à sacola com sucesso.
+            </p>
+
+            <div class="modal-sacola__produto">
+
+                <img
+                    id="imagemProdutoSacola"
+                    src=""
+                    alt="Produto adicionado"
+                >
+
+                <div>
+                    <h3 id="nomeProdutoSacola"></h3>
+                    <p id="precoProdutoSacola"></p>
+                </div>
+
+            </div>
+
+            <div class="modal-sacola__botoes">
+
+                <button
+                    type="button"
+                    id="continuarComprando"
+                    class="modal-sacola__continuar"
+                >
+                    Continuar comprando
+                </button>
+
+                <button
+                    type="button"
+                    id="irParaSacola"
+                    class="modal-sacola__ir"
+                >
+                    Ir para a sacola
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="/js/home.js"></script>
+
+</body>
+</html>

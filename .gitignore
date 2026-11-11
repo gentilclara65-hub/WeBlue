@@ -1,0 +1,17 @@
+﻿.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.env.txt
+node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

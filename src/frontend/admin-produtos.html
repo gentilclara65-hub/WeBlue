@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gerenciar Produtos | Weblue</title>
+
+    <link rel="stylesheet" href="/css/admin-produtos.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="cabecalho">
+        <div class="cabecalho-container">
+
+            <a href="/home.html" class="logo">
+                <span class="logo-nome">WEBLUE</span>
+                <span class="logo-subtitulo">BEAUTY</span>
+            </a>
+
+            <div class="cabecalho-titulo">
+                <span class="cabecalho-tag">ADMINISTRAÇÃO</span>
+                <h1>Produtos</h1>
+            </div>
+
+            <div class="cabecalho-acoes">
+                <a href="/admin-dashboard" class="botao-voltar">Dashboard</a>
+                <a href="/admin-produtos" class="botao-voltar">Produtos</a>
+                <a href="/home" class="botao-voltar">Loja</a>
+
+                <button type="button" id="btnSairAdmin" class="botao-sair">
+                    Sair
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="pagina-admin">
+
+        <!-- RESUMO -->
+        <section class="resumo">
+            <div>
+                <span class="titulo-pequeno">WEBLUE ADMIN</span>
+                <h2>Gerenciamento de produtos</h2>
+                <p>Cadastre, edite e controle os produtos disponíveis na loja.</p>
+            </div>
+
+            <button type="button" id="botaoNovoProduto" class="botao-principal">
+                + Novo produto
+            </button>
+        </section>
+
+        <!-- ESTATÍSTICAS -->
+        <section class="estatisticas">
+
+            <article class="estatistica-card">
+                <span class="estatistica-label">Total de produtos</span>
+                <strong id="totalProdutos" class="estatistica-valor">0</strong>
+            </article>
+
+            <article class="estatistica-card">
+                <span class="estatistica-label">Produtos ativos</span>
+                <strong id="totalAtivos" class="estatistica-valor">0</strong>
+            </article>
+
+            <article class="estatistica-card">
+                <span class="estatistica-label">Produtos inativos</span>
+                <strong id="totalInativos" class="estatistica-valor">0</strong>
+            </article>
+
+            <article class="estatistica-card">
+                <span class="estatistica-label">Unidades em estoque</span>
+                <strong id="totalEstoque" class="estatistica-valor">0</strong>
+            </article>
+
+        </section>
+
+        <!-- PESQUISA E FILTROS -->
+        <section class="barra-filtros">
+
+            <div class="campo-pesquisa">
+                <label for="pesquisaProduto" class="sr-only">
+                    Pesquisar produto
+                </label>
+
+                <input
+                    type="search"
+                    id="pesquisaProduto"
+                    placeholder="Pesquisar por nome, categoria ou marca..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <select id="filtroStatus" aria-label="Filtrar produtos por status">
+                <option value="">Todos os status</option>
+                <option value="ATIVO">Ativos</option>
+                <option value="INATIVO">Inativos</option>
+            </select>
+
+        </section>
+
+        <!-- MENSAGENS -->
+        <div id="mensagem" class="mensagem" hidden></div>
+
+        <!-- LISTAGEM -->
+        <section class="secao-listagem">
+
+            <div class="listagem-cabecalho">
+                <div>
+                    <span class="titulo-pequeno">CATÁLOGO</span>
+                    <h2>Produtos cadastrados</h2>
+                </div>
+            </div>
+
+            <div id="listaProdutos" class="lista-produtos">
+                <p class="carregando">Carregando produtos...</p>
+            </div>
+
+        </section>
+
+        <!-- RESUMO ADMINISTRATIVO -->
+        <section class="secao-admin-resumo">
+
+            <div class="resumo-admin-card">
+                <div class="resumo-admin-cabecalho">
+                    <span class="titulo-pequeno">PEDIDOS RECENTES</span>
+                    <h2>Últimas vendas</h2>
+                </div>
+
+                <div id="listaPedidosRecentes" class="lista-admin-detalhes">
+                    <p class="carregando">Carregando pedidos...</p>
+                </div>
+            </div>
+
+            <div class="resumo-admin-card">
+                <div class="resumo-admin-cabecalho">
+                    <span class="titulo-pequeno">ESTOQUE</span>
+                    <h2>Produtos com pouca quantidade</h2>
+                </div>
+
+                <div id="listaEstoqueBaixo" class="lista-admin-detalhes">
+                    <p class="carregando">Carregando estoque...</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODAL DE PRODUTO -->
+    <div id="modalProduto" class="modal" hidden>
+
+        <div class="modal-overlay" id="modalOverlay"></div>
+
+        <section
+            class="modal-conteudo"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloModal"
+        >
+
+            <!-- CABEÇALHO DO FORMULÁRIO -->
+            <div class="modal-cabecalho">
+
+                <div>
+                    <span class="titulo-pequeno">PRODUTO</span>
+                    <h2 id="tituloModal">Novo produto</h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="botaoFecharModal"
+                    class="botao-fechar"
+                    aria-label="Fechar formulário"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <!-- FORMULÁRIO -->
+            <form id="formProduto">
+
+                <input type="hidden" id="produtoId">
+
+                <!-- NOME -->
+                <div class="campo campo-completo">
+                    <label for="nome">Nome do produto *</label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        maxlength="150"
+                        required
+                        placeholder="Ex.: Sérum Facial Vitamina C"
+                    >
+                </div>
+
+                <!-- DESCRIÇÃO -->
+                <div class="campo campo-completo">
+                    <label for="descricao">Descrição</label>
+
+                    <textarea
+                        id="descricao"
+                        rows="4"
+                        placeholder="Descreva o produto..."
+                    ></textarea>
+                </div>
+
+                <div class="form-grid">
+
+                    <!-- PREÇO -->
+                    <div class="campo">
+                        <label for="preco">Preço *</label>
+
+                        <input
+                            type="number"
+                            id="preco"
+                            min="0"
+                            step="0.01"
+                            required
+                            placeholder="0,00"
+                        >
+                    </div>
+
+                    <!-- ESTOQUE -->
+                    <div class="campo">
+                        <label for="estoque">Estoque *</label>
+
+                        <input
+                            type="number"
+                            id="estoque"
+                            min="0"
+                            step="1"
+                            required
+                            placeholder="0"
+                        >
+                    </div>
+
+                    <!-- CATEGORIA CORRIGIDA -->
+                    <div class="campo">
+                        <label for="categoria">Categoria *</label>
+
+                        <select id="categoria" required>
+
+                            <option value="">Selecione uma categoria</option>
+
+                            <option value="Skincare">Skincare</option>
+                            <option value="Maquiagem">Maquiagem</option>
+                            <option value="Cabelos">Cabelos</option>
+                            <option value="Perfumes">Perfumes</option>
+                            <option value="Corpo e Banho">Corpo e Banho</option>
+                            <option value="Cuidados Masculinos">Cuidados Masculinos</option>
+                            <option value="Barba e Barbear">Barba e Barbear</option>
+                            <option value="Unhas">Unhas</option>
+                            <option value="Protetor Solar">Protetor Solar</option>
+                            <option value="Hidratantes">Hidratantes</option>
+                            <option value="Limpeza Facial">Limpeza Facial</option>
+                            <option value="Tratamento Facial">Tratamento Facial</option>
+                            <option value="Acessórios de Beleza">Acessórios de Beleza</option>
+
+                            <option value="Kits e Presentes">Kits e Presentes</option>
+                            <option value="Perfumes femininos">Perfumes femininos</option>
+                            <option value="Perfumes masculinos">Perfumes masculinos</option>
+                            <option value="Body splash">Body splash</option>
+                            <option value="Colônias">Colônias</option>
+                            <option value="Kits de fragrâncias">Kits de fragrâncias</option>
+
+                            <option value="Ofertas">Ofertas</option>
+                            <option value="Fragrâncias">Fragrâncias</option>
+                            <option value="Cupons">Cupons</option>
+                            <option value="Vale-compras">Vale-compras</option>
+
+                        </select>
+                    </div>
+
+                    <!-- MARCA -->
+                    <div class="campo">
+                        <label for="marca">Marca</label>
+
+                        <input
+                            type="text"
+                            id="marca"
+                            maxlength="100"
+                            placeholder="Ex.: Weblue"
+                        >
+                    </div>
+
+                    <!-- IMAGEM -->
+                    <div class="campo campo-completo">
+                        <label for="imagemUrl">URL da imagem</label>
+
+                        <input
+                            type="url"
+                            id="imagemUrl"
+                            placeholder="https://..."
+                        >
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="campo">
+                        <label for="status">Status</label>
+
+                        <select id="status">
+                            <option value="ATIVO">Ativo</option>
+                            <option value="INATIVO">Inativo</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- AÇÕES -->
+                <div class="form-acoes">
+
+                    <button
+                        type="button"
+                        id="botaoCancelar"
+                        class="botao-secundario"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="botaoSalvar"
+                        class="botao-salvar"
+                    >
+                        Salvar produto
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="/js/admin-produtos.js"></script>
+
+</body>
+</html>
