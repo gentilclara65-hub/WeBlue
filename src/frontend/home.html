@@ -1,11 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Weblue Beauty: produtos de beleza, cosméticos, cuidados e ofertas para você.">
+
+    <meta
+        name="description"
+        content="Weblue Beauty: produtos de beleza, cosméticos, cuidados e ofertas para você."
+    >
 
     <title>Weblue | Beleza e Cosméticos</title>
 
@@ -15,24 +18,52 @@
 <body>
 
     <!-- CABEÇALHO -->
+
     <header class="cabecalho">
+
         <div class="cabecalho-container">
 
-            <a href="/home.html" class="logo" aria-label="Página inicial da Weblue">
+            <a
+                href="/home.html"
+                class="logo"
+                aria-label="Página inicial da Weblue"
+            >
                 <span class="logo-nome">WEBLUE</span>
                 <span class="logo-subtitulo">BEAUTY</span>
             </a>
 
             <nav class="menu" aria-label="Menu principal">
-                <a href="/home.html" class="menu-link ativo">Produtos</a>
-                <a href="#categorias" class="menu-link">Categorias</a>
-                <a href="#ofertas" class="menu-link">Ofertas</a>
-                <a href="#produtos" class="menu-link">Novidades</a>
-                <a href="#cupons" class="menu-link">Cupons</a>
-                <a href="#vale-compras" class="menu-link">Vale-compras</a>
+
+                <a href="/home.html" class="menu-link ativo">
+                    Produtos
+                </a>
+
+                <a href="#categorias" class="menu-link">
+                    Categorias
+                </a>
+
+                <a href="#ofertas" class="menu-link">
+                    Ofertas
+                </a>
+
+                <a href="#produtos" class="menu-link">
+                    Novidades
+                </a>
+
+                <a href="#cupons" class="menu-link">
+                    Cupons
+                </a>
+
+                <a href="#vale-compras" class="menu-link">
+                    Vale-compras
+                </a>
+
             </nav>
 
+            <!-- BUSCA -->
+
             <form id="formBusca" class="busca">
+
                 <input
                     id="campoBusca"
                     type="search"
@@ -41,92 +72,199 @@
                     aria-label="Pesquisar produtos"
                 >
 
-                <button class="botao-busca" type="submit" aria-label="Pesquisar">
+                <button
+                    class="botao-busca"
+                    type="submit"
+                    aria-label="Pesquisar"
+                >
                     🔍
                 </button>
+
             </form>
+
+            <!-- ÍCONES -->
 
             <div class="acoes">
 
-                <a href="/login" class="acao"
-                   aria-label="Entrar na conta"
-                   title="Entrar na conta">🔐</a>
+                <!-- FAVORITOS -->
 
-                <a href="/admin-login.html" class="acao"
-                   aria-label="Painel administrativo"
-                   title="Painel administrativo">⚙</a>
+                <button
+                    type="button"
+                    class="acao"
+                    aria-label="Favoritos"
+                    title="Favoritos"
+                >
 
-                <a href="/cliente" class="acao"
-                   aria-label="Minha conta"
-                   title="Minha conta">♟</a>
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M20.8 8.7c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11A4.7 4.7 0 0 1 12 6.3a4.7 4.7 0 0 1 8.8 2.4Z"/>
+                    </svg>
 
-                <a href="/pedidos" class="acao"
-                   aria-label="Meus pedidos"
-                   title="Meus pedidos">🧾</a>
-
-                <button type="button" class="acao"
-                        aria-label="Favoritos" title="Favoritos">
-                    ♡
                 </button>
 
-                <button id="botaoCarrinho" type="button" class="acao"
-                        aria-label="Carrinho" title="Carrinho">
-                    🛒
-                    <span id="contadorCarrinho" class="contador-carrinho">0</span>
+                <!-- CARRINHO -->
+
+                <button
+                    id="botaoCarrinho"
+                    type="button"
+                    class="acao"
+                    aria-label="Carrinho"
+                    title="Carrinho"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M3 3h2l2.2 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L22 7H6"/>
+                        <circle cx="10" cy="20" r="1.2"/>
+                        <circle cx="18" cy="20" r="1.2"/>
+                    </svg>
+
+                    <span
+                        id="contadorCarrinho"
+                        class="contador-carrinho"
+                    >
+                        0
+                    </span>
+
                 </button>
+
+                <!-- MINHA CONTA -->
+
+                <a
+                    href="/cliente"
+                    class="acao"
+                    aria-label="Minha conta e cadastro"
+                    title="Minha conta"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 21a8 8 0 0 1 16 0"/>
+                    </svg>
+
+                </a>
 
             </div>
+
         </div>
+
     </header>
+
 
     <main>
 
         <!-- CATEGORIAS -->
-        <section id="categorias" class="secao-categorias">
+
+        <section
+            id="categorias"
+            class="secao-categorias"
+        >
 
             <div class="categorias">
 
-                <button type="button" class="categoria" data-categoria="Skincare" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Skincare"
+                    aria-pressed="false"
+                >
                     Skincare
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Maquiagem" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Maquiagem"
+                    aria-pressed="false"
+                >
                     Maquiagem
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Cabelos" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Cabelos"
+                    aria-pressed="false"
+                >
                     Cabelos
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Corpo e Banho" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Corpo e Banho"
+                    aria-pressed="false"
+                >
                     Corpo e Banho
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Fragrâncias" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Fragrâncias"
+                    aria-pressed="false"
+                >
                     Fragrâncias
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Masculino" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Masculino"
+                    aria-pressed="false"
+                >
                     Masculino
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Infantil" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Infantil"
+                    aria-pressed="false"
+                >
                     Infantil
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Kits e Presentes" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Kits e Presentes"
+                    aria-pressed="false"
+                >
                     Kits e Presentes
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Ofertas" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Ofertas"
+                    aria-pressed="false"
+                >
                     Ofertas
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Cupons" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Cupons"
+                    aria-pressed="false"
+                >
                     Cupons
                 </button>
 
-                <button type="button" class="categoria" data-categoria="Vale-compras" aria-pressed="false">
+                <button
+                    type="button"
+                    class="categoria"
+                    data-categoria="Vale-compras"
+                    aria-pressed="false"
+                >
                     Vale-compras
                 </button>
 
@@ -134,12 +272,16 @@
 
         </section>
 
+
         <!-- BANNER / CARROSSEL -->
+
         <section class="hero">
 
             <div class="hero-conteudo">
 
-                <span class="hero-tag">BELEZA DO SEU JEITO</span>
+                <span class="hero-tag">
+                    BELEZA DO SEU JEITO
+                </span>
 
                 <h1>
                     Sua beleza.
@@ -151,13 +293,12 @@
                     de você todos os dias.
                 </p>
 
-                <a href="#produtos" class="botao-principal">
+                <a
+                    href="#produtos"
+                    class="botao-principal"
+                >
                     Ver produtos
                     <span>→</span>
-                </a>
-
-                <a href="/login" class="botao-secundario">
-                    Entrar
                 </a>
 
             </div>
@@ -189,7 +330,10 @@
                     &#10095;
                 </button>
 
-                <div id="indicadoresBanner" class="carrossel-indicadores">
+                <div
+                    id="indicadoresBanner"
+                    class="carrossel-indicadores"
+                >
 
                     <button
                         type="button"
@@ -220,83 +364,163 @@
                         aria-label="Banner 4 - Barba masculina"
                     ></button>
 
+                    <button
+                        type="button"
+                        class="indicador-banner"
+                        data-slide="4"
+                        aria-label="Banner 5 - Maquiagem e Glamour"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="indicador-banner"
+                        data-slide="5"
+                        aria-label="Banner 6 - Monte seu kit"
+                    ></button>
+
                 </div>
 
             </div>
 
         </section>
 
-        <!-- OFERTAS E PRODUTOS -->
-        <section id="produtos" class="secao-produtos">
 
-            <div class="titulo-secao" id="ofertas">
+        <!-- PRODUTOS -->
+
+        <section
+            id="produtos"
+            class="secao-produtos"
+        >
+
+            <div
+                class="titulo-secao"
+                id="ofertas"
+            >
+
                 <div>
-                    <span class="titulo-pequeno">WEBLUE</span>
 
-                    <h2>Ofertas e novidades</h2>
+                    <span class="titulo-pequeno">
+                        WEBLUE
+                    </span>
+
+                    <h2>
+                        Ofertas e novidades
+                    </h2>
 
                     <p>
                         Confira os produtos disponíveis
                         e as novidades do catálogo Weblue.
                     </p>
+
                 </div>
+
             </div>
 
-            <p id="mensagemProdutos" class="mensagem-produtos">
+            <p
+                id="mensagemProdutos"
+                class="mensagem-produtos"
+            >
                 Carregando produtos...
             </p>
 
-            <div id="listaProdutos" class="lista-produtos"></div>
+            <div
+                id="listaProdutos"
+                class="lista-produtos"
+            ></div>
 
         </section>
 
-        <!-- INFORMAÇÕES DE CUPONS E VALE-COMPRAS -->
-        <section class="secao-beneficios" id="beneficios">
+
+        <!-- BENEFÍCIOS -->
+
+        <section
+            class="secao-beneficios"
+            id="beneficios"
+        >
 
             <div class="titulo-secao">
-                <div>
-                    <span class="titulo-pequeno">VANTAGENS WEBLUE</span>
 
-                    <h2>Benefícios para você</h2>
+                <div>
+
+                    <span class="titulo-pequeno">
+                        VANTAGENS WEBLUE
+                    </span>
+
+                    <h2>
+                        Benefícios para você
+                    </h2>
 
                     <p>
                         Aproveite as vantagens disponíveis
                         para suas compras.
                     </p>
+
                 </div>
+
             </div>
 
             <div class="beneficios-container">
 
-                <article class="beneficio-card" id="cupons">
+                <!-- CUPONS -->
 
-                    <span class="beneficio-icone">🎟️</span>
+                <article
+                    class="beneficio-card"
+                    id="cupons"
+                >
 
-                    <h3>Cupons</h3>
+                    <span class="beneficio-icone">
+                        🎟️
+                    </span>
+
+                    <h3>
+                        Cupons
+                    </h3>
 
                     <p>
                         Confira os cupons disponíveis e aproveite
                         condições especiais em suas compras.
                     </p>
 
-                    <a href="/cupons" class="botao-beneficio">
+                    <a
+                        href="/cupons"
+                        class="botao-beneficio"
+                    >
                         Ver cupons
                     </a>
 
                 </article>
 
-                <article class="beneficio-card" id="vale-compras">
 
-                    <span class="beneficio-icone">🎁</span>
+                <!-- VALE-COMPRAS -->
 
-                    <h3>Vale-compras</h3>
+                <article
+                    class="beneficio-card"
+                    id="vale-compras"
+                >
+
+                    <div class="vale-compras-imagem">
+
+                        <img
+                            src="/img/produtos/Vale-Presente%20WeBlue%20Dourado.png"
+                            alt="Vale-Presente WeBlue Dourado"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <h3>
+                        Vale-compras
+                    </h3>
 
                     <p>
                         Conheça as opções de vale-compras
                         disponíveis na Weblue.
                     </p>
 
-                    <a href="/vale-compras" class="botao-beneficio">
+                    <a
+                        href="/vale-compras"
+                        class="botao-beneficio"
+                    >
                         Ver vale-compras
                     </a>
 
@@ -308,19 +532,228 @@
 
     </main>
 
+
     <!-- RODAPÉ -->
+
     <footer class="rodape">
 
         <div class="rodape-container">
 
             <div class="rodape-marca">
-                <span class="rodape-logo">WEBLUE</span>
-                <span class="rodape-subtitulo">BEAUTY</span>
+
+                <a
+                    href="/home.html"
+                    class="rodape-logo"
+                >
+                    WEBLUE
+                    <span>BEAUTY</span>
+                </a>
+
+                <p>
+                    Sua beleza, seu cuidado, seu momento.
+                    Descubra uma nova forma de cuidar de você.
+                </p>
+
             </div>
 
-            <p class="rodape-texto">
-                Beleza do seu jeito.
+
+            <div class="rodape-coluna">
+
+                <h3>
+                    Institucional
+                </h3>
+
+                <a href="/home.html">
+                    Página inicial
+                </a>
+
+                <a href="#categorias">
+                    Nossas categorias
+                </a>
+
+                <a href="#produtos">
+                    Produtos
+                </a>
+
+                <a href="#ofertas">
+                    Ofertas
+                </a>
+
+            </div>
+
+
+            <div class="rodape-coluna">
+
+                <h3>
+                    Atendimento
+                </h3>
+
+                <a href="#contato">
+                    Fale conosco
+                </a>
+
+                <a href="#duvidas">
+                    Dúvidas frequentes
+                </a>
+
+                <a href="#entrega">
+                    Entrega e frete
+                </a>
+
+                <a href="#trocas">
+                    Trocas e devoluções
+                </a>
+
+            </div>
+
+
+            <div class="rodape-coluna">
+
+                <h3>
+                    Minha conta
+                </h3>
+
+                <a href="/cliente">
+                    Entrar ou cadastrar
+                </a>
+
+                <a href="/carrinho">
+                    Minha sacola
+                </a>
+
+                <a href="/cupons">
+                    Meus cupons
+                </a>
+
+                <a href="/vale-compras">
+                    Vale-compras
+                </a>
+
+            </div>
+
+
+            <div class="rodape-coluna rodape-redes">
+
+                <h3>
+                    Redes sociais
+                </h3>
+
+                <p>
+                    Acompanhe as novidades da WeBlue.
+                </p>
+
+                <div class="rodape-social">
+
+                    <a
+                        href="#"
+                        aria-label="Instagram"
+                    >
+                        Instagram
+                    </a>
+
+                    <a
+                        href="#"
+                        aria-label="Facebook"
+                    >
+                        Facebook
+                    </a>
+
+                    <a
+                        href="#"
+                        aria-label="WhatsApp"
+                    >
+                        WhatsApp
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAGAMENTO E SEGURANÇA -->
+
+        <div class="rodape-informacoes">
+
+            <div class="rodape-info-item">
+
+                <span>💳</span>
+
+                <div>
+
+                    <strong>
+                        Formas de pagamento
+                    </strong>
+
+                    <p>
+                        Pix e cartões
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="rodape-info-item">
+
+                <span>🔒</span>
+
+                <div>
+
+                    <strong>
+                        Compra segura
+                    </strong>
+
+                    <p>
+                        Proteção dos seus dados
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="rodape-info-item">
+
+                <span>📦</span>
+
+                <div>
+
+                    <strong>
+                        Entrega
+                    </strong>
+
+                    <p>
+                        Consulte as condições de envio
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PARTE FINAL -->
+
+        <div class="rodape-final">
+
+            <p>
+                © 2026 WeBlue Beauty. Todos os direitos reservados.
             </p>
+
+            <div class="rodape-politicas">
+
+                <a href="#privacidade">
+                    Política de privacidade
+                </a>
+
+                <a href="#termos">
+                    Termos de uso
+                </a>
+
+            </div>
 
             <a
                 href="/admin-login.html"
@@ -334,7 +767,9 @@
 
     </footer>
 
-    <!-- JANELA DE CONFIRMAÇÃO DA SACOLA -->
+
+    <!-- MODAL DA SACOLA -->
+
     <div
         id="modalSacola"
         class="modal-sacola"
@@ -356,7 +791,9 @@
                 ✓
             </div>
 
-            <h2>Produto adicionado!</h2>
+            <h2>
+                Produto adicionado!
+            </h2>
 
             <p class="modal-sacola__mensagem">
                 Seu produto foi adicionado à sacola com sucesso.
@@ -371,8 +808,11 @@
                 >
 
                 <div>
+
                     <h3 id="nomeProdutoSacola"></h3>
+
                     <p id="precoProdutoSacola"></p>
+
                 </div>
 
             </div>
@@ -401,8 +841,11 @@
 
     </div>
 
+
     <!-- JAVASCRIPT -->
+
     <script src="/js/home.js"></script>
 
 </body>
+
 </html>

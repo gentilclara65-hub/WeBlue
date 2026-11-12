@@ -1,14 +1,14 @@
-WeBlue
+﻿# WeBlue
 
 Loja virtual de cosméticos criada como projeto de Laboratório de Inovação III.
 
 O repositório reúne uma aplicação web com frontend em HTML, CSS e JavaScript, API em FastAPI e persistência em MySQL.
 
-«Estado do projeto: cadastro, autenticação de clientes e administradores, catálogo, área administrativa, checkout e recuperação de senha estão implementados. O pagamento é simulado; não use dados reais de cartão nem considere a aplicação pronta para processar vendas reais.»
+> **Estado do projeto:** cadastro, autenticação de clientes e administradores, catálogo, área administrativa, checkout e recuperação de senha estão implementados. O pagamento é simulado; não use dados reais de cartão nem considere a aplicação pronta para processar vendas reais.
 
-Funcionalidades
+## Funcionalidades
 
-Loja e conta do cliente
+### Loja e conta do cliente
 
 - Catálogo público de produtos ativos.
 - Carrinho persistido no navegador e checkout para clientes autenticados.
@@ -19,7 +19,7 @@ Loja e conta do cliente
 - Limitação de tentativas e revogação de tokens persistidas no MySQL e compartilhadas entre instâncias.
 - Recuperação de senha por link enviado por SMTP. O token expira em 15 minutos, é armazenado no banco somente como hash, só pode ser usado uma vez e novas solicitações invalidam o token anterior.
 
-Administração
+### Administração
 
 - Login administrativo separado da autenticação de clientes.
 - Cadastro, consulta, atualização e desativação de produtos.
@@ -27,51 +27,54 @@ Administração
 - Consulta de pedidos, estoque e relatórios de vendas e produtos.
 - Rotas administrativas protegidas por token de administrador.
 
-Tecnologias
+## Tecnologias
 
-- Backend: Python, FastAPI, Pydantic e SQLAlchemy.
-- Banco de dados: MySQL com PyMySQL.
-- Autenticação: JWT e hashes de senha com pwdlib/Argon2.
-- Frontend: HTML, CSS e JavaScript sem framework.
-- Deploy configurado: Railway, via "railway.json" (./railway.json).
-- Testes: pytest, FastAPI TestClient e SQLite em memória.
+- **Backend:** Python, FastAPI, Pydantic e SQLAlchemy.
+- **Banco de dados:** MySQL com PyMySQL (padrão local) ou PostgreSQL/Neon com psycopg, quando `DATABASE_URL` estiver definida.
+- **Autenticação:** JWT e hashes de senha com pwdlib/Argon2.
+- **Frontend:** HTML, CSS e JavaScript sem framework.
+- **Deploy configurado:** Railway, via [railway.json](./railway.json).
+- **Testes:** pytest, FastAPI TestClient e SQLite em memória.
 
-Requisitos
+## Requisitos
 
-- Python compatível com as versões das dependências em "requirements.txt" (./requirements.txt).
+- Python compatível com as versões das dependências em [requirements.txt](./requirements.txt).
 - MySQL acessível localmente ou em um provedor.
 - Git para clonar o repositório.
 - Para envio de recuperação de senha: uma conta/serviço SMTP com TLS implícito na porta configurada.
 
-Executar localmente no Windows
+## Executar localmente no Windows
 
-1. Clonar e preparar o ambiente
+### 1. Clonar e preparar o ambiente
 
 No PowerShell:
 
+```powershell
 git clone https://github.com/gentilclara65-hub/WeBlue-Completo.git
 cd WeBlue-Completo
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+```
 
-Se a política do PowerShell impedir a ativação do ambiente virtual, execute os comandos usando diretamente ".\.venv\Scripts\python.exe".
+Se a política do PowerShell impedir a ativação do ambiente virtual, execute os comandos usando diretamente `.\.venv\Scripts\python.exe`.
 
-2. Preparar o MySQL
+### 2. Preparar o MySQL
 
 Crie um usuário e banco MySQL com permissões para criar e modificar tabelas.
 
-O script "001_criar_tabela_clientes.sql" (./database/ddl/001_criar_tabela_clientes.sql) cria o banco "weblue" e a tabela inicial de clientes. Execute-o no MySQL antes de iniciar a aplicação, por exemplo, pelo MySQL Workbench ou cliente MySQL.
+O script [001_criar_tabela_clientes.sql](./database/ddl/001_criar_tabela_clientes.sql) cria o banco `weblue` e a tabela inicial de clientes. Execute-o no MySQL antes de iniciar a aplicação, por exemplo, pelo MySQL Workbench ou cliente MySQL.
 
-As tabelas são gerenciadas pelo Alembic. Aplique as migrações após configurar o arquivo ".env", conforme a etapa 4.
+As tabelas são gerenciadas pelo Alembic. Aplique as migrações após configurar o arquivo `.env`, conforme a etapa 4.
 
-A migração inicial cria tabelas ausentes sem alterar as existentes; a seguinte cria o armazenamento compartilhado de tentativas de login e tokens revogados. Para mudanças futuras, crie uma nova revisão Alembic e aplique-a antes de iniciar as instâncias da aplicação.
+A migração inicial cria tabelas ausentes sem alterar as existentes; a segunda cria o armazenamento compartilhado de tentativas de login e tokens revogados; a terceira adiciona a coluna `subcategoria` em `produtos` (somente se ela ainda não existir). Para mudanças futuras, crie uma nova revisão Alembic e aplique-a antes de iniciar as instâncias da aplicação.
 
-3. Configurar variáveis de ambiente
+### 3. Configurar variáveis de ambiente
 
-Crie um arquivo ".env" na raiz do repositório. Ele é ignorado pelo Git; não inclua credenciais ou segredos no README, em commits ou em chamados.
+Crie um arquivo `.env` na raiz do repositório. Ele é ignorado pelo Git; não inclua credenciais ou segredos no README, em commits ou em chamados.
 
+```dotenv
 DB_USER=seu_usuario_mysql
 DB_PASSWORD=sua_senha_mysql
 DB_HOST=localhost
@@ -89,26 +92,38 @@ SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_FROM_EMAIL=
 FRONTEND_BASE_URL=http://localhost:8000
+```
 
-"DB_USER", "DB_PASSWORD" e "JWT_SECRET_KEY" são obrigatórios para iniciar a aplicação. Use um segredo JWT aleatório e exclusivo para cada ambiente.
+`JWT_SECRET_KEY` é obrigatório para iniciar a aplicação. Use um segredo JWT aleatório e exclusivo para cada ambiente.
 
-As variáveis SMTP são opcionais para iniciar o serviço, mas necessárias para recuperar senhas. "SMTP_USERNAME" e "SMTP_PASSWORD" devem ser preenchidos em conjunto. "FRONTEND_BASE_URL" deve ser a origem onde a página "/recuperar-senha" está hospedada; em produção, use HTTPS. Sem SMTP válido, solicitações de recuperação retornam "503 Service Unavailable".
+Para usar o MySQL local, preencha as variáveis `DB_*`. Para usar um PostgreSQL hospedado (por exemplo, Neon), defina `DATABASE_URL` com a URL de conexão do provedor; quando ela existe, tem prioridade e as variáveis `DB_*` são ignoradas. URLs `postgres://` e `postgresql://` são convertidas automaticamente para o driver psycopg.
 
-4. Aplicar migrações
+```dotenv
+# Opcional: substitui as variáveis DB_* acima
+DATABASE_URL=postgresql://usuario:senha@host/banco?sslmode=require
+```
 
-Na raiz do repositório, com o ".env" configurado e o MySQL acessível:
+As variáveis SMTP são opcionais para iniciar o serviço, mas necessárias para recuperar senhas. `SMTP_USERNAME` e `SMTP_PASSWORD` devem ser preenchidos em conjunto. `FRONTEND_BASE_URL` deve ser a origem onde a página `/recuperar-senha` está hospedada; em produção, use HTTPS. Sem SMTP válido, solicitações de recuperação retornam `503 Service Unavailable`.
 
+### 4. Aplicar migrações
+
+Na raiz do repositório, com o `.env` configurado e o MySQL acessível:
+
+```powershell
 python -m alembic -c src/backend/alembic.ini upgrade head
+```
 
 O Railway executa esse comando uma vez no estágio de pré-deploy, antes de iniciar as instâncias da API.
 
-5. Iniciar a aplicação
+### 5. Iniciar a aplicação
 
 Na raiz do repositório:
 
+```powershell
 python -m uvicorn backend.app.main:app --app-dir src --reload
+```
 
-A aplicação atende em "http://localhost:8000". Ela serve tanto a API quanto o frontend.
+A aplicação atende em `http://localhost:8000`. Ela serve tanto a API quanto o frontend.
 
 Páginas e recursos úteis:
 
@@ -120,66 +135,76 @@ Páginas e recursos úteis:
 
 O CORS também contém origens de desenvolvimento para Live Server e uma origem Railway definida no código; ajuste a configuração para o domínio efetivamente usado antes de publicar o frontend/API separadamente.
 
-Principais rotas da API
+## Principais rotas da API
 
-Todas as rotas abaixo são prefixadas por "/api".
+Todas as rotas abaixo são prefixadas por `/api`.
 
-Método| Rota| Acesso| Descrição
-"POST"| "/clientes"| Público| Cadastrar cliente
-"POST"| "/auth/login"| Público| Login do cliente
-"POST"| "/auth/refresh"| Refresh token| Renovar tokens do cliente
-"POST"| "/auth/logout"| Público| Revogar tokens enviados
-"POST"| "/auth/solicitar-recuperacao"| Público| Solicitar link de recuperação
-"POST"| "/auth/redefinir-senha"| Público| Redefinir senha com token
-"GET" / "PUT"| "/perfil"| Cliente autenticado| Consultar/atualizar perfil
-"GET"| "/produtos/catalogo"| Público| Listar catálogo ativo
-"POST" / "GET"| "/produtos"| Administrador| Cadastrar/listar produtos
-"GET" / "PUT" / "DELETE"| "/produtos/{produto_id}"| Administrador| Consultar/alterar/desativar produto
-"POST"| "/produtos/{produto_id}/imagem"| Administrador| Enviar imagem de produto
-"POST"| "/pedidos/checkout"| Cliente autenticado| Finalizar compra
-"GET"| "/pedidos/me"| Cliente autenticado| Consultar o próprio histórico
-"GET"| "/pedidos"| Administrador| Consultar pedidos
-"GET"| "/pedidos/estoque"| Administrador| Consultar estoque
-"GET"| "/pedidos/relatorios/vendas"| Administrador| Resumo de vendas
-"GET"| "/pedidos/relatorios/produtos"| Administrador| Produtos mais vendidos
-"POST"| "/admin/auth/login"| Público| Login administrativo
-"POST"| "/admin/auth/refresh"| Refresh token admin| Renovar tokens administrativos
-"POST"| "/admin/auth/logout"| Público| Revogar tokens administrativos
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| `POST` | `/clientes` | Público | Cadastrar cliente |
+| `POST` | `/auth/login` | Público | Login do cliente |
+| `POST` | `/auth/refresh` | Refresh token | Renovar tokens do cliente |
+| `POST` | `/auth/logout` | Público | Revogar tokens enviados |
+| `POST` | `/auth/solicitar-recuperacao` | Público | Solicitar link de recuperação |
+| `POST` | `/auth/redefinir-senha` | Público | Redefinir senha com token |
+| `GET` / `PUT` | `/perfil` | Cliente autenticado | Consultar/atualizar perfil |
+| `GET` | `/produtos/catalogo` | Público | Listar catálogo ativo |
+| `GET` | `/produtos/catalogo/{produto_id}` | Público | Detalhes de um produto ativo |
+| `POST` / `GET` | `/produtos` | Administrador | Cadastrar/listar produtos |
+| `GET` / `PUT` / `DELETE` | `/produtos/{produto_id}` | Administrador | Consultar/alterar/desativar produto |
+| `POST` | `/produtos/{produto_id}/imagem` | Administrador | Enviar imagem de produto |
+| `POST` | `/pedidos/checkout` | Cliente autenticado | Finalizar compra |
+| `GET` | `/pedidos/me` | Cliente autenticado | Consultar o próprio histórico |
+| `GET` | `/pedidos` | Administrador | Consultar pedidos |
+| `GET` | `/pedidos/estoque` | Administrador | Consultar estoque |
+| `GET` | `/pedidos/relatorios/vendas` | Administrador | Resumo de vendas |
+| `GET` | `/pedidos/relatorios/produtos` | Administrador | Produtos mais vendidos |
+| `POST` | `/admin/auth/login` | Público | Login administrativo |
+| `POST` | `/admin/auth/refresh` | Refresh token admin | Renovar tokens administrativos |
+| `POST` | `/admin/auth/logout` | Público | Revogar tokens administrativos |
 
 Rotas protegidas recebem o access token no cabeçalho:
 
+```text
 Authorization: Bearer <access_token>
+```
 
 O endpoint de cadastro administrativo não é público. Cadastre administradores por um processo controlado no banco; nunca disponibilize uma rota aberta para criação de contas administrativas.
 
-Checkout, estoque e pagamento
+## Checkout, estoque e pagamento
 
 O checkout consolida quantidades repetidas do mesmo produto, bloqueia as linhas de produto durante a transação e baixa o estoque com uma condição que impede saldo negativo. O pedido, seus itens e a atualização de estoque são confirmados juntos; falhas causam rollback. Os identificadores de pedido e itens são gerados pelo banco.
 
-O fluxo atual usa "simular_pagamento": não há gateway de pagamento integrado. Não envie números de cartão reais à aplicação. Antes de qualquer uso comercial, integre um provedor de pagamentos, trate confirmações/webhooks e revise os requisitos legais e de segurança aplicáveis.
+O fluxo atual usa `simular_pagamento`: não há gateway de pagamento integrado. Não envie números de cartão reais à aplicação. Antes de qualquer uso comercial, integre um provedor de pagamentos, trate confirmações/webhooks e revise os requisitos legais e de segurança aplicáveis.
 
-Testes
+## Testes
 
 Execute a suíte a partir da raiz:
 
+```powershell
 python -m pytest -q
+```
 
 Os testes usam SQLite em memória e cobrem autenticação, recuperação de senha, autorização, checkout, cálculo de estoque e rollback. Eles não substituem testes de concorrência no MySQL nem o teste de entrega por um provedor SMTP real.
 
-Deploy no Railway
+## Deploy no Railway
 
-O arquivo "railway.json" (./railway.json) configura o comando de inicialização, "/health" como health check e o builder Railpack.
+O arquivo [railway.json](./railway.json) configura o comando de inicialização, `/health` como health check e o builder Railpack.
 
-Configure no Railway as variáveis do banco e JWT listadas acima e, se for usar recuperação de senha, também as variáveis SMTP com a URL HTTPS pública. O banco MySQL deve estar provisionado e acessível pelo serviço.
+Configure no Railway as variáveis do banco e JWT listadas acima e, se for usar recuperação de senha, também as variáveis SMTP com a URL HTTPS pública. O banco (MySQL ou PostgreSQL via `DATABASE_URL`) deve estar provisionado e acessível pelo serviço.
 
-As migrações são aplicadas uma vez no estágio "preDeployCommand" do "railway.json" (./railway.json), evitando que cada réplica tente migrar o banco.
+> **Atenção ao usar PostgreSQL/Neon:** a migração inicial (`001_baseline`) usa tipos específicos do MySQL (`BIGINT UNSIGNED`, `ENUM`). Antes de aplicar as migrações em um banco PostgreSQL vazio, essa migração precisa ser adaptada.
+
+As migrações são aplicadas uma vez no estágio `preDeployCommand` do [railway.json](./railway.json), evitando que cada réplica tente migrar o banco.
 
 O projeto ainda não inclui gateway de pagamento; faça essa integração e validação antes de considerar o deploy adequado para transações reais.
 
-Estrutura do repositório
+## Estrutura do repositório
 
+```text
 database/
   ddl/                 Script inicial do banco
+  produtos_backup.sql  Dump da tabela de produtos
   seeds/               Instruções/dados iniciais
 
 docs/
@@ -195,6 +220,7 @@ src/
       routers/         Rotas FastAPI
       schemas/         Validação de entrada e saída
       services/        Segurança e serviços de aplicação
+    migrations/        Migrações Alembic
     tests/             Testes automatizados
 
   frontend/
@@ -202,14 +228,15 @@ src/
     img/               Imagens
     js/                Lógica do navegador
     *.html             Páginas da loja e administração
+```
 
-Documentação relacionada
+## Documentação relacionada
 
-- "Especificação de recuperação de senha (RF-003)" (./docs/requisitos/RF-003-recuperacao-senha.md)
-- "Testes de recuperação de senha (RF-003)" (./docs/testes/RF-003-testes.md)
-- "Documentação do backend de vendas" (./src/README.md)
-- "Script inicial do banco" (./database/ddl/001_criar_tabela_clientes.sql)
+- [Especificação de recuperação de senha (RF-003)](./docs/requisitos/RF-003-recuperacao-senha.md)
+- [Testes de recuperação de senha (RF-003)](./docs/testes/RF-003-testes.md)
+- [Documentação do backend de vendas](./src/README.md)
+- [Script inicial do banco](./database/ddl/001_criar_tabela_clientes.sql)
 
-Repositório
+## Repositório
 
-"gentilclara65-hub/WeBlue-Completo" (https://github.com/gentilclara65-hub/WeBlue-Completo)
+[gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo)

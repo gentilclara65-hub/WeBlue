@@ -10,12 +10,15 @@ class Settings(BaseSettings):
     # BANCO DE DADOS
     # =========================
 
-    db_user: str
-    db_password: str
+    database_url: str | None = None
+
+    db_user: str = "root"
+    db_password: str = ""
     db_host: str = "localhost"
     db_port: int = 3306
     db_name: str = "weblue"
-
+    
+    
     # =========================
     # JWT
     # =========================

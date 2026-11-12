@@ -3,31 +3,20 @@
 // WEBLUE - JAVASCRIPT DA HOME
 // ============================================================
 
-// ============================================================
 // CONFIGURAÇÕES
-// ============================================================
-
 const API_PRODUTOS = "/api/produtos/catalogo";
 const CHAVE_CARRINHO = "weblue-carrinho";
+const TEMPO_CARROSSEL = 6000;
 
-// ============================================================
 // ELEMENTOS HTML
-// ============================================================
-
 const listaProdutos = document.getElementById("listaProdutos");
 const mensagemProdutos = document.getElementById("mensagemProdutos");
-
 const formBusca = document.getElementById("formBusca");
 const campoBusca = document.getElementById("campoBusca");
-
 const botoesCategoria = document.querySelectorAll("[data-categoria]");
-
 const botaoCarrinho = document.getElementById("botaoCarrinho");
 
-// ============================================================
-// ELEMENTOS DO MODAL DA SACOLA
-// ============================================================
-
+// MODAL DA SACOLA
 const modalSacola = document.getElementById("modalSacola");
 const fecharModalSacola = document.getElementById("fecharModalSacola");
 const continuarComprando = document.getElementById("continuarComprando");
@@ -37,19 +26,13 @@ const imagemProdutoSacola = document.getElementById("imagemProdutoSacola");
 const nomeProdutoSacola = document.getElementById("nomeProdutoSacola");
 const precoProdutoSacola = document.getElementById("precoProdutoSacola");
 
-// ============================================================
-// CARROSSEL DO BANNER
-// ============================================================
-
+// CARROSSEL
 const imagemBanner = document.getElementById("imagemBanner");
 const botaoBannerAnterior = document.getElementById("bannerAnterior");
 const botaoBannerProximo = document.getElementById("bannerProximo");
 const indicadoresBanner = document.getElementById("indicadoresBanner");
 
-// ============================================================
-// ORDEM DAS IMAGENS DO BANNER
-// ============================================================
-
+// IMAGENS DOS BANNERS
 const imagensBanner = [
     {
         imagem: "/img/hero-weblue.png",
@@ -66,10 +49,20 @@ const imagensBanner = [
     {
         imagem: "/img/barbamasculinaweblue.jpeg",
         descricao: "Produtos para barba masculina Weblue"
-    }
+    },
+    {
+        imagem: "/img/produtos/bannermake.jpeg",
+        descricao: "Maquiagem e Glamour",
+        destaque: true
+    },
+    {
+    imagem: "/img/produtos/bannermontekit.jpeg",
+    descricao: "Monte seu kit de beleza Weblue"
+    } 
 ];
 
 let slideAtual = 0;
+let intervaloCarrossel = null;
 let produtos = [];
 
 // ============================================================
@@ -97,6 +90,20 @@ function obterTextoProduto(produto) {
         .toLowerCase();
 }
 
+function obterImagemProduto(produto) {
+    if (!produto) return "";
+
+    return (
+        produto.imagem_url ||
+        produto.imagem ||
+        produto.foto_url ||
+        produto.foto ||
+        produto.url_imagem ||
+        produto.caminho_imagem ||
+        ""
+    );
+}
+
 function produtoEstaEmPromocao(produto) {
     const preco = Number(produto.preco);
 
@@ -119,36 +126,151 @@ function produtoEstaEmPromocao(produto) {
 }
 
 // ============================================================
-// CARROSSEL MANUAL
+// PÁGINA DE DETALHES DO PRODUTO
 // ============================================================
 
-function mostrarBanner(indice) {
-    if (!imagemBanner || imagensBanner.length === 0) {
+function abrirDetalhesProduto(produto) {
+    if (!produto || produto.id === undefined || produto.id === null) {
+        console.error("Produto sem identificador:", produto);
         return;
     }
 
-    slideAtual =
-        (indice + imagensBanner.length) %
-        imagensBanner.length;
+    const id = encodeURIComponent(String(produto.id));
 
-    imagemBanner.src = imagensBanner[slideAtual].imagem;
-    imagemBanner.alt = imagensBanner[slideAtual].descricao;
+    window.location.href = `/produto.html?id=${id}`;
+}
+
+// ============================================================
+// DESTAQUE DE MAQUIAGEM NO BANNER
+// ============================================================
+
+function criarDestaqueBanner() {
+    const heroArte = document.querySelector(".hero-arte");
+
+    if (!heroArte || document.getElementById("destaqueMaquiagem")) {
+        return;
+    }
+
+    const destaque = document.createElement("div");
+
+    destaque.id = "destaqueMaquiagem";
+    destaque.className = "destaque-maquiagem";
+    destaque.setAttribute("aria-hidden", "true");
+
+    destaque.innerHTML = `
+        <span class="destaque-maquiagem__subtitulo">
+            WEBLUE BEAUTY
+        </span>
+
+        <h2>Maquiagem e Glamour</h2>
+
+        <p>
+            Realce sua beleza e descubra seus novos favoritos.
+        </p>
+
+        <a
+            href="/categoria.html?categoria=Maquiagem"
+            class="destaque-maquiagem__botao"
+        >
+            Explorar maquiagem
+            <span aria-hidden="true">→</span>
+        </a>
+    `;
+
+    heroArte.appendChild(destaque);
+}
+
+// ============================================================
+// INDICADORES DO CARROSSEL
+// ============================================================
+
+function criarIndicadoresBanner() {
+    if (!indicadoresBanner) return;
+
+    indicadoresBanner.replaceChildren();
+
+    imagensBanner.forEach((banner, indice) => {
+        const indicador = document.createElement("button");
+
+        indicador.type = "button";
+        indicador.className = "indicador-banner";
+        indicador.dataset.slide = String(indice);
+
+        indicador.setAttribute(
+            "aria-label",
+            `Mostrar banner ${indice + 1}: ${banner.descricao}`
+        );
+
+        indicador.addEventListener("click", () => {
+            mostrarBanner(indice);
+            reiniciarCarrossel();
+        });
+
+        indicadoresBanner.appendChild(indicador);
+    });
+}
+
+// ============================================================
+// MOSTRAR BANNER
+// ============================================================
+
+function mostrarBanner(indice) {
+    if (!imagemBanner || imagensBanner.length === 0) return;
+
+    slideAtual =
+        (indice + imagensBanner.length) % imagensBanner.length;
+
+    const banner = imagensBanner[slideAtual];
+
+    imagemBanner.src = banner.imagem;
+    imagemBanner.alt = banner.descricao;
+
+    const destaque = document.getElementById("destaqueMaquiagem");
+
+    if (destaque) {
+        const exibirDestaque = banner.destaque === true;
+
+        destaque.classList.toggle("visivel", exibirDestaque);
+
+        destaque.setAttribute(
+            "aria-hidden",
+            exibirDestaque ? "false" : "true"
+        );
+    }
 
     if (indicadoresBanner) {
-        const indicadores =
-            indicadoresBanner.querySelectorAll("[data-slide]");
+        indicadoresBanner
+            .querySelectorAll("[data-slide]")
+            .forEach((indicador, index) => {
+                const ativo = index === slideAtual;
 
-        indicadores.forEach((indicador, index) => {
-            const ativo = index === slideAtual;
+                indicador.classList.toggle("ativo", ativo);
 
-            indicador.classList.toggle("ativo", ativo);
-
-            indicador.setAttribute(
-                "aria-current",
-                ativo ? "true" : "false"
-            );
-        });
+                if (ativo) {
+                    indicador.setAttribute("aria-current", "true");
+                } else {
+                    indicador.removeAttribute("aria-current");
+                }
+            });
     }
+}
+
+// ============================================================
+// CARROSSEL AUTOMÁTICO
+// ============================================================
+
+function iniciarTemporizadorCarrossel() {
+    clearInterval(intervaloCarrossel);
+
+    if (document.hidden) return;
+
+    intervaloCarrossel = setInterval(() => {
+        mostrarBanner(slideAtual + 1);
+    }, TEMPO_CARROSSEL);
+}
+
+function reiniciarCarrossel() {
+    iniciarTemporizadorCarrossel();
 }
 
 function iniciarCarrossel() {
@@ -157,33 +279,32 @@ function iniciarCarrossel() {
         return;
     }
 
+    criarDestaqueBanner();
+    criarIndicadoresBanner();
     mostrarBanner(0);
+    iniciarTemporizadorCarrossel();
 
     if (botaoBannerAnterior) {
         botaoBannerAnterior.addEventListener("click", () => {
             mostrarBanner(slideAtual - 1);
+            reiniciarCarrossel();
         });
     }
 
     if (botaoBannerProximo) {
         botaoBannerProximo.addEventListener("click", () => {
             mostrarBanner(slideAtual + 1);
+            reiniciarCarrossel();
         });
     }
 
-    if (indicadoresBanner) {
-        indicadoresBanner
-            .querySelectorAll("[data-slide]")
-            .forEach((indicador) => {
-                indicador.addEventListener("click", () => {
-                    const indice = Number(indicador.dataset.slide);
-
-                    if (Number.isInteger(indice)) {
-                        mostrarBanner(indice);
-                    }
-                });
-            });
-    }
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            clearInterval(intervaloCarrossel);
+        } else {
+            iniciarTemporizadorCarrossel();
+        }
+    });
 }
 
 // ============================================================
@@ -192,8 +313,7 @@ function iniciarCarrossel() {
 
 function obterCarrinho() {
     try {
-        const carrinhoSalvo =
-            localStorage.getItem(CHAVE_CARRINHO);
+        const carrinhoSalvo = localStorage.getItem(CHAVE_CARRINHO);
 
         const carrinho = carrinhoSalvo
             ? JSON.parse(carrinhoSalvo)
@@ -202,11 +322,7 @@ function obterCarrinho() {
         return Array.isArray(carrinho) ? carrinho : [];
 
     } catch (erro) {
-        console.error(
-            "Não foi possível carregar o carrinho.",
-            erro
-        );
-
+        console.error("Não foi possível carregar o carrinho.", erro);
         return [];
     }
 }
@@ -221,13 +337,8 @@ function salvarCarrinho(carrinho) {
         return true;
 
     } catch (erro) {
-        console.error(
-            "Não foi possível salvar o carrinho.",
-            erro
-        );
-
+        console.error("Não foi possível salvar o carrinho.", erro);
         alert("Não foi possível salvar o produto na sacola.");
-
         return false;
     }
 }
@@ -235,20 +346,33 @@ function salvarCarrinho(carrinho) {
 function atualizarContadorCarrinho() {
     const contador = document.getElementById("contadorCarrinho");
 
-    if (!contador) {
-        return;
-    }
+    if (!contador) return;
 
     const carrinho = obterCarrinho();
 
     const totalItens = carrinho.reduce(
-        (soma, item) => {
-            return soma + Number(item.quantidade || 0);
-        },
+        (soma, item) => soma + Number(item.quantidade || 0),
         0
     );
 
     contador.textContent = String(totalItens);
+}
+
+// ============================================================
+// FORMATAR PREÇO
+// ============================================================
+
+function formatarPreco(preco) {
+    const valor = Number(preco);
+
+    if (!Number.isFinite(valor)) {
+        return "Preço indisponível";
+    }
+
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(valor);
 }
 
 // ============================================================
@@ -272,26 +396,33 @@ function abrirModalSacola(produto) {
     }
 
     if (imagemProdutoSacola) {
-        imagemProdutoSacola.style.display = "block";
+        const imagem = obterImagemProduto(produto);
 
-        if (produto.imagem_url) {
-            imagemProdutoSacola.src = produto.imagem_url;
+        imagemProdutoSacola.onerror = null;
+        imagemProdutoSacola.removeAttribute("src");
+
+        if (imagem) {
+            imagemProdutoSacola.style.display = "block";
             imagemProdutoSacola.alt =
                 produto.nome || "Produto adicionado à sacola";
 
             imagemProdutoSacola.onerror = () => {
+                console.error(
+                    "Não foi possível carregar a imagem do produto:",
+                    imagem
+                );
+
                 imagemProdutoSacola.style.display = "none";
             };
 
+            imagemProdutoSacola.src = imagem;
         } else {
-            imagemProdutoSacola.removeAttribute("src");
             imagemProdutoSacola.style.display = "none";
         }
     }
 
     modalSacola.classList.add("aberto");
     modalSacola.setAttribute("aria-hidden", "false");
-
     document.body.style.overflow = "hidden";
 
     if (fecharModalSacola) {
@@ -304,13 +435,10 @@ function abrirModalSacola(produto) {
 // ============================================================
 
 function fecharJanelaSacola() {
-    if (!modalSacola) {
-        return;
-    }
+    if (!modalSacola) return;
 
     modalSacola.classList.remove("aberto");
     modalSacola.setAttribute("aria-hidden", "true");
-
     document.body.style.overflow = "";
 
     if (botaoCarrinho) {
@@ -325,6 +453,8 @@ function fecharJanelaSacola() {
 function adicionarAoCarrinho(produto) {
     const carrinho = obterCarrinho();
 
+    const imagemProduto = obterImagemProduto(produto);
+
     const itemExistente = carrinho.find(
         (item) => String(item.id) === String(produto.id)
     );
@@ -333,21 +463,24 @@ function adicionarAoCarrinho(produto) {
         itemExistente.quantidade =
             Number(itemExistente.quantidade || 0) + 1;
 
+        itemExistente.nome = produto.nome;
+        itemExistente.preco = produto.preco;
+
+        if (imagemProduto) {
+            itemExistente.imagem_url = imagemProduto;
+        }
+
     } else {
         carrinho.push({
             id: produto.id,
             nome: produto.nome,
             preco: produto.preco,
-            imagem_url: produto.imagem_url || "",
+            imagem_url: imagemProduto,
             quantidade: 1
         });
     }
 
-    const salvou = salvarCarrinho(carrinho);
-
-    if (!salvou) {
-        return;
-    }
+    if (!salvarCarrinho(carrinho)) return;
 
     atualizarContadorCarrinho();
 
@@ -359,7 +492,10 @@ function adicionarAoCarrinho(produto) {
         }, 250);
     }
 
-    abrirModalSacola(produto);
+    abrirModalSacola({
+        ...produto,
+        imagem_url: imagemProduto
+    });
 }
 
 // ============================================================
@@ -405,23 +541,6 @@ document.addEventListener("keydown", (evento) => {
 });
 
 // ============================================================
-// FORMATAR PREÇO
-// ============================================================
-
-function formatarPreco(preco) {
-    const valor = Number(preco);
-
-    if (!Number.isFinite(valor)) {
-        return "Preço indisponível";
-    }
-
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    }).format(valor);
-}
-
-// ============================================================
 // CRIAR CARD DE PRODUTO
 // ============================================================
 
@@ -429,40 +548,42 @@ function criarCardProduto(produto) {
     const card = document.createElement("article");
     card.classList.add("product-card");
 
-    // IMAGEM
+    // ÁREA DA IMAGEM CLICÁVEL
+    const linkImagem = document.createElement("a");
+    linkImagem.classList.add("product-card__image-link");
+    linkImagem.href = `/produto.html?id=${encodeURIComponent(produto.id)}`;
+    linkImagem.setAttribute(
+        "aria-label",
+        `Ver detalhes de ${produto.nome || "produto"}`
+    );
 
     const areaImagem = document.createElement("div");
     areaImagem.classList.add("product-card__image");
 
-    if (produto.imagem_url) {
+    const imagemProduto = obterImagemProduto(produto);
+
+    if (imagemProduto) {
         const imagem = document.createElement("img");
 
-        imagem.src = produto.imagem_url;
+        imagem.src = imagemProduto;
         imagem.alt = produto.nome || "Produto Weblue";
         imagem.loading = "lazy";
 
         imagem.addEventListener("error", () => {
             imagem.remove();
-
-            areaImagem.classList.add(
-                "product-card__image--empty"
-            );
-
+            areaImagem.classList.add("product-card__image--empty");
             areaImagem.textContent = "Weblue";
         });
 
         areaImagem.appendChild(imagem);
-
     } else {
-        areaImagem.classList.add(
-            "product-card__image--empty"
-        );
-
+        areaImagem.classList.add("product-card__image--empty");
         areaImagem.textContent = "Weblue";
     }
 
-    // CONTEÚDO
+    linkImagem.appendChild(areaImagem);
 
+    // CONTEÚDO
     const conteudo = document.createElement("div");
     conteudo.classList.add("product-card__content");
 
@@ -470,9 +591,18 @@ function criarCardProduto(produto) {
     categoria.classList.add("product-card__category");
     categoria.textContent = produto.categoria || "Sem categoria";
 
+    // NOME CLICÁVEL
+    const linkNome = document.createElement("a");
+    linkNome.classList.add("product-card__name-link");
+    linkNome.href = `/produto.html?id=${encodeURIComponent(produto.id)}`;
+    linkNome.style.textDecoration = "none";
+    linkNome.style.color = "inherit";
+
     const nome = document.createElement("h3");
     nome.classList.add("product-card__name");
     nome.textContent = produto.nome || "Produto Weblue";
+
+    linkNome.appendChild(nome);
 
     const marca = document.createElement("p");
     marca.classList.add("product-card__brand");
@@ -480,13 +610,28 @@ function criarCardProduto(produto) {
 
     const descricao = document.createElement("p");
     descricao.classList.add("product-card__description");
-    descricao.textContent = produto.descricao || "Produto Weblue.";
+    descricao.textContent =
+        produto.descricao || "Produto Weblue.";
 
     const preco = document.createElement("strong");
     preco.classList.add("product-card__price");
-    preco.textContent = formatarPreco(produto.preco);
 
-    // ESTOQUE
+    if (produtoEstaEmPromocao(produto)) {
+        const precoAntigo = document.createElement("del");
+        precoAntigo.textContent = formatarPreco(produto.preco);
+
+        const precoAtual = Number(
+            produto.preco_promocional || produto.preco_promocao
+        );
+
+        const precoPromocional = document.createElement("strong");
+        precoPromocional.classList.add("product-card__price-promotion");
+        precoPromocional.textContent = formatarPreco(precoAtual);
+
+        preco.replaceChildren(precoAntigo, document.createTextNode(" "), precoPromocional);
+    } else {
+        preco.textContent = formatarPreco(produto.preco);
+    }
 
     const estoque = document.createElement("span");
     estoque.classList.add("product-card__stock");
@@ -500,13 +645,10 @@ function criarCardProduto(produto) {
         estoque.textContent =
             "Produto temporariamente indisponível";
 
-        estoque.classList.add(
-            "product-card__stock--empty"
-        );
+        estoque.classList.add("product-card__stock--empty");
     }
 
-    // BOTÃO DO CARRINHO
-
+    // BOTÃO DE ADICIONAR AO CARRINHO
     const botao = document.createElement("button");
 
     botao.type = "button";
@@ -518,7 +660,6 @@ function criarCardProduto(produto) {
         botao.addEventListener("click", () => {
             adicionarAoCarrinho(produto);
         });
-
     } else {
         botao.textContent = "Indisponível";
         botao.disabled = true;
@@ -526,7 +667,7 @@ function criarCardProduto(produto) {
 
     conteudo.append(
         categoria,
-        nome,
+        linkNome,
         marca,
         descricao,
         preco,
@@ -534,7 +675,7 @@ function criarCardProduto(produto) {
         botao
     );
 
-    card.append(areaImagem, conteudo);
+    card.append(linkImagem, conteudo);
 
     return card;
 }
@@ -545,10 +686,7 @@ function criarCardProduto(produto) {
 
 function exibirProdutos(lista) {
     if (!listaProdutos) {
-        console.error(
-            'Elemento "listaProdutos" não encontrado.'
-        );
-
+        console.error('Elemento "listaProdutos" não encontrado.');
         return;
     }
 
@@ -570,9 +708,7 @@ function exibirProdutos(lista) {
     }
 
     lista.forEach((produto) => {
-        listaProdutos.appendChild(
-            criarCardProduto(produto)
-        );
+        listaProdutos.appendChild(criarCardProduto(produto));
     });
 }
 
@@ -582,10 +718,7 @@ function exibirProdutos(lista) {
 
 async function carregarProdutos() {
     if (!listaProdutos) {
-        console.error(
-            'Elemento "listaProdutos" não encontrado.'
-        );
-
+        console.error('Elemento "listaProdutos" não encontrado.');
         return;
     }
 
@@ -657,9 +790,7 @@ function pesquisarProdutos(texto) {
 // ============================================================
 
 function abrirCategoria(categoria) {
-    if (!categoria) {
-        return;
-    }
+    if (!categoria) return;
 
     const categoriaCodificada =
         encodeURIComponent(categoria);
@@ -677,9 +808,7 @@ botoesCategoria.forEach((botao) => {
         const categoriaSelecionada =
             botao.dataset.categoria;
 
-        if (!categoriaSelecionada) {
-            return;
-        }
+        if (!categoriaSelecionada) return;
 
         abrirCategoria(categoriaSelecionada);
     });
@@ -723,9 +852,7 @@ if (botaoCarrinho) {
 
 function iniciarHome() {
     iniciarCarrossel();
-
     atualizarContadorCarrinho();
-
     carregarProdutos();
 }
 

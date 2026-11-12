@@ -22,6 +22,7 @@ from ..services.recuperacao_senha import (
     validar_configuracao_email,
 )
 from ..services.security import (
+    criar_hash_senha,
     is_rate_limited,
     register_failed_attempt,
 )

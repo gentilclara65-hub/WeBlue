@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confira os detalhes dos produtos da Weblue.">
+    <title>Detalhes do Produto | Weblue</title>
+
+    <link rel="stylesheet" href="/css/produto.css">
+</head>
+
+<body>
+
+    <header class="cabecalho">
+        <a href="/home" class="logo">WEBLUE</a>
+
+        <nav>
+            <a href="/home">Início</a>
+            <a href="/carrinho">Minha sacola</a>
+        </nav>
+    </header>
+
+    <main class="pagina-produto">
+
+        <div class="caminho">
+            <a href="/home">Início</a>
+            <span> / </span>
+            <span>Produto</span>
+        </div>
+
+        <div id="mensagemProduto" class="mensagem">
+            Carregando produto...
+        </div>
+
+        <section id="detalhesProduto" class="detalhes-produto" hidden>
+
+            <div class="produto-imagem">
+                <img id="imagemProduto" src="" alt="">
+            </div>
+
+            <div class="produto-informacoes">
+
+                <span id="categoriaProduto" class="categoria"></span>
+
+                <h1 id="nomeProduto"></h1>
+
+                <p id="marcaProduto" class="marca"></p>
+
+                <p id="descricaoProduto" class="descricao"></p>
+
+                <strong id="precoProduto" class="preco"></strong>
+
+                <p id="estoqueProduto" class="estoque"></p>
+
+                <div class="quantidade">
+                    <span>Quantidade:</span>
+
+                    <button type="button" id="diminuirQuantidade" aria-label="Diminuir quantidade">−</button>
+
+                    <span id="quantidadeProduto">1</span>
+
+                    <button type="button" id="aumentarQuantidade" aria-label="Aumentar quantidade">+</button>
+                </div>
+
+                <button type="button" id="adicionarCarrinho" class="botao-principal">
+                    Adicionar à sacola
+                </button>
+
+                <button type="button" id="comprarAgora" class="botao-secundario">
+                    Comprar agora
+                </button>
+
+            </div>
+
+        </section>
+
+        <section id="secaoRelacionados" class="relacionados" hidden>
+            <h2>Você também pode gostar</h2>
+            <div id="listaRelacionados" class="lista-relacionados"></div>
+        </section>
+
+    </main>
+
+    <footer class="rodape">
+        <p>© Weblue - Sua beleza, seu cuidado.</p>
+    </footer>
+
+    <script src="/js/produto.js"></script>
+
+</body>
+</html>

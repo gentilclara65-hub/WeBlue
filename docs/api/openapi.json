@@ -1,1 +1,1711 @@
-{"openapi":"3.1.0","info":{"title":"API Weblue","description":"API do e-commerce de cosméticos Weblue.","version":"1.0.0"},"paths":{"/clientes":{"post":{"tags":["Clientes"],"summary":"Cadastrar novo cliente","operationId":"cadastrar_cliente_clientes_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ClienteCriacao"}}},"required":true},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ClienteResposta"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api":{"get":{"tags":["Informações"],"summary":"Informacoes Api","operationId":"informacoes_api_api_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/health":{"get":{"tags":["Monitoramento"],"summary":"Verificar Saude","operationId":"verificar_saude_health_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/health/database":{"get":{"tags":["Monitoramento"],"summary":"Verificar Banco","operationId":"verificar_banco_health_database_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}}},"components":{"schemas":{"ClienteCriacao":{"properties":{"nome_completo":{"type":"string","maxLength":150,"minLength":3,"title":"Nome Completo"},"email":{"type":"string","format":"email","title":"Email"},"cpf":{"type":"string","title":"Cpf"},"telefone":{"type":"string","title":"Telefone"},"senha":{"type":"string","maxLength":128,"minLength":8,"title":"Senha"},"confirmar_senha":{"type":"string","maxLength":128,"minLength":8,"title":"Confirmar Senha"},"aceitou_termos":{"type":"boolean","title":"Aceitou Termos"}},"type":"object","required":["nome_completo","email","cpf","telefone","senha","confirmar_senha","aceitou_termos"],"title":"ClienteCriacao"},"ClienteResposta":{"properties":{"id":{"type":"integer","title":"Id"},"nome_completo":{"type":"string","title":"Nome Completo"},"email":{"type":"string","format":"email","title":"Email"},"telefone":{"type":"string","title":"Telefone"},"status":{"type":"string","title":"Status"},"criado_em":{"type":"string","format":"date-time","title":"Criado Em"}},"type":"object","required":["id","nome_completo","email","telefone","status","criado_em"],"title":"ClienteResposta"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"},"input":{"title":"Input"},"ctx":{"type":"object","title":"Context"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}}}}
+﻿{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "API Weblue",
+                 "description":  "API do e-commerce de cosmÃ©ticos Weblue.",
+                 "version":  "1.0.0"
+             },
+    "paths":  {
+                  "/api/clientes":  {
+                                        "post":  {
+                                                     "tags":  [
+                                                                  "Clientes"
+                                                              ],
+                                                     "summary":  "Cadastrar novo cliente",
+                                                     "operationId":  "cadastrar_cliente_api_clientes_post",
+                                                     "requestBody":  {
+                                                                         "content":  {
+                                                                                         "application/json":  {
+                                                                                                                  "schema":  {
+                                                                                                                                 "$ref":  "#/components/schemas/ClienteCriacao"
+                                                                                                                             }
+                                                                                                              }
+                                                                                     },
+                                                                         "required":  true
+                                                                     },
+                                                     "responses":  {
+                                                                       "201":  {
+                                                                                   "description":  "Successful Response",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/ClienteResposta"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               },
+                                                                       "422":  {
+                                                                                   "description":  "Validation Error",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               }
+                                                                   }
+                                                 }
+                                    },
+                  "/api/auth/login":  {
+                                          "post":  {
+                                                       "tags":  [
+                                                                    "AutenticaÃ§Ã£o"
+                                                                ],
+                                                       "summary":  "Realizar login do cliente",
+                                                       "operationId":  "realizar_login_api_auth_login_post",
+                                                       "requestBody":  {
+                                                                           "content":  {
+                                                                                           "application/json":  {
+                                                                                                                    "schema":  {
+                                                                                                                                   "$ref":  "#/components/schemas/LoginEntrada"
+                                                                                                                               }
+                                                                                                                }
+                                                                                       },
+                                                                           "required":  true
+                                                                       },
+                                                       "responses":  {
+                                                                         "200":  {
+                                                                                     "description":  "Successful Response",
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/LoginResposta"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 },
+                                                                         "422":  {
+                                                                                     "description":  "Validation Error",
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 }
+                                                                     }
+                                                   }
+                                      },
+                  "/api/auth/refresh":  {
+                                            "post":  {
+                                                         "tags":  [
+                                                                      "AutenticaÃ§Ã£o"
+                                                                  ],
+                                                         "summary":  "Refresh Cliente",
+                                                         "operationId":  "refresh_cliente_api_auth_refresh_post",
+                                                         "requestBody":  {
+                                                                             "content":  {
+                                                                                             "application/json":  {
+                                                                                                                      "schema":  {
+                                                                                                                                     "$ref":  "#/components/schemas/RefreshTokenRequest"
+                                                                                                                                 }
+                                                                                                                  }
+                                                                                         },
+                                                                             "required":  true
+                                                                         },
+                                                         "responses":  {
+                                                                           "200":  {
+                                                                                       "description":  "Successful Response",
+                                                                                       "content":  {
+                                                                                                       "application/json":  {
+                                                                                                                                "schema":  {
+
+                                                                                                                                           }
+                                                                                                                            }
+                                                                                                   }
+                                                                                   },
+                                                                           "422":  {
+                                                                                       "description":  "Validation Error",
+                                                                                       "content":  {
+                                                                                                       "application/json":  {
+                                                                                                                                "schema":  {
+                                                                                                                                               "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                           }
+                                                                                                                            }
+                                                                                                   }
+                                                                                   }
+                                                                       }
+                                                     }
+                                        },
+                  "/api/auth/logout":  {
+                                           "post":  {
+                                                        "tags":  [
+                                                                     "AutenticaÃ§Ã£o"
+                                                                 ],
+                                                        "summary":  "Logout Cliente",
+                                                        "operationId":  "logout_cliente_api_auth_logout_post",
+                                                        "requestBody":  {
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "$ref":  "#/components/schemas/LogoutRequest"
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        },
+                                                                            "required":  true
+                                                                        },
+                                                        "responses":  {
+                                                                          "200":  {
+                                                                                      "description":  "Successful Response",
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  }
+                                                                                  },
+                                                                          "422":  {
+                                                                                      "description":  "Validation Error",
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+                                                                                                                                              "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  }
+                                                                                  }
+                                                                      }
+                                                    }
+                                       },
+                  "/api/auth/solicitar-recuperacao":  {
+                                                          "post":  {
+                                                                       "tags":  [
+                                                                                    "AutenticaÃ§Ã£o"
+                                                                                ],
+                                                                       "summary":  "Solicitar recuperaÃ§Ã£o de senha",
+                                                                       "operationId":  "solicitar_recuperacao_api_auth_solicitar_recuperacao_post",
+                                                                       "requestBody":  {
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/SolicitarRecuperacaoRequest"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       },
+                                                                                           "required":  true
+                                                                                       },
+                                                                       "responses":  {
+                                                                                         "200":  {
+                                                                                                     "description":  "Successful Response",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+
+                                                                                                                                                         }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 },
+                                                                                         "422":  {
+                                                                                                     "description":  "Validation Error",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+                                                                                                                                                             "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                         }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 }
+                                                                                     }
+                                                                   }
+                                                      },
+                  "/api/auth/redefinir-senha":  {
+                                                    "post":  {
+                                                                 "tags":  [
+                                                                              "AutenticaÃ§Ã£o"
+                                                                          ],
+                                                                 "summary":  "Redefinir senha do cliente",
+                                                                 "operationId":  "redefinir_senha_api_auth_redefinir_senha_post",
+                                                                 "requestBody":  {
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/RedefinirSenhaRequest"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 },
+                                                                                     "required":  true
+                                                                                 },
+                                                                 "responses":  {
+                                                                                   "200":  {
+                                                                                               "description":  "Successful Response",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           },
+                                                                                   "422":  {
+                                                                                               "description":  "Validation Error",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+                                                                                                                                                       "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           }
+                                                                               }
+                                                             }
+                                                },
+                  "/api/perfil":  {
+                                      "get":  {
+                                                  "tags":  [
+                                                               "Perfil"
+                                                           ],
+                                                  "summary":  "Consultar perfil do cliente",
+                                                  "operationId":  "consultar_perfil_api_perfil_get",
+                                                  "responses":  {
+                                                                    "200":  {
+                                                                                "description":  "Successful Response",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            }
+                                                                },
+                                                  "security":  [
+                                                                   {
+                                                                       "HTTPBearer":  [
+
+                                                                                      ]
+                                                                   }
+                                                               ]
+                                              },
+                                      "put":  {
+                                                  "tags":  [
+                                                               "Perfil"
+                                                           ],
+                                                  "summary":  "Atualizar perfil do cliente",
+                                                  "operationId":  "atualizar_perfil_api_perfil_put",
+                                                  "requestBody":  {
+                                                                      "content":  {
+                                                                                      "application/json":  {
+                                                                                                               "schema":  {
+                                                                                                                              "$ref":  "#/components/schemas/AtualizarPerfilRequest"
+                                                                                                                          }
+                                                                                                           }
+                                                                                  },
+                                                                      "required":  true
+                                                                  },
+                                                  "responses":  {
+                                                                    "200":  {
+                                                                                "description":  "Successful Response",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                                    "422":  {
+                                                                                "description":  "Validation Error",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            }
+                                                                },
+                                                  "security":  [
+                                                                   {
+                                                                       "HTTPBearer":  [
+
+                                                                                      ]
+                                                                   }
+                                                               ]
+                                              }
+                                  },
+                  "/api/produtos":  {
+                                        "get":  {
+                                                    "tags":  [
+                                                                 "Produtos"
+                                                             ],
+                                                    "summary":  "Listar produtos",
+                                                    "description":  "Retorna todos os produtos cadastrados.\n\nNesta primeira versÃ£o tambÃ©m retornaremos produtos\ninativos.\n\nDepois podemos adicionar filtros como:\n\n/produtos?categoria=Skincare\n/produtos?marca=Weblue\n/produtos?status=ATIVO",
+                                                    "operationId":  "listar_produtos_api_produtos_get",
+                                                    "responses":  {
+                                                                      "200":  {
+                                                                                  "description":  "Successful Response",
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              }
+                                                                              }
+                                                                  },
+                                                    "security":  [
+                                                                     {
+                                                                         "HTTPBearer":  [
+
+                                                                                        ]
+                                                                     }
+                                                                 ]
+                                                },
+                                        "post":  {
+                                                     "tags":  [
+                                                                  "Produtos"
+                                                              ],
+                                                     "summary":  "Cadastrar novo produto",
+                                                     "description":  "Cadastra um novo produto no banco de dados.\n\nFluxo:\n\n1. Recebe os dados.\n2. Valida os dados com Pydantic.\n3. Cria um objeto Produto.\n4. Salva no MySQL.\n5. Retorna o produto cadastrado.",
+                                                     "operationId":  "cadastrar_produto_api_produtos_post",
+                                                     "requestBody":  {
+                                                                         "content":  {
+                                                                                         "application/json":  {
+                                                                                                                  "schema":  {
+                                                                                                                                 "$ref":  "#/components/schemas/CriarProdutoRequest"
+                                                                                                                             }
+                                                                                                              }
+                                                                                     },
+                                                                         "required":  true
+                                                                     },
+                                                     "responses":  {
+                                                                       "201":  {
+                                                                                   "description":  "Successful Response",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               },
+                                                                       "422":  {
+                                                                                   "description":  "Validation Error",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               }
+                                                                   },
+                                                     "security":  [
+                                                                      {
+                                                                          "HTTPBearer":  [
+
+                                                                                         ]
+                                                                      }
+                                                                  ]
+                                                 }
+                                    },
+                  "/api/produtos/catalogo":  {
+                                                 "get":  {
+                                                             "tags":  [
+                                                                          "Produtos"
+                                                                      ],
+                                                             "summary":  "Listar catÃ¡logo pÃºblico de produtos",
+                                                             "description":  "Retorna somente os produtos ativos para a vitrine da loja.",
+                                                             "operationId":  "listar_catalogo_publico_api_produtos_catalogo_get",
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           }
+                                                         }
+                                             },
+                  "/api/produtos/{produto_id}":  {
+                                                     "get":  {
+                                                                 "tags":  [
+                                                                              "Produtos"
+                                                                          ],
+                                                                 "summary":  "Buscar produto por ID",
+                                                                 "description":  "Busca um produto especÃ­fico utilizando o seu ID.\n\nExemplo:\n\nGET /produtos/1\n\nFluxo:\n\n1. Recebe o ID pela URL.\n2. Procura o produto no banco de dados.\n3. Se o produto nÃ£o existir, retorna erro 404.\n4. Se existir, retorna os dados do produto.",
+                                                                 "operationId":  "buscar_produto_por_id_api_produtos__produto_id__get",
+                                                                 "security":  [
+                                                                                  {
+                                                                                      "HTTPBearer":  [
+
+                                                                                                     ]
+                                                                                  }
+                                                                              ],
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "name":  "produto_id",
+                                                                                        "in":  "path",
+                                                                                        "required":  true,
+                                                                                        "schema":  {
+                                                                                                       "type":  "integer",
+                                                                                                       "title":  "Produto Id"
+                                                                                                   }
+                                                                                    }
+                                                                                ],
+                                                                 "responses":  {
+                                                                                   "200":  {
+                                                                                               "description":  "Successful Response",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           },
+                                                                                   "422":  {
+                                                                                               "description":  "Validation Error",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+                                                                                                                                                       "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           }
+                                                                               }
+                                                             },
+                                                     "put":  {
+                                                                 "tags":  [
+                                                                              "Produtos"
+                                                                          ],
+                                                                 "summary":  "Atualizar produto",
+                                                                 "description":  "Atualiza os dados de um produto existente.\n\nExemplo:\n\nPUT /produtos/1\n\nÃ possÃ­vel atualizar apenas os campos desejados.\n\nExemplo:\n\n{\n    \"preco\": 64.90,\n    \"estoque\": 30\n}",
+                                                                 "operationId":  "atualizar_produto_api_produtos__produto_id__put",
+                                                                 "security":  [
+                                                                                  {
+                                                                                      "HTTPBearer":  [
+
+                                                                                                     ]
+                                                                                  }
+                                                                              ],
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "name":  "produto_id",
+                                                                                        "in":  "path",
+                                                                                        "required":  true,
+                                                                                        "schema":  {
+                                                                                                       "type":  "integer",
+                                                                                                       "title":  "Produto Id"
+                                                                                                   }
+                                                                                    }
+                                                                                ],
+                                                                 "requestBody":  {
+                                                                                     "required":  true,
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/AtualizarProdutoRequest"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 },
+                                                                 "responses":  {
+                                                                                   "200":  {
+                                                                                               "description":  "Successful Response",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           },
+                                                                                   "422":  {
+                                                                                               "description":  "Validation Error",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+                                                                                                                                                       "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           }
+                                                                               }
+                                                             },
+                                                     "delete":  {
+                                                                    "tags":  [
+                                                                                 "Produtos"
+                                                                             ],
+                                                                    "summary":  "Desativar produto",
+                                                                    "description":  "Desativa um produto existente.\n\nExemplo:\n\nDELETE /produtos/1\n\nIMPORTANTE:\n\nO produto NÃO serÃ¡ apagado fisicamente do banco.\n\nEm vez disso, seu status serÃ¡ alterado:\n\nATIVO -\u003e INATIVO\n\nEssa estratÃ©gia Ã© chamada de exclusÃ£o lÃ³gica.\n\nEla permite preservar o histÃ³rico do produto e\npossibilita sua reativaÃ§Ã£o posteriormente.\n\nFluxo:\n\n1. Recebe o ID do produto pela URL.\n2. Procura o produto no banco.\n3. Se nÃ£o existir, retorna erro 404.\n4. Verifica se ele jÃ¡ estÃ¡ inativo.\n5. Altera o status para INATIVO.\n6. Salva a alteraÃ§Ã£o no MySQL.\n7. Retorna uma confirmaÃ§Ã£o.",
+                                                                    "operationId":  "desativar_produto_api_produtos__produto_id__delete",
+                                                                    "security":  [
+                                                                                     {
+                                                                                         "HTTPBearer":  [
+
+                                                                                                        ]
+                                                                                     }
+                                                                                 ],
+                                                                    "parameters":  [
+                                                                                       {
+                                                                                           "name":  "produto_id",
+                                                                                           "in":  "path",
+                                                                                           "required":  true,
+                                                                                           "schema":  {
+                                                                                                          "type":  "integer",
+                                                                                                          "title":  "Produto Id"
+                                                                                                      }
+                                                                                       }
+                                                                                   ],
+                                                                    "responses":  {
+                                                                                      "200":  {
+                                                                                                  "description":  "Successful Response",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              },
+                                                                                      "422":  {
+                                                                                                  "description":  "Validation Error",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+                                                                                                                                                          "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              }
+                                                                                  }
+                                                                }
+                                                 },
+                  "/api/produtos/{produto_id}/imagem":  {
+                                                            "post":  {
+                                                                         "tags":  [
+                                                                                      "Produtos"
+                                                                                  ],
+                                                                         "summary":  "Enviar imagem do produto",
+                                                                         "description":  "Envia uma imagem para um produto jÃ¡ cadastrado.\n\nFluxo:\n\n1. Recebe o ID do produto.\n2. Procura o produto no MySQL.\n3. Recebe a imagem enviada pelo navegador.\n4. Valida formato.\n5. Valida tamanho.\n6. Gera um nome Ãºnico.\n7. Salva em frontend/img/produtos.\n8. Atualiza imagem_url no banco.\n9. Retorna a nova URL.",
+                                                                         "operationId":  "enviar_imagem_produto_api_produtos__produto_id__imagem_post",
+                                                                         "security":  [
+                                                                                          {
+                                                                                              "HTTPBearer":  [
+
+                                                                                                             ]
+                                                                                          }
+                                                                                      ],
+                                                                         "parameters":  [
+                                                                                            {
+                                                                                                "name":  "produto_id",
+                                                                                                "in":  "path",
+                                                                                                "required":  true,
+                                                                                                "schema":  {
+                                                                                                               "type":  "integer",
+                                                                                                               "title":  "Produto Id"
+                                                                                                           }
+                                                                                            }
+                                                                                        ],
+                                                                         "requestBody":  {
+                                                                                             "required":  true,
+                                                                                             "content":  {
+                                                                                                             "multipart/form-data":  {
+                                                                                                                                         "schema":  {
+                                                                                                                                                        "$ref":  "#/components/schemas/Body_enviar_imagem_produto_api_produtos__produto_id__imagem_post"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                         }
+                                                                                         },
+                                                                         "responses":  {
+                                                                                           "200":  {
+                                                                                                       "description":  "Successful Response",
+                                                                                                       "content":  {
+                                                                                                                       "application/json":  {
+                                                                                                                                                "schema":  {
+
+                                                                                                                                                           }
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                                   },
+                                                                                           "422":  {
+                                                                                                       "description":  "Validation Error",
+                                                                                                       "content":  {
+                                                                                                                       "application/json":  {
+                                                                                                                                                "schema":  {
+                                                                                                                                                               "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                           }
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                                   }
+                                                                                       }
+                                                                     }
+                                                        },
+                  "/api/pedidos/checkout":  {
+                                                "post":  {
+                                                             "tags":  [
+                                                                          "Pedidos e Vendas"
+                                                                      ],
+                                                             "summary":  "Finalizar compra e registrar pedido",
+                                                             "description":  "Valida o carrinho, confirma a venda e atualiza o estoque.",
+                                                             "operationId":  "finalizar_compra_api_pedidos_checkout_post",
+                                                             "requestBody":  {
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "$ref":  "#/components/schemas/CheckoutRequest"
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             },
+                                                                                 "required":  true
+                                                                             },
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "422":  {
+                                                                                           "description":  "Validation Error",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           },
+                                                             "security":  [
+                                                                              {
+                                                                                  "HTTPBearer":  [
+
+                                                                                                 ]
+                                                                              }
+                                                                          ]
+                                                         }
+                                            },
+                  "/api/pedidos/me":  {
+                                          "get":  {
+                                                      "tags":  [
+                                                                   "Pedidos e Vendas"
+                                                               ],
+                                                      "summary":  "Listar pedidos do cliente",
+                                                      "description":  "Retorna o histÃ³rico do cliente autenticado.",
+                                                      "operationId":  "listar_pedidos_cliente_api_pedidos_me_get",
+                                                      "responses":  {
+                                                                        "200":  {
+                                                                                    "description":  "Successful Response",
+                                                                                    "content":  {
+                                                                                                    "application/json":  {
+                                                                                                                             "schema":  {
+
+                                                                                                                                        }
+                                                                                                                         }
+                                                                                                }
+                                                                                }
+                                                                    },
+                                                      "security":  [
+                                                                       {
+                                                                           "HTTPBearer":  [
+
+                                                                                          ]
+                                                                       }
+                                                                   ]
+                                                  }
+                                      },
+                  "/api/pedidos":  {
+                                       "get":  {
+                                                   "tags":  [
+                                                                "Pedidos e Vendas"
+                                                            ],
+                                                   "summary":  "Listar todos os pedidos",
+                                                   "description":  "Lista pedidos do sistema para uso administrativo ou consulta simples.",
+                                                   "operationId":  "listar_pedidos_api_pedidos_get",
+                                                   "responses":  {
+                                                                     "200":  {
+                                                                                 "description":  "Successful Response",
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             }
+                                                                             }
+                                                                 },
+                                                   "security":  [
+                                                                    {
+                                                                        "HTTPBearer":  [
+
+                                                                                       ]
+                                                                    }
+                                                                ]
+                                               }
+                                   },
+                  "/api/pedidos/estoque":  {
+                                               "get":  {
+                                                           "tags":  [
+                                                                        "Pedidos e Vendas"
+                                                                    ],
+                                                           "summary":  "Consultar disponibilidade de estoque",
+                                                           "description":  "Retorna os produtos com quantidade disponÃ­vel em estoque.",
+                                                           "operationId":  "consultar_estoque_api_pedidos_estoque_get",
+                                                           "responses":  {
+                                                                             "200":  {
+                                                                                         "description":  "Successful Response",
+                                                                                         "content":  {
+                                                                                                         "application/json":  {
+                                                                                                                                  "schema":  {
+
+                                                                                                                                             }
+                                                                                                                              }
+                                                                                                     }
+                                                                                     }
+                                                                         },
+                                                           "security":  [
+                                                                            {
+                                                                                "HTTPBearer":  [
+
+                                                                                               ]
+                                                                            }
+                                                                        ]
+                                                       }
+                                           },
+                  "/api/pedidos/relatorios/vendas":  {
+                                                         "get":  {
+                                                                     "tags":  [
+                                                                                  "Pedidos e Vendas"
+                                                                              ],
+                                                                     "summary":  "Resumo geral de vendas",
+                                                                     "operationId":  "relatorio_vendas_api_pedidos_relatorios_vendas_get",
+                                                                     "responses":  {
+                                                                                       "200":  {
+                                                                                                   "description":  "Successful Response",
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               }
+                                                                                   },
+                                                                     "security":  [
+                                                                                      {
+                                                                                          "HTTPBearer":  [
+
+                                                                                                         ]
+                                                                                      }
+                                                                                  ]
+                                                                 }
+                                                     },
+                  "/api/pedidos/relatorios/produtos":  {
+                                                           "get":  {
+                                                                       "tags":  [
+                                                                                    "Pedidos e Vendas"
+                                                                                ],
+                                                                       "summary":  "Produtos mais vendidos",
+                                                                       "operationId":  "relatorio_produtos_api_pedidos_relatorios_produtos_get",
+                                                                       "responses":  {
+                                                                                         "200":  {
+                                                                                                     "description":  "Successful Response",
+                                                                                                     "content":  {
+                                                                                                                     "application/json":  {
+                                                                                                                                              "schema":  {
+
+                                                                                                                                                         }
+                                                                                                                                          }
+                                                                                                                 }
+                                                                                                 }
+                                                                                     },
+                                                                       "security":  [
+                                                                                        {
+                                                                                            "HTTPBearer":  [
+
+                                                                                                           ]
+                                                                                        }
+                                                                                    ]
+                                                                   }
+                                                       },
+                  "/api/admin/auth/login":  {
+                                                "post":  {
+                                                             "tags":  [
+                                                                          "Admin - AutenticaÃ§Ã£o"
+                                                                      ],
+                                                             "summary":  "Realizar login do administrador",
+                                                             "operationId":  "login_administrador_api_admin_auth_login_post",
+                                                             "requestBody":  {
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "$ref":  "#/components/schemas/AdministradorLogin"
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             },
+                                                                                 "required":  true
+                                                                             },
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/AdministradorLoginResposta"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "422":  {
+                                                                                           "description":  "Validation Error",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           }
+                                                         }
+                                            },
+                  "/api/admin/auth/refresh":  {
+                                                  "post":  {
+                                                               "tags":  [
+                                                                            "Admin - AutenticaÃ§Ã£o"
+                                                                        ],
+                                                               "summary":  "Refresh Administrador",
+                                                               "operationId":  "refresh_administrador_api_admin_auth_refresh_post",
+                                                               "requestBody":  {
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/RefreshTokenRequest"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               },
+                                                                                   "required":  true
+                                                                               },
+                                                               "responses":  {
+                                                                                 "200":  {
+                                                                                             "description":  "Successful Response",
+                                                                                             "content":  {
+                                                                                                             "application/json":  {
+                                                                                                                                      "schema":  {
+
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                         }
+                                                                                         },
+                                                                                 "422":  {
+                                                                                             "description":  "Validation Error",
+                                                                                             "content":  {
+                                                                                                             "application/json":  {
+                                                                                                                                      "schema":  {
+                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                         }
+                                                                                         }
+                                                                             }
+                                                           }
+                                              },
+                  "/api/admin/auth/logout":  {
+                                                 "post":  {
+                                                              "tags":  [
+                                                                           "Admin - AutenticaÃ§Ã£o"
+                                                                       ],
+                                                              "summary":  "Logout Administrador",
+                                                              "operationId":  "logout_administrador_api_admin_auth_logout_post",
+                                                              "requestBody":  {
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+                                                                                                                                          "$ref":  "#/components/schemas/LogoutRequest"
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              },
+                                                                                  "required":  true
+                                                                              },
+                                                              "responses":  {
+                                                                                "200":  {
+                                                                                            "description":  "Successful Response",
+                                                                                            "content":  {
+                                                                                                            "application/json":  {
+                                                                                                                                     "schema":  {
+
+                                                                                                                                                }
+                                                                                                                                 }
+                                                                                                        }
+                                                                                        },
+                                                                                "422":  {
+                                                                                            "description":  "Validation Error",
+                                                                                            "content":  {
+                                                                                                            "application/json":  {
+                                                                                                                                     "schema":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                }
+                                                                                                                                 }
+                                                                                                        }
+                                                                                        }
+                                                                            }
+                                                          }
+                                             },
+                  "/api":  {
+                               "get":  {
+                                           "tags":  [
+                                                        "InformaÃ§Ãµes"
+                                                    ],
+                                           "summary":  "Informacoes Api",
+                                           "operationId":  "informacoes_api_api_get",
+                                           "responses":  {
+                                                             "200":  {
+                                                                         "description":  "Successful Response",
+                                                                         "content":  {
+                                                                                         "application/json":  {
+                                                                                                                  "schema":  {
+
+                                                                                                                             }
+                                                                                                              }
+                                                                                     }
+                                                                     }
+                                                         }
+                                       }
+                           },
+                  "/health":  {
+                                  "get":  {
+                                              "tags":  [
+                                                           "Monitoramento"
+                                                       ],
+                                              "summary":  "Verificar Saude",
+                                              "operationId":  "verificar_saude_health_get",
+                                              "responses":  {
+                                                                "200":  {
+                                                                            "description":  "Successful Response",
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        }
+                                                                        }
+                                                            }
+                                          }
+                              },
+                  "/health/database":  {
+                                           "get":  {
+                                                       "tags":  [
+                                                                    "Monitoramento"
+                                                                ],
+                                                       "summary":  "Verificar Banco",
+                                                       "operationId":  "verificar_banco_health_database_get",
+                                                       "responses":  {
+                                                                         "200":  {
+                                                                                     "description":  "Successful Response",
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 }
+                                                                     }
+                                                   }
+                                       }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "AdministradorLogin":  {
+                                                                  "properties":  {
+                                                                                     "email":  {
+                                                                                                   "type":  "string",
+                                                                                                   "format":  "email",
+                                                                                                   "title":  "Email"
+                                                                                               },
+                                                                                     "senha":  {
+                                                                                                   "type":  "string",
+                                                                                                   "maxLength":  128,
+                                                                                                   "minLength":  8,
+                                                                                                   "title":  "Senha"
+                                                                                               }
+                                                                                 },
+                                                                  "type":  "object",
+                                                                  "required":  [
+                                                                                   "email",
+                                                                                   "senha"
+                                                                               ],
+                                                                  "title":  "AdministradorLogin"
+                                                              },
+                                       "AdministradorLoginResposta":  {
+                                                                          "properties":  {
+                                                                                             "mensagem":  {
+                                                                                                              "type":  "string",
+                                                                                                              "title":  "Mensagem"
+                                                                                                          },
+                                                                                             "access_token":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "title":  "Access Token"
+                                                                                                              },
+                                                                                             "refresh_token":  {
+                                                                                                                   "type":  "string",
+                                                                                                                   "title":  "Refresh Token"
+                                                                                                               },
+                                                                                             "token_type":  {
+                                                                                                                "type":  "string",
+                                                                                                                "title":  "Token Type",
+                                                                                                                "default":  "bearer"
+                                                                                                            },
+                                                                                             "administrador":  {
+                                                                                                                   "$ref":  "#/components/schemas/AdministradorResposta"
+                                                                                                               }
+                                                                                         },
+                                                                          "type":  "object",
+                                                                          "required":  [
+                                                                                           "mensagem",
+                                                                                           "access_token",
+                                                                                           "refresh_token",
+                                                                                           "administrador"
+                                                                                       ],
+                                                                          "title":  "AdministradorLoginResposta"
+                                                                      },
+                                       "AdministradorResposta":  {
+                                                                     "properties":  {
+                                                                                        "id":  {
+                                                                                                   "type":  "integer",
+                                                                                                   "title":  "Id"
+                                                                                               },
+                                                                                        "nome":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Nome"
+                                                                                                 },
+                                                                                        "email":  {
+                                                                                                      "type":  "string",
+                                                                                                      "format":  "email",
+                                                                                                      "title":  "Email"
+                                                                                                  },
+                                                                                        "ativo":  {
+                                                                                                      "type":  "boolean",
+                                                                                                      "title":  "Ativo"
+                                                                                                  }
+                                                                                    },
+                                                                     "type":  "object",
+                                                                     "required":  [
+                                                                                      "id",
+                                                                                      "nome",
+                                                                                      "email",
+                                                                                      "ativo"
+                                                                                  ],
+                                                                     "title":  "AdministradorResposta"
+                                                                 },
+                                       "AtualizarPerfilRequest":  {
+                                                                      "properties":  {
+                                                                                         "nome_completo":  {
+                                                                                                               "type":  "string",
+                                                                                                               "maxLength":  150,
+                                                                                                               "minLength":  3,
+                                                                                                               "title":  "Nome Completo"
+                                                                                                           },
+                                                                                         "email":  {
+                                                                                                       "type":  "string",
+                                                                                                       "format":  "email",
+                                                                                                       "title":  "Email"
+                                                                                                   },
+                                                                                         "telefone":  {
+                                                                                                          "type":  "string",
+                                                                                                          "maxLength":  20,
+                                                                                                          "minLength":  10,
+                                                                                                          "title":  "Telefone"
+                                                                                                      }
+                                                                                     },
+                                                                      "type":  "object",
+                                                                      "required":  [
+                                                                                       "nome_completo",
+                                                                                       "email",
+                                                                                       "telefone"
+                                                                                   ],
+                                                                      "title":  "AtualizarPerfilRequest"
+                                                                  },
+                                       "AtualizarProdutoRequest":  {
+                                                                       "properties":  {
+                                                                                          "nome":  {
+                                                                                                       "anyOf":  [
+                                                                                                                     {
+                                                                                                                         "type":  "string",
+                                                                                                                         "maxLength":  150,
+                                                                                                                         "minLength":  2
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "type":  "null"
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                       "title":  "Nome"
+                                                                                                   },
+                                                                                          "descricao":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string",
+                                                                                                                              "minLength":  5
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "null"
+                                                                                                                          }
+                                                                                                                      ],
+                                                                                                            "title":  "Descricao"
+                                                                                                        },
+                                                                                          "preco":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "number",
+                                                                                                                          "exclusiveMinimum":  0.0
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "string",
+                                                                                                                          "pattern":  "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,8}|(?=[\\d.]{1,11}0*$)\\d{0,8}\\.\\d{0,2}0*$)"
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Preco"
+                                                                                                    },
+                                                                                          "estoque":  {
+                                                                                                          "anyOf":  [
+                                                                                                                        {
+                                                                                                                            "type":  "integer",
+                                                                                                                            "minimum":  0.0
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            "type":  "null"
+                                                                                                                        }
+                                                                                                                    ],
+                                                                                                          "title":  "Estoque"
+                                                                                                      },
+                                                                                          "categoria":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string",
+                                                                                                                              "maxLength":  100,
+                                                                                                                              "minLength":  2
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "null"
+                                                                                                                          }
+                                                                                                                      ],
+                                                                                                            "title":  "Categoria"
+                                                                                                        },
+                                                                                          "marca":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "string",
+                                                                                                                          "maxLength":  100,
+                                                                                                                          "minLength":  2
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Marca"
+                                                                                                    },
+                                                                                          "imagem_url":  {
+                                                                                                             "anyOf":  [
+                                                                                                                           {
+                                                                                                                               "type":  "string",
+                                                                                                                               "maxLength":  500
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "type":  "null"
+                                                                                                                           }
+                                                                                                                       ],
+                                                                                                             "title":  "Imagem Url"
+                                                                                                         },
+                                                                                          "status":  {
+                                                                                                         "anyOf":  [
+                                                                                                                       {
+                                                                                                                           "type":  "string",
+                                                                                                                           "maxLength":  20
+                                                                                                                       },
+                                                                                                                       {
+                                                                                                                           "type":  "null"
+                                                                                                                       }
+                                                                                                                   ],
+                                                                                                         "title":  "Status"
+                                                                                                     }
+                                                                                      },
+                                                                       "type":  "object",
+                                                                       "title":  "AtualizarProdutoRequest",
+                                                                       "description":  "Representa os dados permitidos durante\na atualizaÃ§Ã£o de um produto.\n\nEste schema Ã© utilizado em:\n\nPUT /produtos/{produto_id}\n\nTodos os campos sÃ£o opcionais porque podemos\natualizar somente uma parte do produto.\n\nExemplo:\n\n{\n    \"preco\": 64.90,\n    \"estoque\": 30\n}\n\nNesse caso somente preÃ§o e estoque serÃ£o alterados."
+                                                                   },
+                                       "Body_enviar_imagem_produto_api_produtos__produto_id__imagem_post":  {
+                                                                                                                "properties":  {
+                                                                                                                                   "imagem":  {
+                                                                                                                                                  "type":  "string",
+                                                                                                                                                  "contentMediaType":  "application/octet-stream",
+                                                                                                                                                  "title":  "Imagem"
+                                                                                                                                              }
+                                                                                                                               },
+                                                                                                                "type":  "object",
+                                                                                                                "required":  [
+                                                                                                                                 "imagem"
+                                                                                                                             ],
+                                                                                                                "title":  "Body_enviar_imagem_produto_api_produtos__produto_id__imagem_post"
+                                                                                                            },
+                                       "CheckoutRequest":  {
+                                                               "properties":  {
+                                                                                  "endereco":  {
+                                                                                                   "type":  "string",
+                                                                                                   "maxLength":  250,
+                                                                                                   "minLength":  5,
+                                                                                                   "title":  "Endereco"
+                                                                                               },
+                                                                                  "metodo_pagamento":  {
+                                                                                                           "type":  "string",
+                                                                                                           "title":  "Metodo Pagamento",
+                                                                                                           "default":  "PIX"
+                                                                                                       },
+                                                                                  "numero_cartao":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "string",
+                                                                                                                          "maxLength":  40
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Numero Cartao"
+                                                                                                    },
+                                                                                  "itens":  {
+                                                                                                "items":  {
+                                                                                                              "$ref":  "#/components/schemas/ItemCarrinhoRequest"
+                                                                                                          },
+                                                                                                "type":  "array",
+                                                                                                "minItems":  1,
+                                                                                                "title":  "Itens"
+                                                                                            }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "endereco",
+                                                                                "itens"
+                                                                            ],
+                                                               "title":  "CheckoutRequest",
+                                                               "description":  "Dados enviados ao finalizar a compra."
+                                                           },
+                                       "ClienteAutenticado":  {
+                                                                  "properties":  {
+                                                                                     "id":  {
+                                                                                                "type":  "integer",
+                                                                                                "title":  "Id"
+                                                                                            },
+                                                                                     "nome_completo":  {
+                                                                                                           "type":  "string",
+                                                                                                           "title":  "Nome Completo"
+                                                                                                       },
+                                                                                     "email":  {
+                                                                                                   "type":  "string",
+                                                                                                   "format":  "email",
+                                                                                                   "title":  "Email"
+                                                                                               },
+                                                                                     "status":  {
+                                                                                                    "type":  "string",
+                                                                                                    "title":  "Status"
+                                                                                                }
+                                                                                 },
+                                                                  "type":  "object",
+                                                                  "required":  [
+                                                                                   "id",
+                                                                                   "nome_completo",
+                                                                                   "email",
+                                                                                   "status"
+                                                                               ],
+                                                                  "title":  "ClienteAutenticado"
+                                                              },
+                                       "ClienteCriacao":  {
+                                                              "properties":  {
+                                                                                 "nome_completo":  {
+                                                                                                       "type":  "string",
+                                                                                                       "maxLength":  150,
+                                                                                                       "minLength":  3,
+                                                                                                       "title":  "Nome Completo"
+                                                                                                   },
+                                                                                 "email":  {
+                                                                                               "type":  "string",
+                                                                                               "format":  "email",
+                                                                                               "title":  "Email"
+                                                                                           },
+                                                                                 "cpf":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Cpf"
+                                                                                         },
+                                                                                 "telefone":  {
+                                                                                                  "type":  "string",
+                                                                                                  "title":  "Telefone"
+                                                                                              },
+                                                                                 "senha":  {
+                                                                                               "type":  "string",
+                                                                                               "maxLength":  128,
+                                                                                               "minLength":  8,
+                                                                                               "title":  "Senha"
+                                                                                           },
+                                                                                 "confirmar_senha":  {
+                                                                                                         "type":  "string",
+                                                                                                         "maxLength":  128,
+                                                                                                         "minLength":  8,
+                                                                                                         "title":  "Confirmar Senha"
+                                                                                                     },
+                                                                                 "aceitou_termos":  {
+                                                                                                        "type":  "boolean",
+                                                                                                        "title":  "Aceitou Termos"
+                                                                                                    }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "nome_completo",
+                                                                               "email",
+                                                                               "cpf",
+                                                                               "telefone",
+                                                                               "senha",
+                                                                               "confirmar_senha",
+                                                                               "aceitou_termos"
+                                                                           ],
+                                                              "title":  "ClienteCriacao"
+                                                          },
+                                       "ClienteResposta":  {
+                                                               "properties":  {
+                                                                                  "id":  {
+                                                                                             "type":  "integer",
+                                                                                             "title":  "Id"
+                                                                                         },
+                                                                                  "nome_completo":  {
+                                                                                                        "type":  "string",
+                                                                                                        "title":  "Nome Completo"
+                                                                                                    },
+                                                                                  "email":  {
+                                                                                                "type":  "string",
+                                                                                                "format":  "email",
+                                                                                                "title":  "Email"
+                                                                                            },
+                                                                                  "telefone":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Telefone"
+                                                                                               },
+                                                                                  "status":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Status"
+                                                                                             },
+                                                                                  "criado_em":  {
+                                                                                                    "type":  "string",
+                                                                                                    "format":  "date-time",
+                                                                                                    "title":  "Criado Em"
+                                                                                                }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "id",
+                                                                                "nome_completo",
+                                                                                "email",
+                                                                                "telefone",
+                                                                                "status",
+                                                                                "criado_em"
+                                                                            ],
+                                                               "title":  "ClienteResposta"
+                                                           },
+                                       "CriarProdutoRequest":  {
+                                                                   "properties":  {
+                                                                                      "nome":  {
+                                                                                                   "type":  "string",
+                                                                                                   "maxLength":  150,
+                                                                                                   "minLength":  2,
+                                                                                                   "title":  "Nome"
+                                                                                               },
+                                                                                      "descricao":  {
+                                                                                                        "type":  "string",
+                                                                                                        "minLength":  5,
+                                                                                                        "title":  "Descricao"
+                                                                                                    },
+                                                                                      "preco":  {
+                                                                                                    "anyOf":  [
+                                                                                                                  {
+                                                                                                                      "type":  "number",
+                                                                                                                      "exclusiveMinimum":  0.0
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "pattern":  "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,8}|(?=[\\d.]{1,11}0*$)\\d{0,8}\\.\\d{0,2}0*$)"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                    "title":  "Preco"
+                                                                                                },
+                                                                                      "estoque":  {
+                                                                                                      "type":  "integer",
+                                                                                                      "minimum":  0.0,
+                                                                                                      "title":  "Estoque"
+                                                                                                  },
+                                                                                      "categoria":  {
+                                                                                                        "type":  "string",
+                                                                                                        "maxLength":  100,
+                                                                                                        "minLength":  2,
+                                                                                                        "title":  "Categoria"
+                                                                                                    },
+                                                                                      "marca":  {
+                                                                                                    "type":  "string",
+                                                                                                    "maxLength":  100,
+                                                                                                    "minLength":  2,
+                                                                                                    "title":  "Marca"
+                                                                                                },
+                                                                                      "imagem_url":  {
+                                                                                                         "anyOf":  [
+                                                                                                                       {
+                                                                                                                           "type":  "string",
+                                                                                                                           "maxLength":  500
+                                                                                                                       },
+                                                                                                                       {
+                                                                                                                           "type":  "null"
+                                                                                                                       }
+                                                                                                                   ],
+                                                                                                         "title":  "Imagem Url"
+                                                                                                     }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "required":  [
+                                                                                    "nome",
+                                                                                    "descricao",
+                                                                                    "preco",
+                                                                                    "estoque",
+                                                                                    "categoria",
+                                                                                    "marca"
+                                                                                ],
+                                                                   "title":  "CriarProdutoRequest",
+                                                                   "description":  "Representa os dados necessÃ¡rios para cadastrar\num novo produto na Weblue.\n\nEste schema Ã© utilizado em:\n\nPOST /produtos"
+                                                               },
+                                       "HTTPValidationError":  {
+                                                                   "properties":  {
+                                                                                      "detail":  {
+                                                                                                     "items":  {
+                                                                                                                   "$ref":  "#/components/schemas/ValidationError"
+                                                                                                               },
+                                                                                                     "type":  "array",
+                                                                                                     "title":  "Detail"
+                                                                                                 }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "title":  "HTTPValidationError"
+                                                               },
+                                       "ItemCarrinhoRequest":  {
+                                                                   "properties":  {
+                                                                                      "produto_id":  {
+                                                                                                         "type":  "integer",
+                                                                                                         "exclusiveMinimum":  0.0,
+                                                                                                         "title":  "Produto Id"
+                                                                                                     },
+                                                                                      "quantidade":  {
+                                                                                                         "type":  "integer",
+                                                                                                         "exclusiveMinimum":  0.0,
+                                                                                                         "title":  "Quantidade"
+                                                                                                     }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "required":  [
+                                                                                    "produto_id",
+                                                                                    "quantidade"
+                                                                                ],
+                                                                   "title":  "ItemCarrinhoRequest",
+                                                                   "description":  "Representa um produto adicionando ao carrinho."
+                                                               },
+                                       "LoginEntrada":  {
+                                                            "properties":  {
+                                                                               "email":  {
+                                                                                             "type":  "string",
+                                                                                             "format":  "email",
+                                                                                             "title":  "Email"
+                                                                                         },
+                                                                               "senha":  {
+                                                                                             "type":  "string",
+                                                                                             "maxLength":  128,
+                                                                                             "minLength":  8,
+                                                                                             "title":  "Senha"
+                                                                                         },
+                                                                               "lembrar":  {
+                                                                                               "type":  "boolean",
+                                                                                               "title":  "Lembrar",
+                                                                                               "default":  false
+                                                                                           }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "email",
+                                                                             "senha"
+                                                                         ],
+                                                            "title":  "LoginEntrada"
+                                                        },
+                                       "LoginResposta":  {
+                                                             "properties":  {
+                                                                                "mensagem":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Mensagem"
+                                                                                             },
+                                                                                "access_token":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Access Token"
+                                                                                                 },
+                                                                                "refresh_token":  {
+                                                                                                      "type":  "string",
+                                                                                                      "title":  "Refresh Token"
+                                                                                                  },
+                                                                                "token_type":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Token Type"
+                                                                                               },
+                                                                                "cliente":  {
+                                                                                                "$ref":  "#/components/schemas/ClienteAutenticado"
+                                                                                            }
+                                                                            },
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "mensagem",
+                                                                              "access_token",
+                                                                              "refresh_token",
+                                                                              "token_type",
+                                                                              "cliente"
+                                                                          ],
+                                                             "title":  "LoginResposta"
+                                                         },
+                                       "LogoutRequest":  {
+                                                             "properties":  {
+                                                                                "access_token":  {
+                                                                                                     "anyOf":  [
+                                                                                                                   {
+                                                                                                                       "type":  "string"
+                                                                                                                   },
+                                                                                                                   {
+                                                                                                                       "type":  "null"
+                                                                                                                   }
+                                                                                                               ],
+                                                                                                     "title":  "Access Token"
+                                                                                                 },
+                                                                                "refresh_token":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "string"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Refresh Token"
+                                                                                                  }
+                                                                            },
+                                                             "type":  "object",
+                                                             "title":  "LogoutRequest"
+                                                         },
+                                       "RedefinirSenhaRequest":  {
+                                                                     "properties":  {
+                                                                                        "token":  {
+                                                                                                      "type":  "string",
+                                                                                                      "maxLength":  128,
+                                                                                                      "minLength":  32,
+                                                                                                      "title":  "Token"
+                                                                                                  },
+                                                                                        "nova_senha":  {
+                                                                                                           "type":  "string",
+                                                                                                           "maxLength":  128,
+                                                                                                           "minLength":  8,
+                                                                                                           "title":  "Nova Senha"
+                                                                                                       },
+                                                                                        "confirmar_senha":  {
+                                                                                                                "type":  "string",
+                                                                                                                "maxLength":  128,
+                                                                                                                "minLength":  8,
+                                                                                                                "title":  "Confirmar Senha"
+                                                                                                            }
+                                                                                    },
+                                                                     "type":  "object",
+                                                                     "required":  [
+                                                                                      "token",
+                                                                                      "nova_senha",
+                                                                                      "confirmar_senha"
+                                                                                  ],
+                                                                     "title":  "RedefinirSenhaRequest"
+                                                                 },
+                                       "RefreshTokenRequest":  {
+                                                                   "properties":  {
+                                                                                      "refresh_token":  {
+                                                                                                            "type":  "string",
+                                                                                                            "title":  "Refresh Token"
+                                                                                                        }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "required":  [
+                                                                                    "refresh_token"
+                                                                                ],
+                                                                   "title":  "RefreshTokenRequest"
+                                                               },
+                                       "SolicitarRecuperacaoRequest":  {
+                                                                           "properties":  {
+                                                                                              "email":  {
+                                                                                                            "type":  "string",
+                                                                                                            "format":  "email",
+                                                                                                            "title":  "Email"
+                                                                                                        }
+                                                                                          },
+                                                                           "type":  "object",
+                                                                           "required":  [
+                                                                                            "email"
+                                                                                        ],
+                                                                           "title":  "SolicitarRecuperacaoRequest"
+                                                                       },
+                                       "ValidationError":  {
+                                                               "properties":  {
+                                                                                  "loc":  {
+                                                                                              "items":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "integer"
+                                                                                                                          }
+                                                                                                                      ]
+                                                                                                        },
+                                                                                              "type":  "array",
+                                                                                              "title":  "Location"
+                                                                                          },
+                                                                                  "msg":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Message"
+                                                                                          },
+                                                                                  "type":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Error Type"
+                                                                                           },
+                                                                                  "input":  {
+                                                                                                "title":  "Input"
+                                                                                            },
+                                                                                  "ctx":  {
+                                                                                              "type":  "object",
+                                                                                              "title":  "Context"
+                                                                                          }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "loc",
+                                                                                "msg",
+                                                                                "type"
+                                                                            ],
+                                                               "title":  "ValidationError"
+                                                           }
+                                   },
+                       "securitySchemes":  {
+                                               "HTTPBearer":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer"
+                                                              }
+                                           }
+                   }
+}

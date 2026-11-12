@@ -225,7 +225,33 @@ app.mount(
 # ============================================================
 # PÁGINAS DO FRONTEND
 # ============================================================
+# ============================================================
+# PÁGINA DE DETALHES DO PRODUTO
+# ============================================================
 
+@app.get(
+    "/produto.html",
+    include_in_schema=False,
+)
+def pagina_produto():
+
+    return FileResponse(
+        FRONTEND_DIR / "produto.html"
+    )
+    
+# ============================================================
+# PÁGINA DE CATEGORIAS
+# ============================================================
+
+@app.get(
+    "/categoria.html",
+    include_in_schema=False,
+)
+def pagina_categoria():
+
+    return FileResponse(
+        FRONTEND_DIR / "categoria.html"
+    )    
 
 # ============================================================
 # PÁGINA INICIAL

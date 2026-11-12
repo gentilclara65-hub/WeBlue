@@ -1052,81 +1052,325 @@ input {
     }
 }
 
-/* 27. RODAPÉ */
+
+
+/* ============================================================
+   27. RODAPÉ PROFISSIONAL - WEBLUE
+   ============================================================ */
 
 .rodape {
     width: 100%;
     margin-top: 0;
-    background: #031b48;
-    padding: 32px 20px;
+    padding: 55px 24px 20px;
+    background: linear-gradient(135deg, #031b48 0%, #05285e 100%);
+    color: #ffffff;
 }
+
+/* CONTAINER PRINCIPAL */
 
 .rodape-container {
     width: min(1200px, 100%);
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    margin: 0 auto 45px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1.2fr;
+    gap: 35px;
+    align-items: start;
 }
+
+/* MARCA */
 
 .rodape-marca {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .rodape-logo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 27px;
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    transition: color 0.2s ease;
 }
 
-.rodape-subtitulo {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 10px;
-    letter-spacing: 4px;
+.rodape-logo:hover {
+    color: #75baff;
+}
+
+.rodape-logo span {
     margin-top: 2px;
+    color: #62baff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 5px;
 }
 
-.rodape-texto {
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 14px;
-    margin: 0;
+.rodape-marca p {
+    max-width: 240px;
+    color: #c5d5ed;
+    font-size: 13px;
+    line-height: 1.8;
 }
+
+/* COLUNAS */
+
+.rodape-coluna {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.rodape-coluna h3 {
+    position: relative;
+    margin-bottom: 7px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.rodape-coluna h3::after {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 2px;
+    margin-top: 9px;
+    border-radius: 10px;
+    background: #62baff;
+}
+
+.rodape-coluna a {
+    color: #c5d5ed;
+    font-size: 13px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.rodape-coluna a:hover {
+    color: #75baff;
+    transform: translateX(3px);
+}
+
+.rodape-coluna p {
+    color: #c5d5ed;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* REDES SOCIAIS */
+
+.rodape-social {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rodape-social a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.rodape-social a::before {
+    content: "•";
+    color: #62baff;
+    font-size: 20px;
+}
+
+/* INFORMAÇÕES DE PAGAMENTO E SEGURANÇA */
+
+.rodape-informacoes {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 25px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.rodape-info-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+}
+
+.rodape-info-item > span {
+    font-size: 25px;
+}
+
+.rodape-info-item strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.rodape-info-item p {
+    color: #c5d5ed;
+    font-size: 12px;
+}
+
+/* PARTE INFERIOR */
+
+.rodape-final {
+    width: min(1200px, 100%);
+    margin: 22px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.rodape-final > p {
+    color: #aebfd9;
+    font-size: 12px;
+}
+
+.rodape-politicas {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.rodape-politicas a {
+    color: #aebfd9;
+    font-size: 12px;
+    transition: color 0.2s ease;
+}
+
+.rodape-politicas a:hover {
+    color: #75baff;
+}
+
+/* ACESSO ADMINISTRATIVO */
 
 .rodape-admin {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 13px;
-    font-weight: 600;
     padding: 9px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 8px;
-    transition: color 0.2s ease,
-                border-color 0.2s ease,
-                background 0.2s ease,
-                transform 0.2s ease;
+    color: #c5d5ed;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
 .rodape-admin:hover {
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.45);
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-1px);
+    border-color: #62baff;
+    background: rgba(98, 186, 255, 0.12);
+    transform: translateY(-2px);
 }
 
-/* 28. RESPONSIVIDADE DO RODAPÉ */
+.rodape a:focus-visible {
+    outline: 2px solid #75baff;
+    outline-offset: 4px;
+}
 
-@media (max-width: 700px) {
+/* ============================================================
+   28. RESPONSIVIDADE DO RODAPÉ
+   ============================================================ */
+
+@media (max-width: 1000px) {
     .rodape-container {
-        flex-direction: column;
-        text-align: center;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 35px 25px;
+    }
+
+    .rodape-marca {
+        grid-column: span 3;
     }
 }
 
+@media (max-width: 650px) {
+    .rodape {
+        padding: 40px 20px 20px;
+    }
+
+    .rodape-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 35px 20px;
+        margin-bottom: 35px;
+    }
+
+    .rodape-marca {
+        grid-column: span 2;
+        align-items: center;
+        text-align: center;
+    }
+
+    .rodape-marca p {
+        max-width: 300px;
+    }
+
+    .rodape-coluna {
+        align-items: flex-start;
+    }
+
+    .rodape-coluna h3 {
+        font-size: 14px;
+    }
+
+    .rodape-coluna a,
+    .rodape-coluna p {
+        font-size: 12px;
+    }
+
+    .rodape-informacoes {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 25px 0;
+    }
+
+    .rodape-info-item {
+        justify-content: flex-start;
+        padding-left: 15%;
+    }
+
+    .rodape-final {
+        flex-direction: column;
+        text-align: center;
+        gap: 17px;
+    }
+
+    .rodape-politicas {
+        justify-content: center;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .rodape-container {
+        grid-template-columns: 1fr;
+    }
+
+    .rodape-marca {
+        grid-column: span 1;
+    }
+
+    .rodape-coluna {
+        align-items: center;
+        text-align: center;
+    }
+
+    .rodape-social {
+        align-items: center;
+    }
+
+    .rodape-coluna h3::after {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 
 /* ============================================================
    29. MODAL DE CONFIRMAÇÃO DA SACOLA
@@ -1327,4 +1571,263 @@ input {
         width: 70px;
         height: 70px;
     }
+}
+
+
+/* ============================================================
+   30. DESTAQUE MAQUIAGEM E GLAMOUR
+   ============================================================ */
+
+.destaque-maquiagem {
+    position: absolute;
+    z-index: 15;
+    top: 50%;
+    left: 50%;
+    width: min(390px, 75%);
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 12px 35px rgba(40, 10, 30, 0.15);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -45%);
+    transition: opacity 0.35s ease,
+                visibility 0.35s ease,
+                transform 0.35s ease;
+}
+
+.destaque-maquiagem.visivel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+}
+
+.destaque-maquiagem__subtitulo {
+    display: block;
+    margin-bottom: 10px;
+    color: #d94d91;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.destaque-maquiagem h2 {
+    margin-bottom: 12px;
+    color: #a52d70;
+    font-size: clamp(25px, 3vw, 36px);
+    line-height: 1.15;
+}
+
+.destaque-maquiagem p {
+    margin-bottom: 20px;
+    color: #66515e;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.destaque-maquiagem__botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 13px 22px;
+    border: 1px solid #e77caf;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #d94d91;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 5px 16px rgba(217, 77, 145, 0.12);
+    transition: background 0.25s ease,
+                color 0.25s ease,
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.destaque-maquiagem__botao:hover {
+    background: #e77caf;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(217, 77, 145, 0.25);
+}
+
+.destaque-maquiagem__botao:focus-visible {
+    outline: 3px solid #d94d91;
+    outline-offset: 4px;
+}
+
+/* RESPONSIVIDADE DO DESTAQUE */
+
+@media (max-width: 650px) {
+    .destaque-maquiagem {
+        top: 42%;
+        left: 50%;
+        width: min(310px, 78%);
+        padding: 18px;
+    }
+
+    .destaque-maquiagem h2 {
+        font-size: 25px;
+    }
+
+    .destaque-maquiagem p {
+        font-size: 12px;
+        margin-bottom: 14px;
+    }
+
+    .destaque-maquiagem__botao {
+        padding: 11px 17px;
+        font-size: 12px;
+    }
+}
+
+
+/* ============================================================
+   31. ÍCONES PROFISSIONAIS DO CABEÇALHO - WEBLUE
+   ============================================================ */
+
+.acoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.acoes .acao {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border: 1px solid #e5edf7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #063b91;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* DESENHOS DOS ÍCONES */
+
+.acoes .acao svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease;
+}
+
+.acoes .acao:hover {
+    background: #edf5ff;
+    border-color: #8dbdff;
+    color: #0869dc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(8, 105, 220, 0.10);
+}
+
+.acoes .acao:hover svg {
+    transform: scale(1.08);
+}
+
+.acoes .acao:focus-visible {
+    outline: 3px solid #86bfff;
+    outline-offset: 3px;
+}
+
+/* CONTADOR DO CARRINHO */
+
+.acoes .contador-carrinho {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border: 2px solid #ffffff;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0869dc;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* CELULAR */
+
+@media (max-width: 650px) {
+    .acoes {
+        gap: 6px;
+    }
+
+    .acoes .acao {
+        width: 37px;
+        height: 37px;
+    }
+
+    .acoes .acao svg {
+        width: 19px;
+        height: 19px;
+    }
+}
+
+/* REMOÇÃO DO ESTILO ANTIGO DO BOTÃO ENTRAR */
+
+.botao-secundario {
+    display: none;
+}
+
+
+/* ÍCONES NO CELULAR */
+
+@media (max-width: 650px) {
+    .acoes {
+        gap: 6px;
+    }
+
+    .acoes .acao {
+        width: 37px;
+        height: 37px;
+        font-size: 18px;
+    }
+}
+
+/* REMOÇÃO DO ESTILO ANTIGO DO BOTÃO ENTRAR */
+
+.botao-secundario {
+    display: none;
+}
+
+/* IMAGEM DO VALE-COMPRAS */
+
+.vale-compras-imagem {
+    width: 100%;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.vale-compras-imagem img {
+    width: 100%;
+    height: 100%;
+    max-width: 260px;
+    object-fit: contain;
+    display: block;
 }

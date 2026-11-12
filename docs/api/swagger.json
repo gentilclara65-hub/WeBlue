@@ -1,0 +1,145 @@
+
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API WeBlue",
+    "description": "Documentação da API da loja virtual WeBlue.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Ambiente local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Produtos",
+      "description": "Operações de cadastro, consulta, atualização e exclusão de produtos."
+    }
+  ],
+  "paths": {
+    "/api/produtos": {
+      "get": {
+        "tags": ["Produtos"],
+        "summary": "Listar produtos",
+        "responses": {
+          "200": {
+            "description": "Lista de produtos retornada com sucesso."
+          }
+        }
+      },
+      "post": {
+        "tags": ["Produtos"],
+        "summary": "Cadastrar produto",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProdutoEntrada"
+              },
+              "example": {
+                "nome": "Produto de exemplo",
+                "descricao": "Descrição do produto",
+                "preco": 29.90,
+                "estoque": 10,
+                "categoria": "Cuidados pessoais",
+                "marca": "WeBlue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto cadastrado."
+          },
+          "400": {
+            "description": "Dados inválidos."
+          }
+        }
+      }
+    },
+    "/api/produtos/{produto_id}": {
+      "parameters": [
+        {
+          "name": "produto_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "put": {
+        "tags": ["Produtos"],
+        "summary": "Atualizar produto",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProdutoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Produto atualizado."
+          },
+          "404": {
+            "description": "Produto não encontrado."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Produtos"],
+        "summary": "Excluir produto",
+        "responses": {
+          "200": {
+            "description": "Produto excluído."
+          },
+          "404": {
+            "description": "Produto não encontrado."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProdutoEntrada": {
+        "type": "object",
+        "required": ["nome", "preco"],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Produto de exemplo"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Descrição do produto"
+          },
+          "preco": {
+            "type": "number",
+            "format": "float",
+            "example": 29.90
+          },
+          "estoque": {
+            "type": "integer",
+            "example": 10
+          },
+          "categoria": {
+            "type": "string",
+            "example": "Cuidados pessoais"
+          },
+          "marca": {
+            "type": "string",
+            "example": "WeBlue"
+          }
+        }
+      }
+    }
+  }
+}
