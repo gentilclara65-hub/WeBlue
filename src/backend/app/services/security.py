@@ -7,6 +7,7 @@ import jwt
 from pwdlib import PasswordHash
 from sqlalchemy import case, delete
 from sqlalchemy.dialects.mysql import insert as mysql_insert
+from sqlalchemy.dialects.postgresql import insert as postgresql_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import Session
 
@@ -124,8 +125,9 @@ def register_failed_attempt(
             iniciada_em=registro.iniciada_em,
         )
         statement = statement.on_duplicate_key_update(**valores_atualizacao)
-    elif dialect == "sqlite":
-        statement = sqlite_insert(RateLimitWindow).values(
+    elif dialect in ("sqlite", "postgresql"):
+        insert = sqlite_insert if dialect == "sqlite" else postgresql_insert
+        statement = insert(RateLimitWindow).values(
             chave=registro.chave,
             tentativas=registro.tentativas,
             iniciada_em=registro.iniciada_em,
@@ -290,8 +292,9 @@ def revogar_token(token: str | None, database: Session) -> None:
             jti=registro.jti,
             expira_em=registro.expira_em,
         ).on_duplicate_key_update(jti=registro.jti)
-    elif dialect == "sqlite":
-        statement = sqlite_insert(TokenRevogado).values(
+    elif dialect in ("sqlite", "postgresql"):
+        insert = sqlite_insert if dialect == "sqlite" else postgresql_insert
+        statement = insert(TokenRevogado).values(
             jti=registro.jti,
             expira_em=registro.expira_em,
         ).on_conflict_do_nothing(index_elements=[TokenRevogado.jti])
