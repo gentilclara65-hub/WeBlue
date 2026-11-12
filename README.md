@@ -265,10 +265,9 @@ railway.json           Configuração do deploy no Railway
 
 Repositório oficial: [gentilclara65-hub/WeBlue](https://github.com/gentilclara65-hub/WeBlue)
 
-Este repositório reúne todo o histórico do projeto: a primeira versão (antes em `Bruno-Gadelha25/WeBlue`) e a versão completa que estava em [gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo).
+Este repositório reúne todo o histórico do projeto: a primeira versão do projeto e a versão completa que estava em [gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo).
 
 Equipe (pelo histórico de commits):
 
-- Bruno Gadelha
 - Clara Gentil Cavalcante
 - Matheus David
