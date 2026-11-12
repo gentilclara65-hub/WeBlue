@@ -2,7 +2,9 @@
 
 Loja virtual de cosméticos criada como projeto de Laboratório de Inovação III.
 
-O repositório reúne uma aplicação web com frontend em HTML, CSS e JavaScript, API em FastAPI e persistência em MySQL.
+O repositório reúne uma aplicação web com frontend em HTML, CSS e JavaScript, API em FastAPI e persistência em MySQL (local) ou PostgreSQL (produção, via Neon).
+
+**Site publicado:** https://weblue-rho.vercel.app
 
 > **Estado do projeto:** cadastro, autenticação de clientes e administradores, catálogo, área administrativa, checkout e recuperação de senha estão implementados. O pagamento é simulado; não use dados reais de cartão nem considere a aplicação pronta para processar vendas reais.
 
@@ -50,8 +52,8 @@ O repositório reúne uma aplicação web com frontend em HTML, CSS e JavaScript
 No PowerShell:
 
 ```powershell
-git clone https://github.com/gentilclara65-hub/WeBlue-Completo.git
-cd WeBlue-Completo
+git clone https://github.com/Bruno-Gadelha25/WeBlue.git
+cd WeBlue
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
@@ -187,13 +189,29 @@ python -m pytest -q
 
 Os testes usam SQLite em memória e cobrem autenticação, recuperação de senha, autorização, checkout, cálculo de estoque e rollback. Eles não substituem testes de concorrência no MySQL nem o teste de entrega por um provedor SMTP real.
 
+## Deploy na Vercel com Neon (produção atual)
+
+A versão publicada roda na Vercel, com banco PostgreSQL no Neon.
+
+- [index.py](./index.py) é o ponto de entrada da Vercel e apenas importa `backend.app.main:app`.
+- [vercel.json](./vercel.json) define o preset FastAPI e a região `gru1` (São Paulo); [.vercelignore](./.vercelignore) impede o envio de `.env`, `venv/` e `backup/`.
+- Variáveis de ambiente na Vercel: `DATABASE_URL` (string **com pooling** do Neon) e `JWT_SECRET_KEY`. Para recuperação de senha, configure também as variáveis SMTP e `FRONTEND_BASE_URL`.
+- As migrações devem ser aplicadas a partir da máquina local usando a string **direta** (sem pooling) do Neon:
+
+```powershell
+$env:DATABASE_URL = "<string direta do Neon>"
+python -m alembic -c src/backend/alembic.ini upgrade head
+```
+
+Limitação conhecida: o sistema de arquivos da Vercel é somente leitura, então o envio de imagens pelo painel administrativo não é persistido. Use URLs de imagem externas ou integre um armazenamento de objetos.
+
 ## Deploy no Railway
 
 O arquivo [railway.json](./railway.json) configura o comando de inicialização, `/health` como health check e o builder Railpack.
 
 Configure no Railway as variáveis do banco e JWT listadas acima e, se for usar recuperação de senha, também as variáveis SMTP com a URL HTTPS pública. O banco (MySQL ou PostgreSQL via `DATABASE_URL`) deve estar provisionado e acessível pelo serviço.
 
-> **Atenção ao usar PostgreSQL/Neon:** a migração inicial (`001_baseline`) usa tipos específicos do MySQL (`BIGINT UNSIGNED`, `ENUM`). Antes de aplicar as migrações em um banco PostgreSQL vazio, essa migração precisa ser adaptada.
+As migrações funcionam tanto em MySQL quanto em PostgreSQL: no MySQL o esquema usa `BIGINT UNSIGNED` e `ENUM`; nos demais bancos, os tipos padrão equivalentes.
 
 As migrações são aplicadas uma vez no estágio `preDeployCommand` do [railway.json](./railway.json), evitando que cada réplica tente migrar o banco.
 
@@ -209,6 +227,7 @@ database/
 
 docs/
   api/                 Documentação da API
+  arquitetura/         Mapeamento da arquitetura (unidades, modelo de dados, contratos)
   evidencias/          Evidências dos requisitos
   requisitos/          Especificações funcionais
   testes/              Planos e resultados de testes
@@ -228,6 +247,10 @@ src/
     img/               Imagens
     js/                Lógica do navegador
     *.html             Páginas da loja e administração
+
+index.py               Ponto de entrada da Vercel
+vercel.json            Configuração do deploy na Vercel
+railway.json           Configuração do deploy no Railway
 ```
 
 ## Documentação relacionada
@@ -236,7 +259,16 @@ src/
 - [Testes de recuperação de senha (RF-003)](./docs/testes/RF-003-testes.md)
 - [Documentação do backend de vendas](./src/README.md)
 - [Script inicial do banco](./database/ddl/001_criar_tabela_clientes.sql)
+- [Mapa da arquitetura](./docs/arquitetura/architecture_index.md)
 
-## Repositório
+## Repositório e equipe
 
-[gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo)
+Repositório oficial: [Bruno-Gadelha25/WeBlue](https://github.com/Bruno-Gadelha25/WeBlue)
+
+Este repositório reúne todo o histórico do projeto: a primeira versão desenvolvida aqui e a versão completa que estava em [gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo).
+
+Equipe (pelo histórico de commits):
+
+- Bruno Gadelha
+- Clara Gentil Cavalcante
+- Matheus David
