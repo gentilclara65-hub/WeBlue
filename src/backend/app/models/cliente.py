@@ -44,7 +44,7 @@ class Cliente(Base):
     )
 
     status: Mapped[str] = mapped_column(
-        Enum("ATIVA", "INATIVA", "BLOQUEADA"),
+        Enum("ATIVA", "INATIVA", "BLOQUEADA", name="status_cliente"),
         nullable=False,
         server_default="ATIVA"
     )

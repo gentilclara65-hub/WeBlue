@@ -1,0 +1,9 @@
+.env
+.env.*
+venv/
+.venv/
+backup/
+**/__pycache__/
+.pytest_cache/
+.git/
+docs/evidencias/

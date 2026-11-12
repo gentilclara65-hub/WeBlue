@@ -15,6 +15,17 @@ branch_labels = None
 depends_on = None
 
 
+# Tipos compatíveis com MySQL e PostgreSQL:
+# no MySQL o esquema continua idêntico (BIGINT UNSIGNED / ENUM);
+# nos demais bancos usa os tipos padrão equivalentes.
+def _bigint_id():
+    return sa.BigInteger().with_variant(mysql.BIGINT(unsigned=True), "mysql")
+
+
+def _enum(nome, *valores):
+    return sa.Enum(*valores, name=nome).with_variant(mysql.ENUM(*valores), "mysql")
+
+
 def _exists(table_name):
     if op.get_context().as_sql:
         return False
@@ -52,7 +63,7 @@ def upgrade():
             "clientes",
             sa.Column(
                 "id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 autoincrement=True,
                 nullable=False,
             ),
@@ -63,7 +74,7 @@ def upgrade():
             sa.Column("senha_hash", sa.String(length=255), nullable=False),
             sa.Column(
                 "status",
-                mysql.ENUM("ATIVA", "INATIVA", "BLOQUEADA"),
+                _enum("status_cliente", "ATIVA", "INATIVA", "BLOQUEADA"),
                 server_default="ATIVA",
                 nullable=False,
             ),
@@ -90,7 +101,7 @@ def upgrade():
             "produtos",
             sa.Column(
                 "id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 autoincrement=True,
                 nullable=False,
             ),
@@ -112,7 +123,7 @@ def upgrade():
             "clientes_versoes_autenticacao",
             sa.Column(
                 "cliente_id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 nullable=False,
             ),
             sa.Column("versao", sa.Integer(), nullable=False),
@@ -130,7 +141,7 @@ def upgrade():
             sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
             sa.Column(
                 "cliente_id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 nullable=False,
             ),
             sa.Column("token_hash", sa.String(length=64), nullable=False),
@@ -168,18 +179,19 @@ def upgrade():
             "pedidos",
             sa.Column(
                 "id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 autoincrement=True,
                 nullable=False,
             ),
             sa.Column(
                 "cliente_id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 nullable=False,
             ),
             sa.Column(
                 "status",
-                mysql.ENUM(
+                _enum(
+                    "statuspedido",
                     "PENDENTE",
                     "PAGO",
                     "EM_SEPARACAO",
@@ -212,18 +224,18 @@ def upgrade():
             "itens_pedido",
             sa.Column(
                 "id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 autoincrement=True,
                 nullable=False,
             ),
             sa.Column(
                 "pedido_id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 nullable=False,
             ),
             sa.Column(
                 "produto_id",
-                mysql.BIGINT(unsigned=True),
+                _bigint_id(),
                 nullable=False,
             ),
             sa.Column("quantidade", sa.Integer(), nullable=False),

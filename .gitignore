@@ -18,3 +18,7 @@ Thumbs.db
 
 # Backup do banco de dados
 backup/
+.neon
+
+.vercel
+.env*
