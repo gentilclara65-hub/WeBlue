@@ -52,7 +52,7 @@ O repositório reúne uma aplicação web com frontend em HTML, CSS e JavaScript
 No PowerShell:
 
 ```powershell
-git clone https://github.com/Bruno-Gadelha25/WeBlue.git
+git clone https://github.com/gentilclara65-hub/WeBlue.git
 cd WeBlue
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -263,9 +263,9 @@ railway.json           Configuração do deploy no Railway
 
 ## Repositório e equipe
 
-Repositório oficial: [Bruno-Gadelha25/WeBlue](https://github.com/Bruno-Gadelha25/WeBlue)
+Repositório oficial: [gentilclara65-hub/WeBlue](https://github.com/gentilclara65-hub/WeBlue)
 
-Este repositório reúne todo o histórico do projeto: a primeira versão desenvolvida aqui e a versão completa que estava em [gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo).
+Este repositório reúne todo o histórico do projeto: a primeira versão (antes em `Bruno-Gadelha25/WeBlue`) e a versão completa que estava em [gentilclara65-hub/WeBlue-Completo](https://github.com/gentilclara65-hub/WeBlue-Completo).
 
 Equipe (pelo histórico de commits):
 
