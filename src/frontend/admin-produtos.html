@@ -13,7 +13,6 @@
 
 <body>
 
-    <!-- CABEÇALHO -->
     <header class="cabecalho">
         <div class="cabecalho-container">
 
@@ -40,10 +39,8 @@
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <main class="pagina-admin">
 
-        <!-- RESUMO -->
         <section class="resumo">
             <div>
                 <span class="titulo-pequeno">WEBLUE ADMIN</span>
@@ -56,7 +53,6 @@
             </button>
         </section>
 
-        <!-- ESTATÍSTICAS -->
         <section class="estatisticas">
 
             <article class="estatistica-card">
@@ -81,7 +77,6 @@
 
         </section>
 
-        <!-- PESQUISA E FILTROS -->
         <section class="barra-filtros">
 
             <div class="campo-pesquisa">
@@ -105,10 +100,8 @@
 
         </section>
 
-        <!-- MENSAGENS -->
         <div id="mensagem" class="mensagem" hidden></div>
 
-        <!-- LISTAGEM -->
         <section class="secao-listagem">
 
             <div class="listagem-cabecalho">
@@ -124,7 +117,6 @@
 
         </section>
 
-        <!-- RESUMO ADMINISTRATIVO -->
         <section class="secao-admin-resumo">
 
             <div class="resumo-admin-card">
@@ -153,7 +145,6 @@
 
     </main>
 
-    <!-- MODAL DE PRODUTO -->
     <div id="modalProduto" class="modal" hidden>
 
         <div class="modal-overlay" id="modalOverlay"></div>
@@ -165,7 +156,6 @@
             aria-labelledby="tituloModal"
         >
 
-            <!-- CABEÇALHO DO FORMULÁRIO -->
             <div class="modal-cabecalho">
 
                 <div>
@@ -184,12 +174,10 @@
 
             </div>
 
-            <!-- FORMULÁRIO -->
             <form id="formProduto">
 
                 <input type="hidden" id="produtoId">
 
-                <!-- NOME -->
                 <div class="campo campo-completo">
                     <label for="nome">Nome do produto *</label>
 
@@ -202,7 +190,6 @@
                     >
                 </div>
 
-                <!-- DESCRIÇÃO -->
                 <div class="campo campo-completo">
                     <label for="descricao">Descrição</label>
 
@@ -215,7 +202,6 @@
 
                 <div class="form-grid">
 
-                    <!-- PREÇO -->
                     <div class="campo">
                         <label for="preco">Preço *</label>
 
@@ -229,7 +215,6 @@
                         >
                     </div>
 
-                    <!-- ESTOQUE -->
                     <div class="campo">
                         <label for="estoque">Estoque *</label>
 
@@ -243,7 +228,6 @@
                         >
                     </div>
 
-                    <!-- CATEGORIA CORRIGIDA -->
                     <div class="campo">
                         <label for="categoria">Categoria *</label>
 
@@ -264,14 +248,12 @@
                             <option value="Limpeza Facial">Limpeza Facial</option>
                             <option value="Tratamento Facial">Tratamento Facial</option>
                             <option value="Acessórios de Beleza">Acessórios de Beleza</option>
-
                             <option value="Kits e Presentes">Kits e Presentes</option>
                             <option value="Perfumes femininos">Perfumes femininos</option>
                             <option value="Perfumes masculinos">Perfumes masculinos</option>
                             <option value="Body splash">Body splash</option>
                             <option value="Colônias">Colônias</option>
                             <option value="Kits de fragrâncias">Kits de fragrâncias</option>
-
                             <option value="Ofertas">Ofertas</option>
                             <option value="Fragrâncias">Fragrâncias</option>
                             <option value="Cupons">Cupons</option>
@@ -280,7 +262,18 @@
                         </select>
                     </div>
 
-                    <!-- MARCA -->
+                    <!-- SUBCATEGORIA OPCIONAL -->
+                    <div class="campo">
+                        <label for="subcategoria">Subcategoria (opcional)</label>
+
+                        <input
+                            type="text"
+                            id="subcategoria"
+                            maxlength="100"
+                            placeholder="Ex.: Shampoo"
+                        >
+                    </div>
+
                     <div class="campo">
                         <label for="marca">Marca</label>
 
@@ -292,7 +285,6 @@
                         >
                     </div>
 
-                    <!-- IMAGEM -->
                     <div class="campo campo-completo">
                         <label for="imagemUrl">URL da imagem</label>
 
@@ -303,7 +295,6 @@
                         >
                     </div>
 
-                    <!-- STATUS -->
                     <div class="campo">
                         <label for="status">Status</label>
 
@@ -315,7 +306,6 @@
 
                 </div>
 
-                <!-- AÇÕES -->
                 <div class="form-acoes">
 
                     <button
@@ -342,7 +332,6 @@
 
     </div>
 
-    <!-- JAVASCRIPT -->
     <script src="/js/admin-produtos.js"></script>
 
 </body>

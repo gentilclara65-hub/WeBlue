@@ -1,17 +1,7 @@
+
 /* ============================================================
    WEBLUE - ADMIN-PRODUTOS.JS
    Painel administrativo de produtos
-
-   Funções principais:
-   - Listar produtos
-   - Pesquisar produtos
-   - Filtrar por status
-   - Cadastrar produto
-   - Buscar produto por ID
-   - Editar produto
-   - Desativar produto
-   - Reativar produto
-   - Atualizar estatísticas
    ============================================================ */
 
 
@@ -19,113 +9,131 @@
    1. ENDPOINT DA API
    ============================================================ */
 
-/*
-   Como frontend e backend estão sendo servidos
-   pelo mesmo endereço:
-
-   http://127.0.0.1:8000
-
-   podemos usar uma URL relativa.
-*/
 const API_PRODUTOS = "/api/produtos";
 const API_PEDIDOS = "/api/pedidos";
 const TOKEN_ADMIN_KEY = "tokenAdminWeblue";
 const REFRESH_TOKEN_ADMIN_KEY = "refreshTokenAdminWeblue";
+
 const listaPedidosRecentes = document.getElementById("listaPedidosRecentes");
 const listaEstoqueBaixo = document.getElementById("listaEstoqueBaixo");
 
+
 function limparSessaoAdmin() {
-   sessionStorage.removeItem(TOKEN_ADMIN_KEY);
-   sessionStorage.removeItem(REFRESH_TOKEN_ADMIN_KEY);
-   sessionStorage.removeItem("administradorWeblue");
-   localStorage.removeItem(TOKEN_ADMIN_KEY);
-   localStorage.removeItem(REFRESH_TOKEN_ADMIN_KEY);
-   localStorage.removeItem("administradorWeblue");
+    sessionStorage.removeItem(TOKEN_ADMIN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_ADMIN_KEY);
+    sessionStorage.removeItem("administradorWeblue");
+
+    localStorage.removeItem(TOKEN_ADMIN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_ADMIN_KEY);
+    localStorage.removeItem("administradorWeblue");
 }
 
-function redirecionarParaLoginAdmin(mensagem = "Sua sessão administrativa expirou. Faça login novamente.") {
-   limparSessaoAdmin();
-   window.location.href = `/admin-login.html?expirada=1&msg=${encodeURIComponent(mensagem)}`;
+
+function redirecionarParaLoginAdmin(
+    mensagem = "Sua sessão administrativa expirou. Faça login novamente."
+) {
+    limparSessaoAdmin();
+
+    window.location.href =
+        `/admin-login.html?expirada=1&msg=${encodeURIComponent(mensagem)}`;
 }
+
 
 async function logoutAdminNoServidor() {
-   const accessToken = sessionStorage.getItem(TOKEN_ADMIN_KEY);
-   const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_ADMIN_KEY);
+    const accessToken = sessionStorage.getItem(TOKEN_ADMIN_KEY);
+    const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_ADMIN_KEY);
 
-   if (!accessToken && !refreshToken) {
-       return;
-   }
+    if (!accessToken && !refreshToken) {
+        return;
+    }
 
-   try {
-       await fetch("/api/admin/auth/logout", {
-           method: "POST",
-           headers: {
-               "Content-Type": "application/json",
-           },
-           body: JSON.stringify({
-               access_token: accessToken,
-               refresh_token: refreshToken,
-           }),
-       });
-   } catch (erro) {
-       console.warn("Logout administrativo falhou no servidor:", erro);
-   }
+    try {
+        await fetch("/api/admin/auth/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+            }),
+        });
+    } catch (erro) {
+        console.warn("Logout administrativo falhou no servidor:", erro);
+    }
 }
 
+
 async function requisitarComRefreshAdmin(url, opcoes = {}) {
-   const accessToken = sessionStorage.getItem(TOKEN_ADMIN_KEY);
-   const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_ADMIN_KEY);
+    const accessToken = sessionStorage.getItem(TOKEN_ADMIN_KEY);
+    const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_ADMIN_KEY);
 
-   if (!accessToken) {
-       redirecionarParaLoginAdmin("Sessão administrativa expirada. Faça login novamente.");
-       throw new Error("Sessão administrativa expirada.");
-   }
+    if (!accessToken) {
+        redirecionarParaLoginAdmin(
+            "Sessão administrativa expirada. Faça login novamente."
+        );
 
-   const headers = {
-       ...(opcoes.headers || {}),
-       "Authorization": `Bearer ${accessToken}`
-   };
+        throw new Error("Sessão administrativa expirada.");
+    }
 
-   const resposta = await fetch(url, {
-       ...opcoes,
-       headers,
-   });
+    const headers = {
+        ...(opcoes.headers || {}),
+        "Authorization": `Bearer ${accessToken}`
+    };
 
-   if (resposta.status !== 401 || !refreshToken) {
-       return resposta;
-   }
+    const resposta = await fetch(url, {
+        ...opcoes,
+        headers,
+    });
 
-   try {
-       const refreshResposta = await fetch("/api/admin/auth/refresh", {
-           method: "POST",
-           headers: {
-               "Content-Type": "application/json",
-           },
-           body: JSON.stringify({ refresh_token: refreshToken }),
-       });
+    if (resposta.status !== 401 || !refreshToken) {
+        return resposta;
+    }
 
-       if (!refreshResposta.ok) {
-           throw new Error("Refresh token inválido.");
-       }
+    try {
+        const refreshResposta = await fetch("/api/admin/auth/refresh", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                refresh_token: refreshToken
+            }),
+        });
 
-       const novosTokens = await refreshResposta.json();
-       sessionStorage.setItem(TOKEN_ADMIN_KEY, novosTokens.access_token);
+        if (!refreshResposta.ok) {
+            throw new Error("Refresh token inválido.");
+        }
 
-       if (novosTokens.refresh_token) {
-           sessionStorage.setItem(REFRESH_TOKEN_ADMIN_KEY, novosTokens.refresh_token);
-       }
+        const novosTokens = await refreshResposta.json();
 
-       return fetch(url, {
-           ...opcoes,
-           headers: {
-               ...(opcoes.headers || {}),
-               "Authorization": `Bearer ${novosTokens.access_token}`
-           },
-       });
-   } catch (erro) {
-       redirecionarParaLoginAdmin("Sua sessão administrativa expirou. Faça login novamente.");
-       throw erro;
-   }
+        sessionStorage.setItem(
+            TOKEN_ADMIN_KEY,
+            novosTokens.access_token
+        );
+
+        if (novosTokens.refresh_token) {
+            sessionStorage.setItem(
+                REFRESH_TOKEN_ADMIN_KEY,
+                novosTokens.refresh_token
+            );
+        }
+
+        return fetch(url, {
+            ...opcoes,
+            headers: {
+                ...(opcoes.headers || {}),
+                "Authorization": `Bearer ${novosTokens.access_token}`
+            },
+        });
+
+    } catch (erro) {
+        redirecionarParaLoginAdmin(
+            "Sua sessão administrativa expirou. Faça login novamente."
+        );
+
+        throw erro;
+    }
 }
 
 
@@ -133,43 +141,36 @@ async function requisitarComRefreshAdmin(url, opcoes = {}) {
    2. ELEMENTOS DA PÁGINA
    ============================================================ */
 
-// Botões principais.
 const botaoNovoProduto = document.getElementById("botaoNovoProduto");
 const botaoFecharModal = document.getElementById("botaoFecharModal");
 const botaoCancelar = document.getElementById("botaoCancelar");
 const botaoSalvar = document.getElementById("botaoSalvar");
 const btnSairAdmin = document.getElementById("btnSairAdmin");
 
-// Modal.
 const modalProduto = document.getElementById("modalProduto");
 const modalOverlay = document.getElementById("modalOverlay");
 const tituloModal = document.getElementById("tituloModal");
 
-// Formulário.
 const formProduto = document.getElementById("formProduto");
 
-// Campos.
 const produtoId = document.getElementById("produtoId");
 const campoNome = document.getElementById("nome");
 const campoDescricao = document.getElementById("descricao");
 const campoPreco = document.getElementById("preco");
 const campoEstoque = document.getElementById("estoque");
 const campoCategoria = document.getElementById("categoria");
+const campoSubcategoria = document.getElementById("subcategoria");
 const campoMarca = document.getElementById("marca");
 const campoImagemUrl = document.getElementById("imagemUrl");
 const campoStatus = document.getElementById("status");
 
-// Pesquisa e filtro.
 const pesquisaProduto = document.getElementById("pesquisaProduto");
 const filtroStatus = document.getElementById("filtroStatus");
 
-// Área da listagem.
 const listaProdutos = document.getElementById("listaProdutos");
 
-// Mensagens.
 const mensagem = document.getElementById("mensagem");
 
-// Estatísticas.
 const totalProdutos = document.getElementById("totalProdutos");
 const totalAtivos = document.getElementById("totalAtivos");
 const totalInativos = document.getElementById("totalInativos");
@@ -180,272 +181,367 @@ const totalEstoque = document.getElementById("totalEstoque");
    3. ESTADO LOCAL
    ============================================================ */
 
-/*
-   Guardamos aqui todos os produtos retornados pela API.
-
-   Depois usamos este array para:
-   - pesquisar;
-   - filtrar;
-   - calcular estatísticas;
-   - renderizar os cards.
-*/
 let produtos = [];
 
 
 function criarElementoTexto(tag, classe, texto) {
     const elemento = document.createElement(tag);
+
     if (classe) {
         elemento.className = classe;
     }
+
     elemento.textContent = String(texto ?? "");
+
     return elemento;
 }
 
-function mostrarEstadoLista(container, texto, classe = "sem-produtos") {
+
+function mostrarEstadoLista(
+    container,
+    texto,
+    classe = "sem-produtos"
+) {
     if (container) {
-        container.replaceChildren(criarElementoTexto("p", classe, texto));
+        container.replaceChildren(
+            criarElementoTexto("p", classe, texto)
+        );
     }
 }
 
 
 /* ============================================================
-   5. FORMATAR PREÇO
+   4. FORMATAR PREÇO
    ============================================================ */
 
 function formatarPreco(valor) {
-
     const numero = Number(valor);
 
-    /*
-       Se por algum motivo o preço recebido não for válido,
-       exibimos R$ 0,00.
-    */
     if (Number.isNaN(numero)) {
         return "R$ 0,00";
     }
 
-    return numero.toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
+    return numero.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
 }
 
 
 /* ============================================================
-   6. MOSTRAR MENSAGEM
+   5. MOSTRAR MENSAGEM
    ============================================================ */
 
 function mostrarMensagem(texto, tipo = "info") {
+    if (!mensagem) {
+        console.warn(texto);
+        return;
+    }
 
     mensagem.textContent = texto;
 
-    /*
-       Remove classes anteriores.
-    */
     mensagem.classList.remove(
         "sucesso",
         "erro",
         "info"
     );
 
-    /*
-       Adiciona a nova classe.
-    */
     mensagem.classList.add(tipo);
 
     mensagem.hidden = false;
 
-
-    /*
-       Após alguns segundos, escondemos a mensagem.
-    */
     window.clearTimeout(mostrarMensagem.timeout);
 
-    mostrarMensagem.timeout = window.setTimeout(
-        () => {
-            mensagem.hidden = true;
-        },
-        5000
-    );
+    mostrarMensagem.timeout = window.setTimeout(() => {
+        mensagem.hidden = true;
+    }, 5000);
 }
 
 
 /* ============================================================
-   7. TRATAR ERROS DA API
+   6. TRATAR ERROS DA API
    ============================================================ */
 
 async function obterMensagemErro(response) {
+    let textoResposta = "";
 
     try {
-
-        const dados = await response.json();
-
-        /*
-           FastAPI normalmente retorna:
-
-           {
-               "detail": "Mensagem do erro"
-           }
-        */
-        if (dados.detail) {
-
-            /*
-               Alguns erros de validação podem vir
-               como uma lista.
-            */
-            if (Array.isArray(dados.detail)) {
-
-                return dados.detail
-                    .map((erro) => erro.msg || "Erro de validação.")
-                    .join(" ");
-
-            }
-
-            return String(dados.detail);
-        }
-
-        if (dados.mensagem) {
-            return String(dados.mensagem);
-        }
+        textoResposta = await response.text();
 
     } catch (erro) {
-
-        console.error(
-            "Não foi possível interpretar o erro da API:",
-            erro
-        );
+        console.error("Não foi possível ler a resposta:", erro);
     }
 
-    return `Erro na requisição. Código HTTP: ${response.status}`;
+    if (textoResposta) {
+        try {
+            const dados = JSON.parse(textoResposta);
+
+            if (dados.detail) {
+                if (Array.isArray(dados.detail)) {
+                    return dados.detail.map((erro) => {
+                        const campo = Array.isArray(erro.loc)
+                            ? erro.loc[erro.loc.length - 1]
+                            : "";
+
+                        const descricaoErro =
+                            erro.msg || "Erro de validação.";
+
+                        return campo
+                            ? `${campo}: ${descricaoErro}`
+                            : descricaoErro;
+                    }).join(" ");
+                }
+
+                return String(dados.detail);
+            }
+
+            if (dados.mensagem) {
+                return String(dados.mensagem);
+            }
+
+            if (dados.message) {
+                return String(dados.message);
+            }
+
+        } catch (erro) {
+            console.warn(
+                "A API retornou uma resposta que não é JSON:",
+                textoResposta
+            );
+        }
+    }
+
+    if (response.status === 422) {
+        return "Os dados enviados não passaram pela validação. Confira os campos obrigatórios.";
+    }
+
+    if (response.status >= 500) {
+        console.error(
+            "Erro interno retornado pelo servidor:",
+            response.status,
+            textoResposta
+        );
+
+        return "O servidor encontrou um erro interno ao processar o produto. Consulte os logs do backend.";
+    }
+
+    return textoResposta
+        ? `Erro ${response.status}: ${textoResposta.slice(0, 300)}`
+        : `Erro na requisição. Código HTTP: ${response.status}`;
 }
 
 
 /* ============================================================
-   8. CARREGAR PRODUTOS
+   7. CARREGAR PRODUTOS
    ============================================================ */
 
 async function carregarProdutos() {
-
-    mostrarEstadoLista(listaProdutos, "Carregando produtos...", "carregando");
+    mostrarEstadoLista(
+        listaProdutos,
+        "Carregando produtos...",
+        "carregando"
+    );
 
     try {
-       const response = await requisitarComRefreshAdmin(API_PRODUTOS, {
-           method: "GET",
-           headers: {
-               "Accept": "application/json"
-           }
-       });
+        const response = await requisitarComRefreshAdmin(
+            API_PRODUTOS,
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
 
-       if (!response.ok) {
-           const erroApi = await obterMensagemErro(response);
-           throw new Error(erroApi);
-       }
+        if (!response.ok) {
+            throw new Error(await obterMensagemErro(response));
+        }
 
-       const dados = await response.json();
-       produtos = Array.isArray(dados.produtos) ? dados.produtos : [];
+        const dados = await response.json();
 
-       atualizarEstatisticas();
-       aplicarFiltros();
+        produtos = Array.isArray(dados.produtos)
+            ? dados.produtos
+            : [];
+
+        atualizarEstatisticas();
+        aplicarFiltros();
 
     } catch (erro) {
-       console.error("Erro ao carregar produtos:", erro);
-       mostrarEstadoLista(listaProdutos, "Não foi possível carregar os produtos.");
+        console.error("Erro ao carregar produtos:", erro);
 
-       mostrarMensagem(
-           erro.message || "Não foi possível carregar os produtos.",
-           "erro"
-       );
+        mostrarEstadoLista(
+            listaProdutos,
+            "Não foi possível carregar os produtos."
+        );
+
+        mostrarMensagem(
+            erro.message || "Não foi possível carregar os produtos.",
+            "erro"
+        );
     }
 }
 
+
+/* ============================================================
+   8. CARREGAR RESUMO ADMINISTRATIVO
+   ============================================================ */
+
 async function carregarResumoAdmin() {
     try {
-       const [pedidosResposta, estoqueResposta] = await Promise.all([
-           requisitarComRefreshAdmin(`${API_PEDIDOS}`, {
-               method: "GET",
-               headers: { "Accept": "application/json" },
-           }),
-           requisitarComRefreshAdmin(`${API_PEDIDOS}/estoque`, {
-               method: "GET",
-               headers: { "Accept": "application/json" },
-           }),
-       ]);
+        const [pedidosResposta, estoqueResposta] = await Promise.all([
+            requisitarComRefreshAdmin(API_PEDIDOS, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
 
-       if (!pedidosResposta.ok || !estoqueResposta.ok) {
-           throw new Error("Não foi possível carregar o resumo administrativo.");
-       }
+            requisitarComRefreshAdmin(`${API_PEDIDOS}/estoque`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
+        ]);
 
-       const pedidosDados = await pedidosResposta.json();
-       const estoqueDados = await estoqueResposta.json();
+        if (!pedidosResposta.ok || !estoqueResposta.ok) {
+            throw new Error(
+                "Não foi possível carregar o resumo administrativo."
+            );
+        }
 
-       const pedidos = Array.isArray(pedidosDados.pedidos) ? pedidosDados.pedidos : [];
-       const estoque = Array.isArray(estoqueDados.produtos) ? estoqueDados.produtos : [];
+        const pedidosDados = await pedidosResposta.json();
+        const estoqueDados = await estoqueResposta.json();
 
-       const itensRecentes = pedidos.slice(0, 3);
-       if (listaPedidosRecentes) {
-           if (!itensRecentes.length) {
-               mostrarEstadoLista(listaPedidosRecentes, "Nenhum pedido registrado.");
-           } else {
-               const fragmento = document.createDocumentFragment();
-               itensRecentes.forEach((pedido) => {
-                   const valor = Number(pedido.valor_total || 0);
-                   const data = pedido.criado_em ? new Date(pedido.criado_em).toLocaleString("pt-BR") : "-";
-                   const itens = (pedido.itens || [])
-                       .slice(0, 2)
-                       .map((item) => `${item.quantidade}x ${item.nome || "Produto"}`).join(", ");
+        const pedidos = Array.isArray(pedidosDados.pedidos)
+            ? pedidosDados.pedidos
+            : [];
 
-                   const linha = document.createElement("div");
-                   linha.className = "admin-item-resumo";
-                   linha.append(
-                       criarElementoTexto("strong", "", `#${pedido.id}`),
-                       criarElementoTexto("span", "", pedido.status || "Indefinido"),
-                       criarElementoTexto("small", "", data),
-                       criarElementoTexto("small", "", itens || "Sem itens"),
-                       criarElementoTexto(
-                           "strong",
-                           "",
-                           valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                       )
-                   );
-                   fragmento.appendChild(linha);
-               });
-               listaPedidosRecentes.replaceChildren(fragmento);
-           }
-       }
+        const estoque = Array.isArray(estoqueDados.produtos)
+            ? estoqueDados.produtos
+            : [];
 
-       const estoqueBaixo = estoque
-           .filter((produto) => Number(produto.estoque) <= 3)
-           .slice(0, 4);
+        const itensRecentes = pedidos.slice(0, 3);
 
-       if (listaEstoqueBaixo) {
-           if (!estoqueBaixo.length) {
-               mostrarEstadoLista(listaEstoqueBaixo, "Estoque saudável para todos os produtos.");
-           } else {
-               const fragmento = document.createDocumentFragment();
-               estoqueBaixo.forEach((produto) => {
-                   const linha = document.createElement("div");
-                   linha.className = "admin-item-resumo";
-                   linha.append(
-                       criarElementoTexto("strong", "", produto.nome || "Produto"),
-                       criarElementoTexto("span", "", `Disponível: ${produto.estoque}`),
-                       criarElementoTexto("small", "", produto.categoria || "Sem categoria")
-                   );
-                   fragmento.appendChild(linha);
-               });
-               listaEstoqueBaixo.replaceChildren(fragmento);
-           }
-       }
+        if (listaPedidosRecentes) {
+            if (!itensRecentes.length) {
+                mostrarEstadoLista(
+                    listaPedidosRecentes,
+                    "Nenhum pedido registrado."
+                );
+
+            } else {
+                const fragmento = document.createDocumentFragment();
+
+                itensRecentes.forEach((pedido) => {
+                    const valor = Number(pedido.valor_total || 0);
+
+                    const data = pedido.criado_em
+                        ? new Date(pedido.criado_em).toLocaleString("pt-BR")
+                        : "-";
+
+                    const itens = (pedido.itens || [])
+                        .slice(0, 2)
+                        .map((item) =>
+                            `${item.quantidade}x ${item.nome || "Produto"}`
+                        )
+                        .join(", ");
+
+                    const linha = document.createElement("div");
+                    linha.className = "admin-item-resumo";
+
+                    linha.append(
+                        criarElementoTexto("strong", "", `#${pedido.id}`),
+                        criarElementoTexto(
+                            "span",
+                            "",
+                            pedido.status || "Indefinido"
+                        ),
+                        criarElementoTexto("small", "", data),
+                        criarElementoTexto(
+                            "small",
+                            "",
+                            itens || "Sem itens"
+                        ),
+                        criarElementoTexto(
+                            "strong",
+                            "",
+                            valor.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL"
+                            })
+                        )
+                    );
+
+                    fragmento.appendChild(linha);
+                });
+
+                listaPedidosRecentes.replaceChildren(fragmento);
+            }
+        }
+
+        const estoqueBaixo = estoque
+            .filter((produto) => Number(produto.estoque) <= 3)
+            .slice(0, 4);
+
+        if (listaEstoqueBaixo) {
+            if (!estoqueBaixo.length) {
+                mostrarEstadoLista(
+                    listaEstoqueBaixo,
+                    "Estoque saudável para todos os produtos."
+                );
+
+            } else {
+                const fragmento = document.createDocumentFragment();
+
+                estoqueBaixo.forEach((produto) => {
+                    const linha = document.createElement("div");
+                    linha.className = "admin-item-resumo";
+
+                    linha.append(
+                        criarElementoTexto(
+                            "strong",
+                            "",
+                            produto.nome || "Produto"
+                        ),
+                        criarElementoTexto(
+                            "span",
+                            "",
+                            `Disponível: ${produto.estoque}`
+                        ),
+                        criarElementoTexto(
+                            "small",
+                            "",
+                            produto.categoria || "Sem categoria"
+                        )
+                    );
+
+                    fragmento.appendChild(linha);
+                });
+
+                listaEstoqueBaixo.replaceChildren(fragmento);
+            }
+        }
+
     } catch (erro) {
-       console.error("Erro ao carregar resumo administrativo:", erro);
-       if (listaPedidosRecentes) {
-           mostrarEstadoLista(listaPedidosRecentes, "Não foi possível carregar os pedidos.");
-       }
-       if (listaEstoqueBaixo) {
-           mostrarEstadoLista(listaEstoqueBaixo, "Não foi possível carregar o estoque.");
-       }
+        console.error(
+            "Erro ao carregar resumo administrativo:",
+            erro
+        );
+
+        if (listaPedidosRecentes) {
+            mostrarEstadoLista(
+                listaPedidosRecentes,
+                "Não foi possível carregar os pedidos."
+            );
+        }
+
+        if (listaEstoqueBaixo) {
+            mostrarEstadoLista(
+                listaEstoqueBaixo,
+                "Não foi possível carregar o estoque."
+            );
+        }
     }
 }
 
@@ -455,38 +551,18 @@ async function carregarResumoAdmin() {
    ============================================================ */
 
 function atualizarEstatisticas() {
-
-    /*
-       Quantidade total.
-    */
     const quantidadeTotal = produtos.length;
 
-
-    /*
-       Produtos ativos.
-    */
     const quantidadeAtivos = produtos.filter(
         (produto) => produto.status === "ATIVO"
     ).length;
 
-
-    /*
-       Produtos inativos.
-    */
     const quantidadeInativos = produtos.filter(
         (produto) => produto.status === "INATIVO"
     ).length;
 
-
-    /*
-       Soma de todas as unidades em estoque.
-
-       Number(produto.estoque) garante que o valor
-       seja tratado como número.
-    */
     const quantidadeEstoque = produtos.reduce(
         (total, produto) => {
-
             const estoque = Number(produto.estoque);
 
             return total + (
@@ -498,10 +574,6 @@ function atualizarEstatisticas() {
         0
     );
 
-
-    /*
-       Atualizamos os quatro cards.
-    */
     totalProdutos.textContent = quantidadeTotal;
     totalAtivos.textContent = quantidadeAtivos;
     totalInativos.textContent = quantidadeInativos;
@@ -514,70 +586,30 @@ function atualizarEstatisticas() {
    ============================================================ */
 
 function aplicarFiltros() {
-
-    /*
-       Texto pesquisado.
-    */
-    const termo = pesquisaProduto.value
-        .trim()
-        .toLowerCase();
-
-
-    /*
-       Status selecionado.
-    */
+    const termo = pesquisaProduto.value.trim().toLowerCase();
     const statusSelecionado = filtroStatus.value;
 
+    const produtosFiltrados = produtos.filter((produto) => {
+        const nome = String(produto.nome || "").toLowerCase();
+        const categoria = String(produto.categoria || "").toLowerCase();
+        const subcategoria = String(
+            produto.subcategoria || ""
+        ).toLowerCase();
+        const marca = String(produto.marca || "").toLowerCase();
 
-    /*
-       Criamos um novo array apenas com os produtos
-       que atendem aos filtros.
-    */
-    const produtosFiltrados = produtos.filter(
-        (produto) => {
+        const correspondePesquisa =
+            !termo ||
+            nome.includes(termo) ||
+            categoria.includes(termo) ||
+            subcategoria.includes(termo) ||
+            marca.includes(termo);
 
-            const nome = String(
-                produto.nome || ""
-            ).toLowerCase();
+        const correspondeStatus =
+            !statusSelecionado ||
+            produto.status === statusSelecionado;
 
-            const categoria = String(
-                produto.categoria || ""
-            ).toLowerCase();
-
-            const marca = String(
-                produto.marca || ""
-            ).toLowerCase();
-
-
-            /*
-               Pesquisa por:
-               - nome;
-               - categoria;
-               - marca.
-            */
-            const correspondePesquisa =
-                !termo ||
-                nome.includes(termo) ||
-                categoria.includes(termo) ||
-                marca.includes(termo);
-
-
-            /*
-               Se nenhum status foi selecionado,
-               qualquer status é aceito.
-            */
-            const correspondeStatus =
-                !statusSelecionado ||
-                produto.status === statusSelecionado;
-
-
-            return (
-                correspondePesquisa &&
-                correspondeStatus
-            );
-        }
-    );
-
+        return correspondePesquisa && correspondeStatus;
+    });
 
     renderizarProdutos(produtosFiltrados);
 }
@@ -588,98 +620,163 @@ function aplicarFiltros() {
    ============================================================ */
 
 function renderizarProdutos(lista) {
-
-    /*
-       Caso não existam produtos.
-    */
     if (!lista.length) {
-        mostrarEstadoLista(listaProdutos, "Nenhum produto encontrado.");
+        mostrarEstadoLista(
+            listaProdutos,
+            "Nenhum produto encontrado."
+        );
+
         return;
     }
 
     const fragmento = document.createDocumentFragment();
 
-    lista.forEach(
-        (produto) => {
-            const card = document.createElement("article");
-            card.className = "admin-produto-card";
+    lista.forEach((produto) => {
+        const card = document.createElement("article");
+        card.className = "admin-produto-card";
 
-            const possuiImagem =
-                produto.imagem_url &&
-                String(produto.imagem_url).trim() !== "";
+        const possuiImagem =
+            produto.imagem_url &&
+            String(produto.imagem_url).trim() !== "";
 
-            const classeStatus =
-                produto.status === "ATIVO"
-                    ? "ativo"
-                    : "inativo";
+        const classeStatus =
+            produto.status === "ATIVO" ? "ativo" : "inativo";
 
-            const textoBotaoStatus =
-                produto.status === "ATIVO"
-                    ? "Desativar"
-                    : "Reativar";
+        const textoBotaoStatus =
+            produto.status === "ATIVO" ? "Desativar" : "Reativar";
 
-            const areaImagem = document.createElement("div");
-            areaImagem.className = "admin-produto-imagem";
-            if (possuiImagem) {
-                const imagem = document.createElement("img");
-                imagem.src = produto.imagem_url;
-                imagem.alt = produto.nome || "Imagem do produto";
-                imagem.loading = "lazy";
-                imagem.addEventListener("error", () => {
-                    imagem.remove();
-                    areaImagem.appendChild(
-                        criarElementoTexto("span", "admin-produto-sem-imagem", "Weblue")
-                    );
-                }, { once: true });
-                areaImagem.appendChild(imagem);
-            } else {
+        const areaImagem = document.createElement("div");
+        areaImagem.className = "admin-produto-imagem";
+
+        if (possuiImagem) {
+            const imagem = document.createElement("img");
+
+            imagem.src = produto.imagem_url;
+            imagem.alt = produto.nome || "Imagem do produto";
+            imagem.loading = "lazy";
+
+            imagem.addEventListener("error", () => {
+                imagem.remove();
+
                 areaImagem.appendChild(
-                    criarElementoTexto("span", "admin-produto-sem-imagem", "Weblue")
+                    criarElementoTexto(
+                        "span",
+                        "admin-produto-sem-imagem",
+                        "Weblue"
+                    )
                 );
-            }
+            }, { once: true });
 
-            const statusProduto = criarElementoTexto(
-                "span",
-                `status-produto ${classeStatus}`,
-                produto.status || "INDEFINIDO"
+            areaImagem.appendChild(imagem);
+
+        } else {
+            areaImagem.appendChild(
+                criarElementoTexto(
+                    "span",
+                    "admin-produto-sem-imagem",
+                    "Weblue"
+                )
             );
-            areaImagem.appendChild(statusProduto);
-
-            const conteudo = document.createElement("div");
-            conteudo.className = "admin-produto-conteudo";
-            conteudo.append(
-                criarElementoTexto("span", "admin-produto-categoria", produto.categoria || "Sem categoria"),
-                criarElementoTexto("h3", "admin-produto-nome", produto.nome || "Produto Weblue"),
-                criarElementoTexto("p", "admin-produto-marca", produto.marca || "Sem marca"),
-                criarElementoTexto("p", "admin-produto-descricao", produto.descricao || "Produto sem descrição.")
-            );
-
-            const dados = document.createElement("div");
-            dados.className = "admin-produto-dados";
-            dados.append(
-                criarElementoTexto("strong", "admin-produto-preco", formatarPreco(produto.preco)),
-                criarElementoTexto("span", "admin-produto-estoque", `${produto.estoque} unidade(s)`)
-            );
-            conteudo.appendChild(dados);
-
-            const acoes = document.createElement("div");
-            acoes.className = "admin-produto-acoes";
-
-            const botaoEditar = criarElementoTexto("button", "botao-editar", "Editar");
-            botaoEditar.type = "button";
-            botaoEditar.dataset.id = String(produto.id);
-
-            const botaoStatus = criarElementoTexto("button", "botao-status", textoBotaoStatus);
-            botaoStatus.type = "button";
-            botaoStatus.dataset.id = String(produto.id);
-            botaoStatus.dataset.status = produto.status || "";
-            acoes.append(botaoEditar, botaoStatus);
-            conteudo.appendChild(acoes);
-
-            card.append(areaImagem, conteudo);
-            fragmento.appendChild(card);
         }
-    );
+
+        const statusProduto = criarElementoTexto(
+            "span",
+            `status-produto ${classeStatus}`,
+            produto.status || "INDEFINIDO"
+        );
+
+        areaImagem.appendChild(statusProduto);
+
+        const conteudo = document.createElement("div");
+        conteudo.className = "admin-produto-conteudo";
+
+        conteudo.append(
+            criarElementoTexto(
+                "span",
+                "admin-produto-categoria",
+                produto.categoria || "Sem categoria"
+            ),
+            criarElementoTexto(
+                "h3",
+                "admin-produto-nome",
+                produto.nome || "Produto Weblue"
+            )
+        );
+
+        if (
+            produto.subcategoria &&
+            String(produto.subcategoria).trim()
+        ) {
+            conteudo.appendChild(
+                criarElementoTexto(
+                    "span",
+                    "admin-produto-subcategoria",
+                    `Subcategoria: ${produto.subcategoria}`
+                )
+            );
+        }
+
+        conteudo.append(
+            criarElementoTexto(
+                "p",
+                "admin-produto-marca",
+                produto.marca || "Sem marca"
+            ),
+            criarElementoTexto(
+                "p",
+                "admin-produto-descricao",
+                produto.descricao || "Produto sem descrição."
+            )
+        );
+
+        const dados = document.createElement("div");
+        dados.className = "admin-produto-dados";
+
+        dados.append(
+            criarElementoTexto(
+                "strong",
+                "admin-produto-preco",
+                formatarPreco(produto.preco)
+            ),
+            criarElementoTexto(
+                "span",
+                "admin-produto-estoque",
+                `${produto.estoque} unidade(s)`
+            )
+        );
+
+        conteudo.appendChild(dados);
+
+        const acoes = document.createElement("div");
+        acoes.className = "admin-produto-acoes";
+
+        const botaoEditar = criarElementoTexto(
+            "button",
+            "botao-editar",
+            "Editar"
+        );
+
+        botaoEditar.type = "button";
+        botaoEditar.dataset.id = String(produto.id);
+
+        const botaoStatus = criarElementoTexto(
+            "button",
+            "botao-status",
+            textoBotaoStatus
+        );
+
+        botaoStatus.type = "button";
+        botaoStatus.dataset.id = String(produto.id);
+        botaoStatus.dataset.status = produto.status || "";
+
+        acoes.append(botaoEditar, botaoStatus);
+
+        conteudo.appendChild(acoes);
+
+        card.append(areaImagem, conteudo);
+
+        fragmento.appendChild(card);
+    });
 
     listaProdutos.replaceChildren(fragmento);
 }
@@ -690,29 +787,17 @@ function renderizarProdutos(lista) {
    ============================================================ */
 
 function abrirModalNovoProduto() {
-
-    /*
-       Limpa todos os campos.
-    */
     formProduto.reset();
 
-
-    /*
-       Sem ID significa cadastro.
-    */
     produtoId.value = "";
 
-
-    /*
-       Produto novo começa ativo.
-    */
     campoStatus.value = "ATIVO";
 
+    campoSubcategoria.value = "";
 
     tituloModal.textContent = "Novo produto";
 
     botaoSalvar.textContent = "Salvar produto";
-
 
     abrirModal();
 }
@@ -723,23 +808,13 @@ function abrirModalNovoProduto() {
    ============================================================ */
 
 function abrirModal() {
-
     modalProduto.hidden = false;
 
-    document.body.classList.add(
-        "modal-aberto"
-    );
+    document.body.classList.add("modal-aberto");
 
-
-    /*
-       Coloca o cursor no nome.
-    */
-    window.setTimeout(
-        () => {
-            campoNome.focus();
-        },
-        50
-    );
+    window.setTimeout(() => {
+        campoNome.focus();
+    }, 50);
 }
 
 
@@ -748,18 +823,10 @@ function abrirModal() {
    ============================================================ */
 
 function fecharModal() {
-
     modalProduto.hidden = true;
 
-    document.body.classList.remove(
-        "modal-aberto"
-    );
+    document.body.classList.remove("modal-aberto");
 
-
-    /*
-       Limpa o formulário para evitar que
-       dados antigos permaneçam na próxima abertura.
-    */
     formProduto.reset();
 
     produtoId.value = "";
@@ -771,7 +838,6 @@ function fecharModal() {
    ============================================================ */
 
 async function buscarProdutoPorId(id) {
-
     const response = await requisitarComRefreshAdmin(
         `${API_PRODUTOS}/${id}`,
         {
@@ -782,25 +848,12 @@ async function buscarProdutoPorId(id) {
         }
     );
 
-
     if (!response.ok) {
-
-        const erroApi = await obterMensagemErro(response);
-
-        throw new Error(erroApi);
+        throw new Error(await obterMensagemErro(response));
     }
-
 
     const dados = await response.json();
 
-
-    /*
-       Nosso endpoint retorna:
-
-       {
-           "produto": {...}
-       }
-    */
     return dados.produto;
 }
 
@@ -810,19 +863,9 @@ async function buscarProdutoPorId(id) {
    ============================================================ */
 
 async function editarProduto(id) {
-
     try {
-
-        /*
-           Buscamos novamente na API para garantir
-           que estamos editando os dados mais recentes.
-        */
         const produto = await buscarProdutoPorId(id);
 
-
-        /*
-           Preenchemos os campos.
-        */
         produtoId.value = produto.id;
 
         campoNome.value = produto.nome || "";
@@ -830,24 +873,19 @@ async function editarProduto(id) {
         campoPreco.value = produto.preco || "";
         campoEstoque.value = produto.estoque ?? 0;
         campoCategoria.value = produto.categoria || "";
+        campoSubcategoria.value = produto.subcategoria || "";
         campoMarca.value = produto.marca || "";
         campoImagemUrl.value = produto.imagem_url || "";
         campoStatus.value = produto.status || "ATIVO";
-
 
         tituloModal.textContent = "Editar produto";
 
         botaoSalvar.textContent = "Salvar alterações";
 
-
         abrirModal();
 
     } catch (erro) {
-
-        console.error(
-            "Erro ao buscar produto:",
-            erro
-        );
+        console.error("Erro ao buscar produto:", erro);
 
         mostrarMensagem(
             erro.message || "Não foi possível abrir o produto.",
@@ -862,90 +900,82 @@ async function editarProduto(id) {
    ============================================================ */
 
 function obterDadosFormulario() {
-
-    /*
-       trim() remove espaços desnecessários
-       no começo e no fim.
-    */
     const nome = campoNome.value.trim();
-
     const descricao = campoDescricao.value.trim();
 
     const preco = Number(campoPreco.value);
-
     const estoque = Number(campoEstoque.value);
 
-    const categoria = campoCategoria.value;
+    const categoria = campoCategoria.value.trim();
+    const subcategoria = campoSubcategoria.value.trim();
 
     const marca = campoMarca.value.trim();
-
     const imagemUrl = campoImagemUrl.value.trim();
 
     const status = campoStatus.value;
 
-
-    /*
-       Validações adicionais no frontend.
-    */
-    if (!nome) {
+    // Nome obrigatório.
+    if (nome.length < 2) {
         throw new Error(
-            "Informe o nome do produto."
+            "Informe o nome do produto com pelo menos 2 caracteres."
         );
     }
 
+    // Descrição obrigatória.
+    if (descricao.length < 5) {
+        throw new Error(
+            "A descrição é obrigatória e deve ter pelo menos 5 caracteres."
+        );
+    }
 
+    // Preço obrigatório e maior que zero.
     if (
-        Number.isNaN(preco) ||
-        preco < 0
+        !Number.isFinite(preco) ||
+        preco <= 0
     ) {
         throw new Error(
-            "Informe um preço válido."
+            "Informe um preço válido maior que zero."
         );
     }
 
-
+    // Estoque obrigatório.
     if (
         !Number.isInteger(estoque) ||
         estoque < 0
     ) {
         throw new Error(
-            "Informe um estoque válido."
+            "Informe um estoque válido, igual ou maior que zero."
         );
     }
 
-
-    if (!categoria) {
+    // Categoria obrigatória.
+    if (categoria.length < 2) {
         throw new Error(
-            "Selecione uma categoria."
+            "Selecione uma categoria válida."
         );
     }
 
+    // Marca obrigatória.
+    if (marca.length < 2) {
+        throw new Error(
+            "Informe a marca do produto com pelo menos 2 caracteres."
+        );
+    }
 
     /*
-       Criamos o objeto enviado para a API.
+       A subcategoria é opcional.
+       Quando estiver vazia, será enviada como null.
     */
+
     return {
-
         nome: nome,
-
-        /*
-           Campos opcionais vazios são enviados como null.
-        */
-        descricao:
-            descricao || null,
-
+        descricao: descricao,
         preco: preco,
-
         estoque: estoque,
-
         categoria: categoria,
-
-        marca:
-            marca || null,
-
-        imagem_url:
-            imagemUrl || null,
-
+        subcategoria: subcategoria || null,
+        marca: marca,
+        imagem_url: imagemUrl || null,
         status: status
     };
 }
@@ -956,55 +986,29 @@ function obterDadosFormulario() {
    ============================================================ */
 
 async function salvarProduto(event) {
-
-    /*
-       Impede o navegador de recarregar a página.
-    */
     event.preventDefault();
 
+    if (botaoSalvar.disabled) {
+        return;
+    }
 
     try {
-
         const dadosProduto = obterDadosFormulario();
 
-
-        /*
-           Verificamos se estamos:
-           - cadastrando;
-           - editando.
-        */
         const id = produtoId.value;
-
-
         const editando = Boolean(id);
 
-
-        /*
-           Cadastro:
-           POST /produtos
-
-           Edição:
-           PUT /produtos/{id}
-        */
         const url = editando
             ? `${API_PRODUTOS}/${id}`
             : API_PRODUTOS;
 
+        const metodo = editando ? "PUT" : "POST";
 
-        const metodo = editando
-            ? "PUT"
-            : "POST";
-
-
-        /*
-           Evita vários cliques enquanto salva.
-        */
         botaoSalvar.disabled = true;
 
         botaoSalvar.textContent = editando
             ? "Salvando alterações..."
             : "Salvando produto...";
-
 
         const response = await requisitarComRefreshAdmin(
             url,
@@ -1016,30 +1020,29 @@ async function salvarProduto(event) {
                     "Accept": "application/json"
                 },
 
-                body: JSON.stringify(
-                    dadosProduto
-                )
+                body: JSON.stringify(dadosProduto)
             }
         );
 
-
         if (!response.ok) {
-
-            const erroApi = await obterMensagemErro(response);
-
-            throw new Error(erroApi);
+            throw new Error(await obterMensagemErro(response));
         }
 
+        // Lê a resposta sem exigir que ela seja JSON.
+        const respostaTexto = await response.text();
 
-        /*
-           Lemos a resposta para concluir corretamente
-           a requisição.
-        */
-        await response.json();
-
+        if (respostaTexto) {
+            try {
+                JSON.parse(respostaTexto);
+            } catch (erro) {
+                console.warn(
+                    "A API respondeu com sucesso, mas sem JSON válido:",
+                    respostaTexto
+                );
+            }
+        }
 
         fecharModal();
-
 
         mostrarMensagem(
             editando
@@ -1048,19 +1051,10 @@ async function salvarProduto(event) {
             "sucesso"
         );
 
-
-        /*
-           Atualizamos a listagem usando dados
-           novos diretamente do banco.
-        */
         await carregarProdutos();
 
     } catch (erro) {
-
-        console.error(
-            "Erro ao salvar produto:",
-            erro
-        );
+        console.error("Erro ao salvar produto:", erro);
 
         mostrarMensagem(
             erro.message || "Não foi possível salvar o produto.",
@@ -1068,7 +1062,6 @@ async function salvarProduto(event) {
         );
 
     } finally {
-
         botaoSalvar.disabled = false;
 
         botaoSalvar.textContent = produtoId.value
@@ -1083,46 +1076,22 @@ async function salvarProduto(event) {
    ============================================================ */
 
 async function alterarStatusProduto(id, statusAtual) {
-
-    /*
-       Se está ativo:
-       usamos DELETE para desativar.
-
-       Se está inativo:
-       usamos PUT para reativar.
-    */
-    const estaAtivo =
-        statusAtual === "ATIVO";
-
+    const estaAtivo = statusAtual === "ATIVO";
 
     const mensagemConfirmacao = estaAtivo
-
         ? "Deseja realmente desativar este produto?"
-
         : "Deseja reativar este produto?";
 
-
-    const confirmou = window.confirm(
-        mensagemConfirmacao
-    );
-
+    const confirmou = window.confirm(mensagemConfirmacao);
 
     if (!confirmou) {
         return;
     }
 
-
     try {
-
         let response;
 
-
-        /* ====================================================
-           DESATIVAR
-           ==================================================== */
-
         if (estaAtivo) {
-
             response = await requisitarComRefreshAdmin(
                 `${API_PRODUTOS}/${id}`,
                 {
@@ -1133,45 +1102,27 @@ async function alterarStatusProduto(id, statusAtual) {
                 }
             );
 
-        }
-
-
-        /* ====================================================
-           REATIVAR
-           ==================================================== */
-
-        else {
-
+        } else {
             response = await requisitarComRefreshAdmin(
                 `${API_PRODUTOS}/${id}`,
                 {
                     method: "PUT",
-
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-
-                    body: JSON.stringify(
-                        {
-                            status: "ATIVO"
-                        }
-                    )
+                    body: JSON.stringify({
+                        status: "ATIVO"
+                    })
                 }
             );
         }
 
-
         if (!response.ok) {
-
-            const erroApi = await obterMensagemErro(response);
-
-            throw new Error(erroApi);
+            throw new Error(await obterMensagemErro(response));
         }
 
-
-        await response.json();
-
+        await response.text();
 
         mostrarMensagem(
             estaAtivo
@@ -1180,15 +1131,10 @@ async function alterarStatusProduto(id, statusAtual) {
             "sucesso"
         );
 
-
         await carregarProdutos();
 
     } catch (erro) {
-
-        console.error(
-            "Erro ao alterar status:",
-            erro
-        );
+        console.error("Erro ao alterar status:", erro);
 
         mostrarMensagem(
             erro.message || "Não foi possível alterar o status.",
@@ -1202,61 +1148,26 @@ async function alterarStatusProduto(id, statusAtual) {
    20. CLIQUES NOS CARDS
    ============================================================ */
 
-/*
-   Usamos delegação de eventos.
+listaProdutos.addEventListener("click", (event) => {
+    const botaoEditar = event.target.closest(".botao-editar");
 
-   Assim não precisamos adicionar um listener
-   separado para cada produto.
-*/
-listaProdutos.addEventListener(
-    "click",
-    (event) => {
+    if (botaoEditar) {
+        const id = Number(botaoEditar.dataset.id);
 
-        /*
-           Procura o botão Editar mais próximo.
-        */
-        const botaoEditar = event.target.closest(
-            ".botao-editar"
-        );
+        editarProduto(id);
 
-
-        if (botaoEditar) {
-
-            const id = Number(
-                botaoEditar.dataset.id
-            );
-
-            editarProduto(id);
-
-            return;
-        }
-
-
-        /*
-           Procura o botão de status.
-        */
-        const botaoStatus = event.target.closest(
-            ".botao-status"
-        );
-
-
-        if (botaoStatus) {
-
-            const id = Number(
-                botaoStatus.dataset.id
-            );
-
-            const statusAtual =
-                botaoStatus.dataset.status;
-
-
-            alterarStatusProduto(
-                id,
-                statusAtual
-            );
-        }
+        return;
     }
-);
+
+    const botaoStatus = event.target.closest(".botao-status");
+
+    if (botaoStatus) {
+        const id = Number(botaoStatus.dataset.id);
+        const statusAtual = botaoStatus.dataset.status;
+
+        alterarStatusProduto(id, statusAtual);
+    }
+});
 
 
 /* ============================================================
@@ -1268,18 +1179,15 @@ botaoNovoProduto.addEventListener(
     abrirModalNovoProduto
 );
 
-
 botaoFecharModal.addEventListener(
     "click",
     fecharModal
 );
 
-
 botaoCancelar.addEventListener(
     "click",
     fecharModal
 );
-
 
 modalOverlay.addEventListener(
     "click",
@@ -1287,21 +1195,14 @@ modalOverlay.addEventListener(
 );
 
 
-/*
-   ESC também fecha o modal.
-*/
-document.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (
-            event.key === "Escape" &&
-            !modalProduto.hidden
-        ) {
-            fecharModal();
-        }
+document.addEventListener("keydown", (event) => {
+    if (
+        event.key === "Escape" &&
+        !modalProduto.hidden
+    ) {
+        fecharModal();
     }
-);
+});
 
 
 /* ============================================================
@@ -1323,7 +1224,6 @@ pesquisaProduto.addEventListener(
     aplicarFiltros
 );
 
-
 filtroStatus.addEventListener(
     "change",
     aplicarFiltros
@@ -1334,76 +1234,36 @@ filtroStatus.addEventListener(
    24. ERRO DE IMAGEM
    ============================================================ */
 
-/*
-   Caso uma URL de imagem cadastrada deixe de funcionar,
-   escondemos a imagem quebrada e mostramos "Weblue".
-*/
 listaProdutos.addEventListener(
     "error",
     (event) => {
-
-        if (
-            event.target.tagName !== "IMG"
-        ) {
+        if (event.target.tagName !== "IMG") {
             return;
         }
 
-
-        const container =
-            event.target.closest(
-                ".admin-produto-imagem"
-            );
-
+        const container = event.target.closest(
+            ".admin-produto-imagem"
+        );
 
         event.target.remove();
 
-
-        /*
-           Evita criar o placeholder duas vezes.
-        */
         if (
             container &&
-            !container.querySelector(
-                ".admin-produto-sem-imagem"
-            )
+            !container.querySelector(".admin-produto-sem-imagem")
         ) {
+            const placeholder = document.createElement("span");
 
-            const placeholder =
-                document.createElement("span");
+            placeholder.className = "admin-produto-sem-imagem";
+            placeholder.textContent = "Weblue";
 
-
-            placeholder.className =
-                "admin-produto-sem-imagem";
-
-
-            placeholder.textContent =
-                "Weblue";
-
-
-            /*
-               Inserimos antes do status.
-            */
-            const status =
-                container.querySelector(
-                    ".status-produto"
-                );
-
+            const status = container.querySelector(".status-produto");
 
             if (status) {
-
-                container.insertBefore(
-                    placeholder,
-                    status
-                );
-
+                container.insertBefore(placeholder, status);
             } else {
-
-                container.appendChild(
-                    placeholder
-                );
+                container.appendChild(placeholder);
             }
         }
-
     },
     true
 );
@@ -1414,18 +1274,21 @@ listaProdutos.addEventListener(
    ============================================================ */
 
 if (btnSairAdmin) {
-   btnSairAdmin.addEventListener("click", async () => {
-       btnSairAdmin.disabled = true;
-       btnSairAdmin.textContent = "Saindo...";
+    btnSairAdmin.addEventListener("click", async () => {
+        btnSairAdmin.disabled = true;
+        btnSairAdmin.textContent = "Saindo...";
 
-       try {
-           await logoutAdminNoServidor();
-       } finally {
-           limparSessaoAdmin();
-           window.location.href = "/admin-login.html";
-       }
-   });
+        try {
+            await logoutAdminNoServidor();
+
+        } finally {
+            limparSessaoAdmin();
+
+            window.location.href = "/admin-login.html";
+        }
+    });
 }
+
 
 /* ============================================================
    26. INICIALIZAÇÃO
@@ -1434,8 +1297,12 @@ if (btnSairAdmin) {
 const tokenAdminAtivo = sessionStorage.getItem(TOKEN_ADMIN_KEY);
 
 if (!tokenAdminAtivo) {
-   redirecionarParaLoginAdmin("Você precisa estar autenticado para acessar o painel administrativo.");
+    redirecionarParaLoginAdmin(
+        "Você precisa estar autenticado para acessar o painel administrativo."
+    );
+
 } else {
-   carregarProdutos();
-   carregarResumoAdmin();
+    carregarProdutos();
+
+    carregarResumoAdmin();
 }
