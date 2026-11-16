@@ -68,8 +68,6 @@ body {
     color: #258bd0;
 }
 
-/* BOTÃO DA SACOLA */
-
 .botao-sacola {
     border: none;
     background: #174b91;
@@ -123,7 +121,7 @@ body {
     text-decoration: underline;
 }
 
-/* TÍTULO DA CATEGORIA */
+/* TÍTULO */
 
 .titulo-categoria {
     margin-bottom: 35px;
@@ -152,8 +150,8 @@ body {
 
 .area-catalogo {
     display: grid;
-    grid-template-columns: 245px 1fr;
-    gap: 35px;
+    grid-template-columns: 225px minmax(0, 1fr);
+    gap: 30px;
     align-items: start;
 }
 
@@ -214,7 +212,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .topo-produtos h2 {
@@ -244,6 +242,124 @@ body {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 22px;
+    align-items: stretch;
+}
+
+/* CARD */
+
+.card-produto {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(25, 55, 95, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-produto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(25, 75, 135, 0.12);
+}
+
+/* IMAGEM DO PRODUTO */
+
+.link-produto {
+    display: flex;
+    width: 100%;
+    height: 215px;
+    padding: 12px;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.imagem-produto {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.card-produto:hover .imagem-produto {
+    transform: scale(1.04);
+}
+
+/* INFORMAÇÕES */
+
+.informacoes-produto {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: flex-start;
+}
+
+.categoria-produto {
+    color: #258bd0;
+    background: #edf6ff;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+}
+
+.informacoes-produto h3 {
+    width: 100%;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    min-height: 42px;
+}
+
+.informacoes-produto h3 a {
+    color: #263c59;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.informacoes-produto h3 a:hover {
+    color: #258bd0;
+}
+
+/* PREÇO */
+
+.preco-produto {
+    color: #174b91;
+    font-size: 19px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* BOTÃO */
+
+.botao-adicionar {
+    width: 100%;
+    margin-top: auto;
+    padding: 11px 10px;
+    border: none;
+    border-radius: 8px;
+    background: #174b91;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.botao-adicionar:hover {
+    background: #258bd0;
+    transform: translateY(-2px);
 }
 
 /* MENSAGENS */
@@ -266,10 +382,15 @@ body {
 
 /* RESPONSIVIDADE */
 
-@media (max-width: 900px) {
+@media (min-width: 1200px) {
+    .lista-produtos {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
 
+@media (max-width: 1000px) {
     .area-catalogo {
-        grid-template-columns: 200px 1fr;
+        grid-template-columns: 200px minmax(0, 1fr);
         gap: 20px;
     }
 
@@ -283,7 +404,6 @@ body {
 }
 
 @media (max-width: 650px) {
-
     .container-cabecalho {
         flex-wrap: wrap;
     }
@@ -309,6 +429,29 @@ body {
         gap: 12px;
     }
 
+    .link-produto {
+        height: 165px;
+        padding: 9px;
+    }
+
+    .informacoes-produto {
+        padding: 11px;
+    }
+
+    .informacoes-produto h3 {
+        font-size: 13px;
+        min-height: 36px;
+    }
+
+    .preco-produto {
+        font-size: 16px;
+    }
+
+    .botao-adicionar {
+        font-size: 11px;
+        padding: 10px 5px;
+    }
+
     .titulo-categoria h1 {
         font-size: 27px;
     }
@@ -320,9 +463,11 @@ body {
 }
 
 @media (max-width: 380px) {
-
     .lista-produtos {
         grid-template-columns: 1fr;
     }
 
+    .link-produto {
+        height: 210px;
+    }
 }
