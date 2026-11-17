@@ -245,7 +245,7 @@ body {
     align-items: stretch;
 }
 
-/* CARD */
+/* CARD DE PRODUTO */
 
 .card-produto {
     min-width: 0;
@@ -341,7 +341,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* BOTÃO */
+/* BOTÃO DO PRODUTO */
 
 .botao-adicionar {
     width: 100%;
@@ -360,6 +360,112 @@ body {
 .botao-adicionar:hover {
     background: #258bd0;
     transform: translateY(-2px);
+}
+
+/* CARD ESPECIAL VALE-COMPRAS */
+
+.card-vale-compras {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 850px;
+    margin: 5px auto 20px;
+    padding: 25px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 30px;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(25, 55, 95, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-vale-compras:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 13px 32px rgba(25, 55, 95, 0.12);
+}
+
+.vale-compras-imagem {
+    width: 100%;
+    min-height: 280px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #fffdf7, #f7f0df);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.vale-compras-imagem img {
+    display: block;
+    width: 100%;
+    height: 280px;
+    object-fit: contain;
+    object-position: center;
+}
+
+.vale-compras-imagem.imagem-indisponivel::after {
+    content: "Vale-Presente WeBlue";
+    color: #98783b;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.vale-compras-conteudo {
+    padding: 15px;
+}
+
+.vale-compras-etiqueta {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border-radius: 30px;
+    background: #f7f0df;
+    color: #967333;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.vale-compras-conteudo h3 {
+    margin-bottom: 14px;
+    color: #173d70;
+    font-size: 27px;
+}
+
+.vale-compras-conteudo p {
+    margin-bottom: 25px;
+    color: #738197;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.botao-vale-compras {
+    display: inline-flex;
+    min-height: 46px;
+    padding: 0 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #174b91;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.25s ease;
+}
+
+.botao-vale-compras:hover {
+    background: #258bd0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(23, 75, 145, 0.18);
+}
+
+.botao-vale-compras:focus-visible {
+    outline: 3px solid #80bdff;
+    outline-offset: 3px;
 }
 
 /* MENSAGENS */
@@ -459,6 +565,32 @@ body {
     .topo-produtos {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .card-vale-compras {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .vale-compras-imagem {
+        min-height: 220px;
+    }
+
+    .vale-compras-imagem img {
+        height: 220px;
+    }
+
+    .vale-compras-conteudo {
+        padding: 10px 5px 5px;
+    }
+
+    .vale-compras-conteudo h3 {
+        font-size: 23px;
+    }
+
+    .botao-vale-compras {
+        width: 100%;
     }
 }
 

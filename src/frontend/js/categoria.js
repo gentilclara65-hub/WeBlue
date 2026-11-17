@@ -119,12 +119,6 @@ function obterCategoria(produto) {
     return produto.categoria || produto.category || "";
 }
 
-// OBTER SUBCATEGORIA DO PRODUTO
-
-function obterSubcategoria(produto) {
-    return produto.subcategoria || produto.sub_categoria || "";
-}
-
 // OBTER IMAGEM DO PRODUTO
 
 function obterImagem(produto) {
@@ -136,9 +130,17 @@ function obterImagem(produto) {
         "";
 }
 
+// VERIFICAR SE A CATEGORIA É VALE-COMPRAS
+
+function ehCategoriaValeCompras() {
+    return normalizarTexto(categoriaAtual) === "vale-compras";
+}
+
 // CONFIGURAR PÁGINA
 
 function configurarPagina() {
+    const ehValeCompras = ehCategoriaValeCompras();
+
     if (tituloCategoria) {
         tituloCategoria.textContent = categoriaAtual;
     }
@@ -148,12 +150,15 @@ function configurarPagina() {
     }
 
     if (tituloProdutos) {
-        tituloProdutos.textContent = categoriaAtual;
+        tituloProdutos.textContent = ehValeCompras
+            ? "Nosso benefício"
+            : categoriaAtual;
     }
 
     if (descricaoCategoria) {
-        descricaoCategoria.textContent =
-            `Confira nossos produtos de ${categoriaAtual} e encontre seus favoritos.`;
+        descricaoCategoria.textContent = ehValeCompras
+            ? "Conheça as opções de vale-compras disponíveis na WeBlue."
+            : `Confira nossos produtos de ${categoriaAtual} e encontre seus favoritos.`;
     }
 
     document.title = `${categoriaAtual} | WeBlue Beauty`;
@@ -245,6 +250,58 @@ function ordenarProdutos(produtos) {
     return produtos;
 }
 
+// CRIAR CARD DO VALE-COMPRAS
+
+function criarCardValeCompras() {
+    const card = document.createElement("article");
+    card.className = "card-vale-compras";
+
+    const areaImagem = document.createElement("div");
+    areaImagem.className = "vale-compras-imagem";
+
+    const imagem = document.createElement("img");
+
+    imagem.src = "/img/produtos/Vale-Presente%20WeBlue%20Dourado.png";
+    imagem.alt = "Vale-Presente WeBlue Dourado";
+    imagem.loading = "lazy";
+
+    imagem.onerror = () => {
+        imagem.style.display = "none";
+        areaImagem.classList.add("imagem-indisponivel");
+    };
+
+    areaImagem.appendChild(imagem);
+
+    const conteudo = document.createElement("div");
+    conteudo.className = "vale-compras-conteudo";
+
+    const etiqueta = document.createElement("span");
+    etiqueta.className = "vale-compras-etiqueta";
+    etiqueta.textContent = "BENEFÍCIO WEBLUE";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = "Vale-compras";
+
+    const descricao = document.createElement("p");
+    descricao.textContent =
+        "Conheça as opções de vale-compras disponíveis na Weblue.";
+
+    const botao = document.createElement("a");
+    botao.href = "/vale-compras";
+    botao.className = "botao-vale-compras";
+    botao.textContent = "Ver vale-compras";
+
+    conteudo.appendChild(etiqueta);
+    conteudo.appendChild(titulo);
+    conteudo.appendChild(descricao);
+    conteudo.appendChild(botao);
+
+    card.appendChild(areaImagem);
+    card.appendChild(conteudo);
+
+    return card;
+}
+
 // CRIAR CARD DO PRODUTO
 
 function criarCardProduto(produto) {
@@ -254,8 +311,6 @@ function criarCardProduto(produto) {
     const imagem = obterImagem(produto);
     const nome = obterNome(produto);
     const preco = formatarPreco(produto.preco);
-
-    // IMAGEM
 
     const imagemProduto = document.createElement("img");
 
@@ -268,15 +323,11 @@ function criarCardProduto(produto) {
         imagemProduto.style.display = "none";
     };
 
-    // LINK PARA A PÁGINA DO PRODUTO
-
     const linkImagem = document.createElement("a");
     linkImagem.href = `/produto.html?id=${encodeURIComponent(produto.id)}`;
     linkImagem.className = "link-produto";
 
     linkImagem.appendChild(imagemProduto);
-
-    // INFORMAÇÕES
 
     const informacoes = document.createElement("div");
     informacoes.className = "informacoes-produto";
@@ -296,8 +347,6 @@ function criarCardProduto(produto) {
     const precoProduto = document.createElement("p");
     precoProduto.className = "preco-produto";
     precoProduto.textContent = preco;
-
-    // BOTÃO ADICIONAR À SACOLA
 
     const botao = document.createElement("button");
 
@@ -320,12 +369,37 @@ function criarCardProduto(produto) {
     return card;
 }
 
-// MOSTRAR PRODUTOS
+// MOSTRAR PRODUTOS OU BENEFÍCIO
 
 function renderizarProdutos() {
     if (!listaProdutos) return;
 
     listaProdutos.innerHTML = "";
+
+    // VALE-COMPRAS NÃO É BUSCADO NA API DE PRODUTOS.
+    // ELE É EXIBIDO COMO UM BENEFÍCIO PRÓPRIO DA WEBLUE.
+
+    if (ehCategoriaValeCompras()) {
+        if (ordenacaoProdutos) {
+            ordenacaoProdutos.hidden = true;
+        }
+
+        if (quantidadeProdutos) {
+            quantidadeProdutos.textContent = "Conheça nosso benefício especial";
+        }
+
+        if (mensagemProdutos) {
+            mensagemProdutos.style.display = "none";
+        }
+
+        listaProdutos.appendChild(criarCardValeCompras());
+
+        return;
+    }
+
+    if (ordenacaoProdutos) {
+        ordenacaoProdutos.hidden = false;
+    }
 
     let produtos = filtrarProdutos();
     produtos = ordenarProdutos(produtos);
@@ -358,6 +432,13 @@ function renderizarProdutos() {
 // CARREGAR PRODUTOS DA API
 
 async function carregarProdutos() {
+    // NÃO PRECISA CONSULTAR A API PARA MOSTRAR O VALE-COMPRAS.
+
+    if (ehCategoriaValeCompras()) {
+        renderizarProdutos();
+        return;
+    }
+
     try {
         if (mensagemProdutos) {
             mensagemProdutos.textContent = "Carregando produtos...";
