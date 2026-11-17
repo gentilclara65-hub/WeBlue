@@ -6,6 +6,7 @@
 const CHAVE_CARRINHO = "weblue-carrinho";
 const CHAVE_CUPOM = "weblue-cupom";
 const CHAVE_PAGAMENTO = "weblue-pagamento";
+const CHAVE_ENDERECO = "weblue-endereco";
 
 const listaCarrinho = document.getElementById("listaCarrinho");
 const mensagemCarrinho = document.getElementById("mensagemCarrinho");
@@ -22,10 +23,17 @@ const removerCupom = document.getElementById("removerCupom");
 const mensagemPagamento = document.getElementById("mensagemPagamento");
 const botaoCheckout = document.getElementById("botaoCheckout");
 
+
+/* ============================================================
+   CARRINHO
+   ============================================================ */
+
 function obterCarrinho() {
     try {
         const salvo = localStorage.getItem(CHAVE_CARRINHO);
-        return salvo ? JSON.parse(salvo) : [];
+        const carrinho = salvo ? JSON.parse(salvo) : [];
+
+        return Array.isArray(carrinho) ? carrinho : [];
     } catch (erro) {
         console.error("Erro ao ler o carrinho:", erro);
         return [];
@@ -33,7 +41,10 @@ function obterCarrinho() {
 }
 
 function salvarCarrinho(carrinho) {
-    localStorage.setItem(CHAVE_CARRINHO, JSON.stringify(carrinho));
+    localStorage.setItem(
+        CHAVE_CARRINHO,
+        JSON.stringify(carrinho)
+    );
 }
 
 function formatarPreco(valor) {
@@ -43,11 +54,36 @@ function formatarPreco(valor) {
     }).format(Number(valor) || 0);
 }
 
+
+/* ============================================================
+   IMAGEM DO PRODUTO
+   ============================================================ */
+
+function obterImagemProduto(item) {
+    return (
+        item.imagem ||
+        item.image ||
+        item.foto ||
+        item.urlImagem ||
+        item.url_imagem ||
+        item.imagemUrl ||
+        item.imagem_url ||
+        item.foto_url ||
+        ""
+    );
+}
+
+
+/* ============================================================
+   CONTADOR
+   ============================================================ */
+
 function atualizarContadorCarrinho() {
     const carrinho = obterCarrinho();
 
     const quantidade = carrinho.reduce(
-        (soma, item) => soma + Number(item.quantidade || 0),
+        (soma, item) =>
+            soma + Number(item.quantidade || 0),
         0
     );
 
@@ -58,11 +94,17 @@ function atualizarContadorCarrinho() {
     }
 }
 
+
+/* ============================================================
+   ALTERAR QUANTIDADE
+   ============================================================ */
+
 function alterarQuantidade(produtoId, delta) {
     const carrinho = obterCarrinho();
 
     const item = carrinho.find(
-        produto => String(produto.id) === String(produtoId)
+        produto =>
+            String(produto.id) === String(produtoId)
     );
 
     if (!item) return;
@@ -76,14 +118,25 @@ function alterarQuantidade(produtoId, delta) {
     renderCarrinho();
 }
 
+
+/* ============================================================
+   REMOVER PRODUTO
+   ============================================================ */
+
 function removerDoCarrinho(produtoId) {
     const carrinho = obterCarrinho().filter(
-        produto => String(produto.id) !== String(produtoId)
+        produto =>
+            String(produto.id) !== String(produtoId)
     );
 
     salvarCarrinho(carrinho);
     renderCarrinho();
 }
+
+
+/* ============================================================
+   CUPOM E PAGAMENTO
+   ============================================================ */
 
 function obterCupom() {
     return localStorage.getItem(CHAVE_CUPOM) || "";
@@ -92,6 +145,11 @@ function obterCupom() {
 function obterPagamento() {
     return localStorage.getItem(CHAVE_PAGAMENTO) || "";
 }
+
+
+/* ============================================================
+   RENDERIZAR CARRINHO
+   ============================================================ */
 
 function renderCarrinho() {
     const carrinho = obterCarrinho();
@@ -103,18 +161,35 @@ function renderCarrinho() {
     if (!carrinho.length) {
         listaCarrinho.replaceChildren();
 
-        mensagemCarrinho.textContent =
-            "Seu carrinho está vazio. Adicione produtos para continuar.";
+        if (mensagemCarrinho) {
+            mensagemCarrinho.textContent =
+                "Seu carrinho está vazio. Adicione produtos para continuar.";
+        }
 
-        quantidadeItens.textContent = "0 itens";
-        subtotalCarrinho.textContent = formatarPreco(0);
-        descontoCarrinho.textContent = formatarPreco(0);
-        totalCarrinho.textContent = formatarPreco(0);
+        if (quantidadeItens) {
+            quantidadeItens.textContent = "0 itens";
+        }
+
+        if (subtotalCarrinho) {
+            subtotalCarrinho.textContent = formatarPreco(0);
+        }
+
+        if (descontoCarrinho) {
+            descontoCarrinho.textContent = formatarPreco(0);
+        }
+
+        if (totalCarrinho) {
+            totalCarrinho.textContent = formatarPreco(0);
+        }
+
+        atualizarParcelamento();
 
         return;
     }
 
-    mensagemCarrinho.textContent = "";
+    if (mensagemCarrinho) {
+        mensagemCarrinho.textContent = "";
+    }
 
     let subtotal = 0;
     let quantidadeTotal = 0;
@@ -132,14 +207,55 @@ function renderCarrinho() {
         const artigo = document.createElement("article");
         artigo.className = "item";
 
+        /* IMAGEM */
+
+        const imagemContainer = document.createElement("div");
+        imagemContainer.className = "item-image";
+
+        const imagemProduto = obterImagemProduto(item);
+
+        if (imagemProduto) {
+            const imagem = document.createElement("img");
+
+            imagem.src = imagemProduto;
+            imagem.alt = item.nome
+                ? `Imagem de ${item.nome}`
+                : "Imagem do produto WeBlue";
+
+            imagem.loading = "lazy";
+
+            imagem.onerror = function () {
+                imagemContainer.replaceChildren();
+
+                const fallback = document.createElement("div");
+                fallback.className = "item-image-placeholder";
+                fallback.textContent = "WeBlue";
+
+                imagemContainer.appendChild(fallback);
+            };
+
+            imagemContainer.appendChild(imagem);
+        } else {
+            const placeholder = document.createElement("div");
+
+            placeholder.className = "item-image-placeholder";
+            placeholder.textContent = "WeBlue";
+
+            imagemContainer.appendChild(placeholder);
+        }
+
+        /* DETALHES */
+
         const detalhes = document.createElement("div");
+        detalhes.className = "item-details";
 
         const nome = document.createElement("h3");
         nome.textContent = item.nome || "Produto WeBlue";
 
         const precoUnitario = document.createElement("p");
-        precoUnitario.textContent =
-            `${formatarPreco(preco)} cada`;
+        precoUnitario.textContent = `${formatarPreco(preco)} cada`;
+
+        /* CONTROLES */
 
         const controles = document.createElement("div");
         controles.className = "controls";
@@ -164,18 +280,26 @@ function renderCarrinho() {
         }
 
         const diminuir = criarBotao(
-            "diminuir", "-", "", "Diminuir quantidade"
+            "diminuir",
+            "-",
+            "",
+            "Diminuir quantidade"
         );
 
         const quantidadeTexto = document.createElement("span");
         quantidadeTexto.textContent = String(quantidade);
 
         const aumentar = criarBotao(
-            "aumentar", "+", "", "Aumentar quantidade"
+            "aumentar",
+            "+",
+            "",
+            "Aumentar quantidade"
         );
 
         const remover = criarBotao(
-            "remover", "Remover", "btn-secondary",
+            "remover",
+            "Remover",
+            "btn-secondary",
             "Remover produto do carrinho"
         );
 
@@ -186,52 +310,86 @@ function renderCarrinho() {
             remover
         );
 
-        detalhes.append(nome, precoUnitario, controles);
+        detalhes.append(
+            nome,
+            precoUnitario,
+            controles
+        );
+
+        /* SUBTOTAL DO PRODUTO */
 
         const subtotalTexto = document.createElement("strong");
         subtotalTexto.textContent = formatarPreco(valorSubtotal);
 
-        artigo.append(detalhes, subtotalTexto);
+        artigo.append(
+            imagemContainer,
+            detalhes,
+            subtotalTexto
+        );
+
         fragmento.appendChild(artigo);
     });
 
     listaCarrinho.replaceChildren(fragmento);
 
-    quantidadeItens.textContent =
-        `${quantidadeTotal} ${quantidadeTotal === 1 ? "item" : "itens"}`;
+    if (quantidadeItens) {
+        quantidadeItens.textContent =
+            `${quantidadeTotal} ${quantidadeTotal === 1 ? "item" : "itens"}`;
+    }
 
-    subtotalCarrinho.textContent = formatarPreco(subtotal);
+    if (subtotalCarrinho) {
+        subtotalCarrinho.textContent = formatarPreco(subtotal);
+    }
 
-    // O desconto só é calculado quando houver uma regra de cupom validada.
-    // Não aplicar descontos fictícios no navegador.
-    descontoCarrinho.textContent = formatarPreco(0);
-    totalCarrinho.textContent = formatarPreco(subtotal);
+    if (descontoCarrinho) {
+        descontoCarrinho.textContent = formatarPreco(0);
+    }
+
+    if (totalCarrinho) {
+        totalCarrinho.textContent = formatarPreco(subtotal);
+    }
+
+    atualizarParcelamento();
 }
 
-listaCarrinho.addEventListener("click", evento => {
-    const botao = evento.target.closest("[data-acao]");
 
-    if (!botao || !listaCarrinho.contains(botao)) return;
+/* ============================================================
+   EVENTOS DOS BOTÕES DO CARRINHO
+   ============================================================ */
 
-    const acao = botao.dataset.acao;
-    const produtoId = botao.dataset.id;
+if (listaCarrinho) {
+    listaCarrinho.addEventListener("click", evento => {
+        const botao = evento.target.closest("[data-acao]");
 
-    if (acao === "aumentar") {
-        alterarQuantidade(produtoId, 1);
-    }
+        if (!botao || !listaCarrinho.contains(botao)) {
+            return;
+        }
 
-    if (acao === "diminuir") {
-        alterarQuantidade(produtoId, -1);
-    }
+        const acao = botao.dataset.acao;
+        const produtoId = botao.dataset.id;
 
-    if (acao === "remover") {
-        removerDoCarrinho(produtoId);
-    }
-});
+        if (acao === "aumentar") {
+            alterarQuantidade(produtoId, 1);
+        }
 
-/* CUPOM */
+        if (acao === "diminuir") {
+            alterarQuantidade(produtoId, -1);
+        }
+
+        if (acao === "remover") {
+            removerDoCarrinho(produtoId);
+        }
+    });
+}
+
+
+/* ============================================================
+   CUPOM
+   ============================================================ */
 
 function mostrarMensagemCupom(texto, tipo = "") {
+    if (!mensagemCupom) return;
+
     mensagemCupom.textContent = texto;
     mensagemCupom.className = `coupon-message ${tipo}`;
 }
@@ -239,46 +397,129 @@ function mostrarMensagemCupom(texto, tipo = "") {
 function carregarCupom() {
     const cupom = obterCupom();
 
-    if (cupom) {
+    if (!cupom) return;
+
+    if (codigoCupom) {
         codigoCupom.value = cupom;
-        mostrarMensagemCupom(
-            "Cupom registrado para validação na finalização da compra."
-        );
+    }
+
+    mostrarMensagemCupom(
+        "Cupom registrado para validação na finalização da compra."
+    );
+
+    if (removerCupom) {
         removerCupom.style.display = "inline-block";
     }
 }
 
-botaoAplicarCupom.addEventListener("click", () => {
-    const cupom = codigoCupom.value.trim().toUpperCase();
+if (botaoAplicarCupom) {
+    botaoAplicarCupom.addEventListener("click", () => {
+        const cupom = codigoCupom.value.trim().toUpperCase();
 
-    if (!cupom) {
+        if (!cupom) {
+            mostrarMensagemCupom(
+                "Digite um código de cupom.",
+                "erro"
+            );
+            return;
+        }
+
+        localStorage.setItem(CHAVE_CUPOM, cupom);
+
         mostrarMensagemCupom(
-            "Digite um código de cupom.",
-            "erro"
+            "Cupom registrado! A validade e o desconto serão verificados no checkout.",
+            "sucesso"
         );
-        return;
+
+        if (removerCupom) {
+            removerCupom.style.display = "inline-block";
+        }
+    });
+}
+
+if (removerCupom) {
+    removerCupom.addEventListener("click", () => {
+        localStorage.removeItem(CHAVE_CUPOM);
+
+        if (codigoCupom) {
+            codigoCupom.value = "";
+        }
+
+        removerCupom.style.display = "none";
+
+        mostrarMensagemCupom("Cupom removido.");
+    });
+}
+
+
+/* ============================================================
+   ENDEREÇO DE ENTREGA
+   ============================================================ */
+
+function obterEndereco() {
+    try {
+        return JSON.parse(
+            localStorage.getItem(CHAVE_ENDERECO)
+        ) || {};
+    } catch (erro) {
+        console.error("Erro ao recuperar endereço:", erro);
+        return {};
+    }
+}
+
+function validarEndereco() {
+    const form = document.getElementById("formEndereco");
+
+    if (!form) {
+        return false;
     }
 
-    localStorage.setItem(CHAVE_CUPOM, cupom);
+    if (!form.reportValidity()) {
+        const campoInvalido = form.querySelector(":invalid");
 
-    mostrarMensagemCupom(
-        "Cupom registrado! A validade e o desconto serão verificados no checkout.",
-        "sucesso"
+        if (campoInvalido) {
+            campoInvalido.focus();
+        }
+
+        return false;
+    }
+
+    const endereco = obterEndereco();
+
+    const camposObrigatorios = [
+        "nome",
+        "cep",
+        "numero",
+        "rua",
+        "bairro",
+        "cidade",
+        "estado"
+    ];
+
+    const preenchido = camposObrigatorios.every(campo =>
+        String(endereco[campo] || "").trim() !== ""
     );
 
-    removerCupom.style.display = "inline-block";
-});
+    if (!preenchido) {
+        alert("Preencha e salve seu endereço de entrega antes de continuar.");
+        return false;
+    }
 
-removerCupom.addEventListener("click", () => {
-    localStorage.removeItem(CHAVE_CUPOM);
+    const cepLimpo = String(endereco.cep).replace(/\D/g, "");
 
-    codigoCupom.value = "";
-    removerCupom.style.display = "none";
+    if (cepLimpo.length !== 8) {
+        alert("Informe um CEP válido com 8 números.");
+        document.getElementById("cep")?.focus();
+        return false;
+    }
 
-    mostrarMensagemCupom("Cupom removido.");
-});
+    return true;
+}
 
-/* PAGAMENTO */
+
+/* ============================================================
+   PAGAMENTO
+   ============================================================ */
 
 function carregarPagamento() {
     const pagamento = obterPagamento();
@@ -302,44 +543,118 @@ function atualizarMensagemPagamento(pagamento) {
         pix: "Pix"
     };
 
+    if (!mensagemPagamento) return;
+
     mensagemPagamento.textContent =
-        `Forma selecionada: ${nomes[pagamento]}.`;
+        `Forma selecionada: ${nomes[pagamento] || pagamento}.`;
+
+    mensagemPagamento.style.color = "";
 }
 
-document.querySelectorAll('input[name="formaPagamento"]').forEach(opcao => {
+document.querySelectorAll(
+    'input[name="formaPagamento"]'
+).forEach(opcao => {
     opcao.addEventListener("change", () => {
         localStorage.setItem(CHAVE_PAGAMENTO, opcao.value);
+
         atualizarMensagemPagamento(opcao.value);
+        atualizarParcelamento();
     });
 });
 
-/* CONTINUAR PARA O CHECKOUT */
 
-botaoCheckout.addEventListener("click", evento => {
-    const carrinho = obterCarrinho();
-    const pagamento = obterPagamento();
+/* ============================================================
+   PARCELAMENTO
+   ============================================================ */
 
-    if (!carrinho.length) {
-        evento.preventDefault();
-        alert("Adicione pelo menos um produto ao carrinho.");
+function atualizarParcelamento() {
+    const seletor = document.getElementById("quantidadeParcelas");
+    const resultado = document.getElementById("resultadoParcelamento");
+
+    if (!seletor || !resultado || !totalCarrinho) {
         return;
     }
 
-    if (!pagamento) {
-        evento.preventDefault();
-        mensagemPagamento.textContent =
-            "Escolha uma forma de pagamento para continuar.";
+    const pagamento = document.querySelector(
+        'input[name="formaPagamento"]:checked'
+    );
 
-        mensagemPagamento.style.color = "#c03939";
+    if (!pagamento || pagamento.value !== "credito") {
+        seletor.disabled = true;
+
+        resultado.textContent =
+            "Selecione cartão de crédito para simular as parcelas.";
+
         return;
     }
 
-    // Os dados ficam disponíveis para a página de checkout.
-    localStorage.setItem(CHAVE_PAGAMENTO, pagamento);
-});
+    seletor.disabled = false;
 
-/* INICIALIZAÇÃO */
+    const total = Number(
+        totalCarrinho.textContent
+            .replace(/[^\d,.-]/g, "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+    ) || 0;
+
+    if (total <= 0) {
+        resultado.textContent =
+            "Adicione produtos para simular as parcelas.";
+        return;
+    }
+
+    const parcelas = Number(seletor.value) || 1;
+    const valorParcela = total / parcelas;
+
+    resultado.textContent =
+        `${parcelas}x de ${formatarPreco(valorParcela)}`;
+}
+
+
+/* ============================================================
+   CHECKOUT
+   ============================================================ */
+
+if (botaoCheckout) {
+    botaoCheckout.addEventListener("click", evento => {
+        const carrinho = obterCarrinho();
+        const pagamento = obterPagamento();
+
+        if (!carrinho.length) {
+            evento.preventDefault();
+
+            alert("Adicione pelo menos um produto ao carrinho.");
+            return;
+        }
+
+        if (!validarEndereco()) {
+            evento.preventDefault();
+            return;
+        }
+
+        if (!pagamento) {
+            evento.preventDefault();
+
+            if (mensagemPagamento) {
+                mensagemPagamento.textContent =
+                    "Escolha uma forma de pagamento para continuar.";
+
+                mensagemPagamento.style.color = "#c03939";
+            }
+
+            return;
+        }
+
+        localStorage.setItem(CHAVE_PAGAMENTO, pagamento);
+    });
+}
+
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
 
 carregarCupom();
 carregarPagamento();
 renderCarrinho();
+atualizarParcelamento();

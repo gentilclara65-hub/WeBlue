@@ -24,7 +24,7 @@
             text-decoration: none;
         }
 
-        button, input {
+        button, input, select {
             font: inherit;
         }
 
@@ -33,8 +33,6 @@
             margin: 0 auto;
             padding: 35px 0 60px;
         }
-
-        /* CABEÇALHO */
 
         .topbar {
             display: flex;
@@ -70,8 +68,6 @@
             color: #031b48;
         }
 
-        /* TÍTULO */
-
         .titulo {
             margin-bottom: 28px;
         }
@@ -86,8 +82,6 @@
             color: #71829a;
             font-size: 14px;
         }
-
-        /* ORGANIZAÇÃO */
 
         .cart-grid {
             display: grid;
@@ -130,6 +124,36 @@
 
         .item:last-child {
             border-bottom: none;
+        }
+
+        .item-image {
+            width: 105px;
+            height: 105px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 13px;
+            background: #f1f6fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 5px;
+        }
+
+        .item-image-placeholder {
+            color: #1686ed;
+            font-weight: 900;
+            font-size: 13px;
+        }
+
+        .item-details {
+            flex: 1;
+            min-width: 0;
         }
 
         .item h3 {
@@ -236,7 +260,8 @@
             background: #ffffff;
         }
 
-        .coupon-input input:focus {
+        .coupon-input input:focus,
+        .form-control:focus {
             border-color: #1686ed;
             box-shadow: 0 0 0 3px rgba(22, 134, 237, .12);
         }
@@ -283,6 +308,60 @@
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
+        }
+
+        /* ENDEREÇO */
+
+        .address-description {
+            color: #75849a;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: -9px;
+            margin-bottom: 19px;
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: #29486f;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            min-width: 0;
+            padding: 12px 13px;
+            border: 1px solid #d5e2f0;
+            border-radius: 9px;
+            outline: none;
+            background: #ffffff;
+            color: #082653;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+
+        .address-status {
+            margin-top: 13px;
+            color: #16804a;
+            font-size: 12px;
         }
 
         /* PAGAMENTO */
@@ -349,6 +428,76 @@
             color: #75849a;
             font-size: 12px;
             line-height: 1.5;
+        }
+
+        /* PARCELAMENTO */
+
+        .installment-box {
+            margin-top: 20px;
+            padding: 17px;
+            border-radius: 13px;
+            border: 1px solid #d9eaff;
+            background: #f1f8ff;
+        }
+
+        .installment-box h3 {
+            color: #082653;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .installment-box p {
+            color: #61758f;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .installment-box select {
+            margin-top: 12px;
+        }
+
+        .installment-result {
+            display: block;
+            margin-top: 12px;
+            color: #0869dc;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .installment-note {
+            display: block;
+            margin-top: 7px;
+            color: #8190a3;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* DEVOLUÇÃO */
+
+        .return-box {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            padding: 17px;
+            border-radius: 13px;
+            background: #f1f8ff;
+            border: 1px solid #d9eaff;
+        }
+
+        .return-icon {
+            font-size: 25px;
+        }
+
+        .return-box h3 {
+            color: #082653;
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .return-box p {
+            color: #61758f;
+            font-size: 13px;
+            line-height: 1.7;
         }
 
         /* RESUMO */
@@ -460,8 +609,6 @@
             font-size: 11px;
         }
 
-        /* ANIMAÇÃO */
-
         @keyframes aparecer {
             from {
                 opacity: 0;
@@ -472,8 +619,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* CELULAR */
 
         @media (max-width: 850px) {
             .cart-grid {
@@ -508,11 +653,16 @@
 
             .item {
                 align-items: flex-start;
-                flex-direction: column;
+                flex-wrap: wrap;
+            }
+
+            .item-image {
+                width: 85px;
+                height: 85px;
             }
 
             .item > strong {
-                align-self: flex-end;
+                margin-left: auto;
             }
 
             .coupon-input {
@@ -535,189 +685,582 @@
             .total {
                 font-size: 22px;
             }
+
+            .address-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
         }
     </style>
 </head>
 
 <body>
-    <main class="container">
+<main class="container">
 
-        <header class="topbar">
-            <a href="/home" class="logo">WE<span>BLUE</span></a>
+    <header class="topbar">
+        <a href="/home" class="logo">WE<span>BLUE</span></a>
 
-            <nav class="topbar-links">
-                <a href="/home">← Voltar para a loja</a>
-                <a href="/pedidos">Meus pedidos</a>
-            </nav>
-        </header>
+        <nav class="topbar-links">
+            <a href="/home">← Voltar para a loja</a>
+            <a href="/pedidos">Meus pedidos</a>
+        </nav>
+    </header>
 
-        <section class="titulo">
-            <h1>Meu carrinho 🛒</h1>
-            <p>Confira seus produtos antes de finalizar sua compra.</p>
-        </section>
+    <section class="titulo">
+        <h1>Meu carrinho 🛒</h1>
+        <p>Confira seus produtos antes de finalizar sua compra.</p>
+    </section>
 
-        <div class="cart-grid">
+    <div class="cart-grid">
 
-            <div class="coluna-principal">
+        <div class="coluna-principal">
 
-                <section class="panel">
-                    <h2>Seus produtos</h2>
+            <!-- PRODUTOS -->
 
-                    <div id="listaCarrinho"></div>
+            <section class="panel">
+                <h2>Seus produtos</h2>
 
-                    <div id="mensagemCarrinho" class="empty"></div>
-                </section>
+                <div id="listaCarrinho"></div>
+                <div id="mensagemCarrinho" class="empty"></div>
+            </section>
 
-                <section class="panel">
-                    <h2>🎟️ Cupom de desconto</h2>
+            <!-- CUPOM -->
 
-                    <div class="coupon-box">
-                        <label for="codigoCupom">
-                            Você tem um cupom promocional?
-                        </label>
+            <section class="panel">
+                <h2>🎟️ Cupom de desconto</h2>
 
-                        <div class="coupon-input">
-                            <input
-                                type="text"
-                                id="codigoCupom"
-                                placeholder="Digite seu cupom"
-                                maxlength="40"
-                                autocomplete="off"
-                            >
+                <div class="coupon-box">
+                    <label for="codigoCupom">
+                        Você tem um cupom promocional?
+                    </label>
 
-                            <button
-                                type="button"
-                                class="btn-coupon"
-                                id="botaoAplicarCupom"
-                            >
-                                Aplicar
-                            </button>
-                        </div>
-
-                        <p
-                            id="mensagemCupom"
-                            class="coupon-message"
-                            aria-live="polite"
-                        ></p>
+                    <div class="coupon-input">
+                        <input
+                            type="text"
+                            id="codigoCupom"
+                            placeholder="Digite seu cupom"
+                            maxlength="40"
+                            autocomplete="off"
+                        >
 
                         <button
                             type="button"
-                            id="removerCupom"
-                            class="btn-remove-coupon"
+                            class="btn-coupon"
+                            id="botaoAplicarCupom"
                         >
-                            Remover cupom
+                            Aplicar
                         </button>
                     </div>
-                </section>
 
-                <section class="panel">
-                    <h2>💳 Forma de pagamento</h2>
+                    <p
+                        id="mensagemCupom"
+                        class="coupon-message"
+                        aria-live="polite"
+                    ></p>
 
-                    <div class="payment-options">
+                    <button
+                        type="button"
+                        id="removerCupom"
+                        class="btn-remove-coupon"
+                    >
+                        Remover cupom
+                    </button>
+                </div>
+            </section>
 
-                        <div class="payment-option">
-                            <input
-                                type="radio"
-                                id="pagamentoCredito"
-                                name="formaPagamento"
-                                value="credito"
-                            >
-                            <label for="pagamentoCredito">
-                                <span class="payment-icon">💳</span>
-                                Crédito
+            <!-- ENDEREÇO -->
+
+            <section class="panel">
+                <h2>📍 Endereço de entrega</h2>
+
+                <p class="address-description">
+                    Informe onde deseja receber seus produtos.
+                    Seus dados serão mantidos neste navegador para continuar no checkout.
+                </p>
+
+                <form id="formEndereco">
+                    <div class="address-grid">
+
+                        <div class="form-group full">
+                            <label for="nomeDestinatario">
+                                Nome de quem vai receber *
                             </label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="nomeDestinatario"
+                                name="nome"
+                                placeholder="Nome completo"
+                                autocomplete="name"
+                                required
+                            >
                         </div>
 
-                        <div class="payment-option">
+                        <div class="form-group">
+                            <label for="cep">CEP *</label>
                             <input
-                                type="radio"
-                                id="pagamentoDebito"
-                                name="formaPagamento"
-                                value="debito"
+                                class="form-control"
+                                type="text"
+                                id="cep"
+                                name="cep"
+                                placeholder="00000-000"
+                                maxlength="9"
+                                inputmode="numeric"
+                                autocomplete="postal-code"
+                                required
                             >
-                            <label for="pagamentoDebito">
-                                <span class="payment-icon">💳</span>
-                                Débito
-                            </label>
                         </div>
 
-                        <div class="payment-option">
+                        <div class="form-group">
+                            <label for="numero">Número *</label>
                             <input
-                                type="radio"
-                                id="pagamentoPix"
-                                name="formaPagamento"
-                                value="pix"
+                                class="form-control"
+                                type="text"
+                                id="numero"
+                                name="numero"
+                                placeholder="Número"
+                                autocomplete="address-line2"
+                                required
                             >
-                            <label for="pagamentoPix">
-                                <span class="payment-icon">⚡</span>
-                                Pix
-                            </label>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="rua">Rua / Avenida *</label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="rua"
+                                name="rua"
+                                placeholder="Nome da rua ou avenida"
+                                autocomplete="address-line1"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="complemento">Complemento</label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="complemento"
+                                name="complemento"
+                                placeholder="Apartamento, bloco..."
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bairro">Bairro *</label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="bairro"
+                                name="bairro"
+                                placeholder="Seu bairro"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cidade">Cidade *</label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="cidade"
+                                name="cidade"
+                                placeholder="Sua cidade"
+                                autocomplete="address-level2"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estado">Estado *</label>
+                            <select
+                                class="form-control"
+                                id="estado"
+                                name="estado"
+                                autocomplete="address-level1"
+                                required
+                            >
+                                <option value="">Selecione</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
                         </div>
 
                     </div>
 
-                    <p class="payment-message" id="mensagemPagamento">
-                        Selecione a forma de pagamento desejada.
+                    <p
+                        class="address-status"
+                        id="statusEndereco"
+                        aria-live="polite"
+                    ></p>
+                </form>
+            </section>
+
+            <!-- PAGAMENTO -->
+
+            <section class="panel">
+                <h2>💳 Forma de pagamento</h2>
+
+                <div class="payment-options">
+
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="pagamentoCredito"
+                            name="formaPagamento"
+                            value="credito"
+                        >
+                        <label for="pagamentoCredito">
+                            <span class="payment-icon">💳</span>
+                            Crédito
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="pagamentoDebito"
+                            name="formaPagamento"
+                            value="debito"
+                        >
+                        <label for="pagamentoDebito">
+                            <span class="payment-icon">💳</span>
+                            Débito
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="pagamentoPix"
+                            name="formaPagamento"
+                            value="pix"
+                        >
+                        <label for="pagamentoPix">
+                            <span class="payment-icon">⚡</span>
+                            Pix
+                        </label>
+                    </div>
+
+                </div>
+
+                <p class="payment-message" id="mensagemPagamento">
+                    Selecione a forma de pagamento desejada.
+                </p>
+
+                <!-- PARCELAMENTO -->
+
+                <div class="installment-box" id="areaParcelamento">
+                    <h3>✨ Opções de parcelamento</h3>
+
+                    <p>
+                        Simule o valor das parcelas de acordo com o total da sua compra.
                     </p>
-                </section>
 
-            </div>
-
-            <aside class="panel summary">
-
-                <h2>Resumo do pedido</h2>
-
-                <div class="summary-line">
-                    <span>Quantidade</span>
-                    <strong id="quantidadeItens">0 itens</strong>
-                </div>
-
-                <div class="summary-line">
-                    <span>Subtotal</span>
-                    <strong id="subtotalCarrinho">R$ 0,00</strong>
-                </div>
-
-                <div class="summary-line">
-                    <span>Desconto</span>
-                    <strong id="descontoCarrinho">R$ 0,00</strong>
-                </div>
-
-                <div class="summary-divider"></div>
-
-                <div class="total-line">
-                    <span>Total</span>
-                    <strong class="total" id="totalCarrinho">
-                        R$ 0,00
-                    </strong>
-                </div>
-
-                <p class="frete-info">
-                    O valor do frete será calculado na finalização da compra.
-                </p>
-
-                <div class="actions">
-                    <a
-                        class="btn-link btn-primary"
-                        href="/checkout"
-                        id="botaoCheckout"
+                    <select
+                        class="form-control"
+                        id="quantidadeParcelas"
                     >
-                        Continuar para o checkout →
-                    </a>
+                        <option value="1">1x</option>
+                        <option value="2">2x</option>
+                        <option value="3">3x</option>
+                        <option value="4">4x</option>
+                        <option value="5">5x</option>
+                        <option value="6">6x</option>
+                    </select>
 
-                    <a class="btn-link btn-secondary" href="/home">
-                        Continuar comprando
-                    </a>
+                    <span
+                        class="installment-result"
+                        id="resultadoParcelamento"
+                        aria-live="polite"
+                    >
+                        Selecione o cartão de crédito para simular.
+                    </span>
+
+                    <small class="installment-note">
+                        Simulação informativa. Juros, limite de parcelas e condições
+                        dependem da configuração do meio de pagamento no checkout.
+                    </small>
                 </div>
+            </section>
 
-                <p class="secure-info">
-                    🔒 Seus dados serão tratados com segurança.
-                </p>
+            <!-- DEVOLUÇÃO -->
 
-            </aside>
+            <section class="panel">
+                <h2>↩️ Trocas e devoluções</h2>
+
+                <div class="return-box">
+                    <span class="return-icon">📦</span>
+
+                    <div>
+                        <h3>Compre com tranquilidade</h3>
+
+                        <p>
+                            Se precisar solicitar uma troca ou devolução,
+                            entre em contato com a equipe WeBlue para receber
+                            orientações sobre o procedimento e as condições aplicáveis.
+                            Consulte a política de trocas e devoluções antes de concluir
+                            sua compra.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
         </div>
-    </main>
 
-    <script src="/js/carrinho.js"></script>
+        <!-- RESUMO -->
+
+        <aside class="panel summary">
+
+            <h2>Resumo do pedido</h2>
+
+            <div class="summary-line">
+                <span>Quantidade</span>
+                <strong id="quantidadeItens">0 itens</strong>
+            </div>
+
+            <div class="summary-line">
+                <span>Subtotal</span>
+                <strong id="subtotalCarrinho">R$ 0,00</strong>
+            </div>
+
+            <div class="summary-line">
+                <span>Desconto</span>
+                <strong id="descontoCarrinho">R$ 0,00</strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="total-line">
+                <span>Total</span>
+                <strong class="total" id="totalCarrinho">
+                    R$ 0,00
+                </strong>
+            </div>
+
+            <p class="frete-info">
+                O valor do frete será calculado na finalização da compra.
+            </p>
+
+            <div class="actions">
+                <a
+                    class="btn-link btn-primary"
+                    href="/checkout"
+                    id="botaoCheckout"
+                >
+                    Continuar para o checkout →
+                </a>
+
+                <a class="btn-link btn-secondary" href="/home">
+                    Continuar comprando
+                </a>
+            </div>
+
+            <p class="secure-info">
+                🔒 Seus dados serão tratados com segurança.
+            </p>
+
+        </aside>
+
+    </div>
+</main>
+
+<script src="/js/carrinho.js"></script>
+
+<script>
+/* ============================================================
+   ENDEREÇO DE ENTREGA
+   ============================================================ */
+
+const CHAVE_ENDERECO = "weblue-endereco";
+
+const formEndereco = document.getElementById("formEndereco");
+const statusEndereco = document.getElementById("statusEndereco");
+const camposEndereco = formEndereco.querySelectorAll("[name]");
+
+function obterEndereco() {
+    try {
+        return JSON.parse(
+            localStorage.getItem(CHAVE_ENDERECO)
+        ) || {};
+    } catch (erro) {
+        console.error("Erro ao recuperar endereço:", erro);
+        return {};
+    }
+}
+
+function salvarEndereco() {
+    const endereco = {};
+
+    camposEndereco.forEach(campo => {
+        endereco[campo.name] = campo.value.trim();
+    });
+
+    localStorage.setItem(
+        CHAVE_ENDERECO,
+        JSON.stringify(endereco)
+    );
+
+    statusEndereco.textContent =
+        "✓ Endereço salvo neste navegador.";
+}
+
+function carregarEndereco() {
+    const endereco = obterEndereco();
+
+    camposEndereco.forEach(campo => {
+        if (endereco[campo.name] !== undefined) {
+            campo.value = endereco[campo.name];
+        }
+    });
+}
+
+camposEndereco.forEach(campo => {
+    campo.addEventListener("input", salvarEndereco);
+    campo.addEventListener("change", salvarEndereco);
+});
+
+carregarEndereco();
+
+/* Máscara simples de CEP */
+
+document.getElementById("cep").addEventListener("input", evento => {
+    let valor = evento.target.value.replace(/\D/g, "").slice(0, 8);
+
+    if (valor.length > 5) {
+        valor = valor.replace(/^(\d{5})(\d)/, "$1-$2");
+    }
+
+    evento.target.value = valor;
+});
+
+
+/* ============================================================
+   SIMULAÇÃO DE PARCELAMENTO
+   ============================================================ */
+
+const quantidadeParcelas = document.getElementById("quantidadeParcelas");
+const resultadoParcelamento = document.getElementById("resultadoParcelamento");
+const totalCarrinhoElemento = document.getElementById("totalCarrinho");
+
+function obterTotalNumerico() {
+    const texto = totalCarrinhoElemento.textContent;
+
+    return Number(
+        texto
+            .replace(/[^\d,.-]/g, "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+    ) || 0;
+}
+
+function atualizarParcelamento() {
+    const pagamento = document.querySelector(
+        'input[name="formaPagamento"]:checked'
+    );
+
+    if (!pagamento || pagamento.value !== "credito") {
+        resultadoParcelamento.textContent =
+            "O parcelamento está disponível para simulação no cartão de crédito.";
+
+        quantidadeParcelas.disabled = true;
+        return;
+    }
+
+    quantidadeParcelas.disabled = false;
+
+    const parcelas = Number(quantidadeParcelas.value);
+    const total = obterTotalNumerico();
+
+    if (total <= 0) {
+        resultadoParcelamento.textContent =
+            "Adicione produtos para simular as parcelas.";
+        return;
+    }
+
+    const valorParcela = total / parcelas;
+
+    resultadoParcelamento.textContent =
+        `${parcelas}x de ${valorParcela.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        })}`;
+
+}
+
+quantidadeParcelas.addEventListener(
+    "change",
+    atualizarParcelamento
+);
+
+document.querySelectorAll(
+    'input[name="formaPagamento"]'
+).forEach(opcao => {
+    opcao.addEventListener("change", atualizarParcelamento);
+});
+
+const observadorTotal = new MutationObserver(
+    atualizarParcelamento
+);
+
+observadorTotal.observe(totalCarrinhoElemento, {
+    childList: true,
+    characterData: true,
+    subtree: true
+});
+
+atualizarParcelamento();
+
+
+/* ============================================================
+   VALIDAR ENDEREÇO ANTES DE IR PARA O CHECKOUT
+   ============================================================ */
+
+document.getElementById("botaoCheckout").addEventListener(
+    "click",
+    evento => {
+        if (!formEndereco.reportValidity()) {
+            evento.preventDefault();
+
+            formEndereco.querySelector(":invalid").focus();
+
+            return;
+        }
+
+        salvarEndereco();
+    }
+);
+</script>
+
 </body>
 </html>

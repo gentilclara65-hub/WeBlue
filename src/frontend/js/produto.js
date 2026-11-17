@@ -227,6 +227,8 @@ function adicionarProdutoSacola() {
         }
 
         itemExistente.quantidade = novaQuantidade;
+        itemExistente.imagem_url =
+    produtoAtual.imagem_url || itemExistente.imagem_url || "";
 
     } else {
         carrinho.push({
