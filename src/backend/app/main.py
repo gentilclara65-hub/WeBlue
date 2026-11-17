@@ -253,6 +253,33 @@ def pagina_categoria():
         FRONTEND_DIR / "categoria.html"
     )    
 
+
+
+# ============================================================
+# PÁGINA DE VALE-COMPRAS
+# ============================================================
+
+@app.get(
+    "/vale-compras",
+    include_in_schema=False,
+)
+@app.get(
+    "/vale-compras.html",
+    include_in_schema=False,
+)
+def pagina_vale_compras():
+
+    arquivo = FRONTEND_DIR / "vale-compras.html"
+
+    if not arquivo.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Página de vale-compras não encontrada."
+        )
+
+    return FileResponse(arquivo)
+
+
 # ============================================================
 # PÁGINA INICIAL
 # ============================================================

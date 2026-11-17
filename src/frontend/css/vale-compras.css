@@ -1,0 +1,281 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8f9fb;
+    color: #183b59;
+}
+
+.cabecalho {
+    min-height: 75px;
+    padding: 18px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+    color: #173c5c;
+    font-size: 27px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.logo span {
+    color: #48a6d8;
+}
+
+.cabecalho nav {
+    display: flex;
+    gap: 25px;
+}
+
+.cabecalho nav a {
+    color: #244762;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cabecalho nav a:hover {
+    color: #369bd0;
+}
+
+.conteudo {
+    width: 100%;
+    max-width: 1200px;
+    margin: 45px auto;
+    padding: 0 25px;
+}
+
+.banner-vale {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 35px;
+    padding: 55px;
+    background: linear-gradient(135deg, #fff, #f2f6fa);
+    border-radius: 25px;
+    box-shadow: 0 12px 35px rgba(25, 61, 89, 0.09);
+}
+
+.etiqueta {
+    display: inline-block;
+    padding: 9px 15px;
+    border-radius: 30px;
+    background: #e8f4fb;
+    color: #287cae;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.texto-vale h1 {
+    margin-top: 22px;
+    max-width: 500px;
+    color: #183c5a;
+    font-size: clamp(30px, 4vw, 45px);
+    line-height: 1.15;
+}
+
+.chamada {
+    margin-top: 18px;
+    color: #617487;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.valor-vale {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25px;
+    color: #a47b2d;
+}
+
+.valor-vale span {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.valor-vale strong {
+    margin: 5px 0;
+    font-size: clamp(38px, 5vw, 55px);
+    color: #b58b38;
+}
+
+.condicao {
+    margin-top: 12px;
+    color: #294b66;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.botao-comprar {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 15px 25px;
+    border-radius: 10px;
+    background: #1d567e;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.25s;
+}
+
+.botao-comprar:hover {
+    background: #328dc0;
+    transform: translateY(-2px);
+}
+
+.imagem-vale {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.imagem-vale img {
+    width: 100%;
+    max-width: 430px;
+    max-height: 380px;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 18px rgba(0, 0, 0, 0.12));
+}
+
+.como-usar {
+    padding: 65px 10px;
+    text-align: center;
+}
+
+.como-usar h2,
+.mensagem-final h2 {
+    color: #183c5a;
+    font-size: 29px;
+}
+
+.descricao {
+    margin-top: 12px;
+    color: #718092;
+}
+
+.opcoes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-top: 35px;
+}
+
+.opcao {
+    padding: 35px 25px;
+    background: #fff;
+    border: 1px solid #e6edf2;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(25, 61, 89, 0.05);
+}
+
+.icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #edf6fb;
+    color: #267ba9;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.opcao h3 {
+    margin-bottom: 12px;
+    color: #244b68;
+    font-size: 20px;
+}
+
+.opcao p {
+    color: #718092;
+    line-height: 1.7;
+}
+
+.mensagem-final {
+    padding: 45px 20px;
+    border-radius: 20px;
+    background: #eaf3f9;
+    text-align: center;
+}
+
+.mensagem-final p {
+    margin-top: 12px;
+    color: #64798b;
+    line-height: 1.6;
+}
+
+footer {
+    padding: 25px;
+    background: #183c5a;
+    color: white;
+    text-align: center;
+    font-size: 13px;
+}
+
+@media (max-width: 750px) {
+    .cabecalho {
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .cabecalho nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .conteudo {
+        margin: 25px auto;
+        padding: 0 15px;
+    }
+
+    .banner-vale {
+        grid-template-columns: 1fr;
+        padding: 30px 22px;
+        text-align: center;
+    }
+
+    .texto-vale h1 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .valor-vale {
+        align-items: center;
+    }
+
+    .imagem-vale {
+        min-height: 180px;
+    }
+
+    .imagem-vale img {
+        max-width: 300px;
+        max-height: 260px;
+    }
+
+    .opcoes {
+        grid-template-columns: 1fr;
+    }
+
+    .como-usar h2,
+    .mensagem-final h2 {
+        font-size: 24px;
+    }
+}
