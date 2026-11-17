@@ -1,7 +1,16 @@
+
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import DateTime, Enum as SQLAlchemyEnum, ForeignKey, Integer, Numeric, text
+from sqlalchemy import (
+    DateTime,
+    Enum as SQLAlchemyEnum,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    text,
+)
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -49,6 +58,21 @@ class Pedido(Base):
     valor_total: Mapped[float] = mapped_column(
         Numeric(10, 2),
         nullable=False
+    )
+
+    cupom_codigo: Mapped[str | None] = mapped_column(
+        String(40),
+        nullable=True
+    )
+
+    valor_subtotal: Mapped[float | None] = mapped_column(
+        Numeric(10, 2),
+        nullable=True
+    )
+
+    valor_desconto: Mapped[float | None] = mapped_column(
+        Numeric(10, 2),
+        nullable=True
     )
 
     criado_em: Mapped[datetime] = mapped_column(

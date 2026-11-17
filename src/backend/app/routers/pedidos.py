@@ -1,17 +1,6 @@
+
 # ============================================================
 # ROTAS DO FLUXO DE VENDAS
-# ============================================================
-#
-# Este router centraliza o ciclo de vendas do Weblue:
-#
-# 1. Carrinho / checkout
-# 2. Simulação de pagamento
-# 3. Registro do pedido
-# 4. Histórico do cliente
-# 5. Controle de estoque
-#
-# O projeto já possui os models Pedido, ItemPedido e Produto,
-# então reutilizamos essa base para evitar duplicação.
 # ============================================================
 
 from decimal import Decimal
@@ -29,8 +18,11 @@ from ..models.produto import Produto
 from ..schemas.pedido import CheckoutRequest
 from ..services.admin_security import verificar_token_admin
 from ..services.security import verificar_token_acesso
+from ..services.cupons import calcular_desconto
+
 
 router = APIRouter(tags=["Pedidos e Vendas"])
+
 seguranca_admin = HTTPBearer()
 seguranca_cliente = HTTPBearer(auto_error=False)
 
@@ -39,6 +31,7 @@ def exigir_cliente_autenticado(
     credenciais: HTTPAuthorizationCredentials | None = Depends(seguranca_cliente),
     database: Session = Depends(get_database),
 ) -> Cliente:
+
     if credenciais is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -46,7 +39,11 @@ def exigir_cliente_autenticado(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    cliente_id = verificar_token_acesso(credenciais.credentials, database)
+    cliente_id = verificar_token_acesso(
+        credenciais.credentials,
+        database
+    )
+
     if cliente_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -55,12 +52,14 @@ def exigir_cliente_autenticado(
         )
 
     cliente = database.get(Cliente, cliente_id)
+
     if cliente is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Cliente não encontrado.",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     if cliente.status != "ATIVA":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -74,36 +73,48 @@ def exigir_admin_autenticado(
     credenciais: HTTPAuthorizationCredentials = Depends(seguranca_admin),
     database: Session = Depends(get_database),
 ) -> int:
-    admin_id = verificar_token_admin(credenciais.credentials, database)
+
+    admin_id = verificar_token_admin(
+        credenciais.credentials,
+        database
+    )
+
     if admin_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token administrativo inválido ou expirado.",
         )
+
     return admin_id
 
 
-def simular_pagamento(metodo_pagamento: str, numero_cartao: str | None) -> bool:
+def simular_pagamento(
+    metodo_pagamento: str,
+    numero_cartao: str | None
+) -> bool:
     """Simula o resultado do pagamento sem depender de gateway real."""
 
-    # PIX geralmente é aprovado imediatamente em um fluxo simples.
     if metodo_pagamento == "PIX":
         return True
 
-    # Cabe ao cartão validar informações mínimas do número.
     if not numero_cartao:
         return False
 
-    numeros = "".join(ch for ch in numero_cartao if ch.isdigit())
+    numeros = "".join(
+        ch for ch in numero_cartao if ch.isdigit()
+    )
 
     if len(numeros) < 13:
         return False
 
-    # Também simulamos um cenário simples de rejeição.
-    # Caso o número tenha todos os dígitos repetidos,
-    # a transação é recusada.
-    return not all(digito == numeros[0] for digito in numeros)
+    return not all(
+        digito == numeros[0] for digito in numeros
+    )
 
+
+# ============================================================
+# CHECKOUT
+# ============================================================
 
 @router.post(
     "/checkout",
@@ -115,9 +126,10 @@ def finalizar_compra(
     database: Session = Depends(get_database),
     cliente: Cliente = Depends(exigir_cliente_autenticado),
 ):
-    """Valida o carrinho, confirma a venda e atualiza o estoque."""
+    """Valida o carrinho, aplica cupom, confirma a venda e atualiza o estoque."""
 
     quantidades = {}
+
     for item in dados.itens:
         quantidades[item.produto_id] = (
             quantidades.get(item.produto_id, 0) + item.quantidade
@@ -130,53 +142,106 @@ def finalizar_compra(
             .order_by(Produto.id)
             .with_for_update()
         ).scalars().all()
-        produtos_por_id = {produto.id: produto for produto in produtos}
+
+        produtos_por_id = {
+            produto.id: produto for produto in produtos
+        }
 
         for produto_id in sorted(quantidades):
             produto = produtos_por_id.get(produto_id)
+
             if produto is None or produto.status != "ATIVO":
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Produto {produto_id} não encontrado ou indisponível.",
+                    detail=(
+                        f"Produto {produto_id} não encontrado "
+                        "ou indisponível."
+                    ),
                 )
 
             if produto.estoque < quantidades[produto_id]:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=(
-                        f"Produto '{produto.nome}' não possui estoque suficiente. "
-                        f"Disponível: {produto.estoque}"
+                        f"Produto '{produto.nome}' não possui "
+                        f"estoque suficiente. Disponível: {produto.estoque}"
                     ),
                 )
 
+        # ----------------------------------------------------
+        # CALCULAR SUBTOTAL COM OS PREÇOS DO BANCO
+        # ----------------------------------------------------
+
         itens_do_pedido = []
-        total_pedido = Decimal("0.00")
+        subtotal_pedido = Decimal("0.00")
+
         for produto_id in sorted(quantidades):
             produto = produtos_por_id[produto_id]
             quantidade = quantidades[produto_id]
+
             preco_unitario = Decimal(str(produto.preco))
-            subtotal = preco_unitario * quantidade
-            total_pedido += subtotal
+            subtotal_item = preco_unitario * quantidade
+
+            subtotal_pedido += subtotal_item
+
             itens_do_pedido.append(
                 {
                     "produto": produto,
                     "quantidade": quantidade,
                     "preco_unitario": preco_unitario,
-                    "subtotal": subtotal,
+                    "subtotal": subtotal_item,
                 }
             )
 
-        if not simular_pagamento(dados.metodo_pagamento, dados.numero_cartao):
+        # ----------------------------------------------------
+        # VALIDAR E CALCULAR O CUPOM
+        # ----------------------------------------------------
+
+        codigo_cupom = dados.cupom_codigo
+        valor_desconto = Decimal("0.00")
+
+        if codigo_cupom:
+            try:
+                resultado_cupom = calcular_desconto(
+                    codigo_cupom,
+                    subtotal_pedido
+                )
+
+                codigo_cupom = resultado_cupom["codigo"]
+                valor_desconto = resultado_cupom["desconto"]
+
+            except ValueError as erro:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str(erro),
+                )
+
+        total_pedido = subtotal_pedido - valor_desconto
+
+        # ----------------------------------------------------
+        # SIMULAR PAGAMENTO
+        # ----------------------------------------------------
+
+        if not simular_pagamento(
+            dados.metodo_pagamento,
+            dados.numero_cartao
+        ):
             raise HTTPException(
                 status_code=status.HTTP_402_PAYMENT_REQUIRED,
                 detail=(
-                    "Pagamento recusado. Verifique os dados do pagamento e tente novamente."
+                    "Pagamento recusado. Verifique os dados "
+                    "do pagamento e tente novamente."
                 ),
             )
+
+        # ----------------------------------------------------
+        # ATUALIZAR ESTOQUE
+        # ----------------------------------------------------
 
         for item in itens_do_pedido:
             produto = item["produto"]
             quantidade = item["quantidade"]
+
             resultado = database.execute(
                 update(Produto)
                 .where(
@@ -184,9 +249,14 @@ def finalizar_compra(
                     Produto.status == "ATIVO",
                     Produto.estoque >= quantidade,
                 )
-                .values(estoque=Produto.estoque - quantidade)
-                .execution_options(synchronize_session=False)
+                .values(
+                    estoque=Produto.estoque - quantidade
+                )
+                .execution_options(
+                    synchronize_session=False
+                )
             )
+
             if resultado.rowcount != 1:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
@@ -196,13 +266,25 @@ def finalizar_compra(
                     ),
                 )
 
+        # ----------------------------------------------------
+        # REGISTRAR PEDIDO
+        # ----------------------------------------------------
+
         pedido = Pedido(
             cliente_id=cliente.id,
             status=StatusPedido.PAGO,
             valor_total=total_pedido,
+            cupom_codigo=codigo_cupom,
+            valor_subtotal=subtotal_pedido,
+            valor_desconto=valor_desconto,
         )
+
         database.add(pedido)
         database.flush()
+
+        # ----------------------------------------------------
+        # REGISTRAR ITENS DO PEDIDO
+        # ----------------------------------------------------
 
         for item in itens_do_pedido:
             database.add(
@@ -217,16 +299,26 @@ def finalizar_compra(
 
         database.flush()
         database.refresh(pedido)
+
+        # ----------------------------------------------------
+        # RESPOSTA DO CHECKOUT
+        # ----------------------------------------------------
+
         resposta = {
             "mensagem": "Pedido registrado com sucesso.",
             "pedido": {
                 "id": pedido.id,
                 "status": pedido.status.value,
                 "valor_total": str(pedido.valor_total),
+                "valor_subtotal": str(pedido.valor_subtotal),
+                "valor_desconto": str(pedido.valor_desconto),
+                "cupom_codigo": pedido.cupom_codigo,
                 "metodo_pagamento": dados.metodo_pagamento,
                 "endereco": dados.endereco,
                 "criado_em": (
-                    pedido.criado_em.isoformat() if pedido.criado_em else None
+                    pedido.criado_em.isoformat()
+                    if pedido.criado_em
+                    else None
                 ),
                 "itens": [
                     {
@@ -239,12 +331,19 @@ def finalizar_compra(
                 ],
             },
         }
+
         database.commit()
+
         return resposta
+
     except Exception:
         database.rollback()
         raise
 
+
+# ============================================================
+# HISTÓRICO DE PEDIDOS DO CLIENTE
+# ============================================================
 
 @router.get(
     "/me",
@@ -267,13 +366,19 @@ def listar_pedidos_cliente(
     )
 
     resposta = []
+
     for pedido in pedidos:
         itens = []
+
         for item in pedido.itens:
             itens.append(
                 {
                     "produto_id": item.produto_id,
-                    "nome": item.produto.nome if item.produto else "Produto",
+                    "nome": (
+                        item.produto.nome
+                        if item.produto
+                        else "Produto"
+                    ),
                     "quantidade": item.quantidade,
                     "subtotal": str(item.subtotal),
                 }
@@ -284,13 +389,35 @@ def listar_pedidos_cliente(
                 "id": pedido.id,
                 "status": pedido.status.value,
                 "valor_total": str(pedido.valor_total),
-                "criado_em": pedido.criado_em.isoformat() if pedido.criado_em else None,
+                "valor_subtotal": (
+                    str(pedido.valor_subtotal)
+                    if pedido.valor_subtotal is not None
+                    else None
+                ),
+                "valor_desconto": (
+                    str(pedido.valor_desconto)
+                    if pedido.valor_desconto is not None
+                    else None
+                ),
+                "cupom_codigo": pedido.cupom_codigo,
+                "criado_em": (
+                    pedido.criado_em.isoformat()
+                    if pedido.criado_em
+                    else None
+                ),
                 "itens": itens,
             }
         )
 
-    return {"total": len(resposta), "pedidos": resposta}
+    return {
+        "total": len(resposta),
+        "pedidos": resposta
+    }
 
+
+# ============================================================
+# LISTAR TODOS OS PEDIDOS - ADMINISTRADOR
+# ============================================================
 
 @router.get(
     "",
@@ -300,7 +427,7 @@ def listar_pedidos(
     database: Session = Depends(get_database),
     admin_id: int = Depends(exigir_admin_autenticado),
 ):
-    """Lista pedidos do sistema para uso administrativo ou consulta simples."""
+    """Lista pedidos do sistema para consulta administrativa."""
 
     pedidos = (
         database.execute(
@@ -312,6 +439,7 @@ def listar_pedidos(
     )
 
     resposta = []
+
     for pedido in pedidos:
         resposta.append(
             {
@@ -319,11 +447,30 @@ def listar_pedidos(
                 "cliente_id": pedido.cliente_id,
                 "status": pedido.status.value,
                 "valor_total": str(pedido.valor_total),
-                "criado_em": pedido.criado_em.isoformat() if pedido.criado_em else None,
+                "valor_subtotal": (
+                    str(pedido.valor_subtotal)
+                    if pedido.valor_subtotal is not None
+                    else None
+                ),
+                "valor_desconto": (
+                    str(pedido.valor_desconto)
+                    if pedido.valor_desconto is not None
+                    else None
+                ),
+                "cupom_codigo": pedido.cupom_codigo,
+                "criado_em": (
+                    pedido.criado_em.isoformat()
+                    if pedido.criado_em
+                    else None
+                ),
                 "itens": [
                     {
                         "produto_id": item.produto_id,
-                        "nome": item.produto.nome if item.produto else "Produto",
+                        "nome": (
+                            item.produto.nome
+                            if item.produto
+                            else "Produto"
+                        ),
                         "quantidade": item.quantidade,
                         "subtotal": str(item.subtotal),
                     }
@@ -332,8 +479,15 @@ def listar_pedidos(
             }
         )
 
-    return {"total": len(resposta), "pedidos": resposta}
+    return {
+        "total": len(resposta),
+        "pedidos": resposta
+    }
 
+
+# ============================================================
+# CONSULTAR ESTOQUE
+# ============================================================
 
 @router.get(
     "/estoque",
@@ -363,6 +517,12 @@ def consultar_estoque(
             for produto in produtos
         ],
     }
+
+
+# ============================================================
+# RELATÓRIO DE VENDAS
+# ============================================================
+
 @router.get(
     "/relatorios/vendas",
     summary="Resumo geral de vendas"
@@ -381,8 +541,8 @@ def relatorio_vendas(
     )
 
     total_vendas = sum(
-        float(p.valor_total)
-        for p in pedidos
+        (Decimal(str(p.valor_total)) for p in pedidos),
+        Decimal("0.00")
     )
 
     quantidade_pedidos = len(pedidos)
@@ -390,14 +550,20 @@ def relatorio_vendas(
     ticket_medio = (
         total_vendas / quantidade_pedidos
         if quantidade_pedidos
-        else 0
+        else Decimal("0.00")
     )
 
     return {
-        "faturamento_total": round(total_vendas, 2),
+        "faturamento_total": round(float(total_vendas), 2),
         "quantidade_pedidos": quantidade_pedidos,
-        "ticket_medio": round(ticket_medio, 2)
+        "ticket_medio": round(float(ticket_medio), 2)
     }
+
+
+# ============================================================
+# RELATÓRIO DE PRODUTOS MAIS VENDIDOS
+# ============================================================
+
 @router.get(
     "/relatorios/produtos",
     summary="Produtos mais vendidos"

@@ -102,6 +102,10 @@ from .routers.admin_auth import (
     router as admin_auth_router
 )
 
+from .routers.cupons import (
+    router as cupons_router
+)
+
 
 # ============================================================
 # ROUTER PRINCIPAL
@@ -198,4 +202,13 @@ api_router.include_router(
 api_router.include_router(
     admin_auth_router,
     prefix="/admin/auth"
+)
+
+# ------------------------------------------------------------
+# CUPONS DE DESCONTO
+# ------------------------------------------------------------
+
+api_router.include_router(
+    cupons_router,
+    prefix="/cupons"
 )
