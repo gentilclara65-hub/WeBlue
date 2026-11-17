@@ -34,11 +34,14 @@
             padding: 35px 0 60px;
         }
 
+        /* CABEÇALHO */
+
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 35px;
+            gap: 20px;
         }
 
         .logo {
@@ -52,21 +55,45 @@
             color: #1686ed;
         }
 
+        /* NOVO VISUAL DOS BOTÕES DO CABEÇALHO */
+
         .topbar-links {
             display: flex;
-            gap: 22px;
+            align-items: center;
+            gap: 12px;
         }
 
-        .topbar a {
+        .topbar-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            padding: 0 20px;
+            border-radius: 12px;
             color: #1266bd;
+            background: #ffffff;
+            border: 1px solid #d7e8f8;
             font-size: 14px;
             font-weight: 700;
-            transition: color .2s;
+            transition: all .25s ease;
+            box-shadow: 0 3px 10px rgba(8, 38, 83, .05);
         }
 
-        .topbar a:hover {
-            color: #031b48;
+        .topbar-links a:hover {
+            color: #ffffff;
+            background: linear-gradient(110deg, #1686ed, #0754a5);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(8, 105, 220, .18);
         }
+
+        .topbar-links a:focus-visible {
+            outline: 3px solid #80bdff;
+            outline-offset: 3px;
+        }
+
+        /* TÍTULO */
 
         .titulo {
             margin-bottom: 28px;
@@ -82,6 +109,8 @@
             color: #71829a;
             font-size: 14px;
         }
+
+        /* ESTRUTURA */
 
         .cart-grid {
             display: grid;
@@ -556,7 +585,7 @@
             line-height: 1.5;
         }
 
-        /* BOTÕES */
+        /* BOTÕES DO RESUMO */
 
         .actions {
             display: flex;
@@ -609,6 +638,8 @@
             font-size: 11px;
         }
 
+        /* ANIMAÇÃO */
+
         @keyframes aparecer {
             from {
                 opacity: 0;
@@ -619,6 +650,8 @@
                 transform: translateY(0);
             }
         }
+
+        /* RESPONSIVIDADE */
 
         @media (max-width: 850px) {
             .cart-grid {
@@ -638,13 +671,19 @@
 
             .topbar {
                 align-items: flex-start;
-                gap: 15px;
+                gap: 12px;
             }
 
             .topbar-links {
                 flex-direction: column;
-                gap: 9px;
-                text-align: right;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .topbar-links a {
+                min-height: 40px;
+                padding: 0 12px;
+                font-size: 12px;
             }
 
             .panel {
@@ -692,6 +731,15 @@
 
             .form-group.full {
                 grid-column: auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
@@ -1152,7 +1200,7 @@ camposEndereco.forEach(campo => {
 
 carregarEndereco();
 
-/* Máscara simples de CEP */
+/* MÁSCARA DE CEP */
 
 document.getElementById("cep").addEventListener("input", evento => {
     let valor = evento.target.value.replace(/\D/g, "").slice(0, 8);
@@ -1215,7 +1263,6 @@ function atualizarParcelamento() {
             style: "currency",
             currency: "BRL"
         })}`;
-
 }
 
 quantidadeParcelas.addEventListener(
