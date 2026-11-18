@@ -1831,3 +1831,23 @@ input {
     object-fit: contain;
     display: block;
 }
+
+/* IMAGEM DOS CUPONS - MESMA PROPORÇÃO DO VALE-PRESENTE */
+
+.beneficio-imagem-link {
+    width: 100%;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.imagem-beneficio {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 260px;
+    object-fit: contain;
+}

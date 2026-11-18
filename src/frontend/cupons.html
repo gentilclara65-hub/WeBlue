@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confira os cupons de desconto disponíveis na WeBlue.">
+    <title>Cupons de Desconto | WeBlue</title>
+
+    <link rel="stylesheet" href="/css/cupons.css">
+    <script src="/js/cupons.js" defer></script>
+</head>
+<body>
+
+    <header class="topo">
+        <a href="/home" class="logo">WeBlue</a>
+
+        <a href="/home" class="voltar">
+            <span aria-hidden="true">←</span> Voltar à loja
+        </a>
+    </header>
+
+    <main>
+        <section class="apresentacao">
+            <span class="etiqueta">VANTAGENS WEBLUE</span>
+
+            <h1>Cupons especiais para você</h1>
+
+            <p>
+                Escolha seu cupom, copie o código e aproveite
+                descontos especiais nas suas compras.
+            </p>
+        </section>
+
+        <section class="secao-cupons">
+            <div class="titulo-secao">
+                <div>
+                    <h2>Cupons disponíveis</h2>
+                    <p>Confira as condições de cada desconto.</p>
+                </div>
+
+                <span id="contador-cupons" class="contador">
+                    Carregando...
+                </span>
+            </div>
+
+            <div id="mensagem-carregamento" class="mensagem">
+                Carregando cupons...
+            </div>
+
+            <div id="lista-cupons" class="lista-cupons"></div>
+
+            <div id="mensagem-erro" class="mensagem erro" hidden>
+                Não foi possível carregar os cupons.
+                Tente novamente mais tarde.
+            </div>
+        </section>
+
+        <section class="aviso">
+            <span class="aviso-icone" aria-hidden="true">ℹ</span>
+
+            <div>
+                <h3>Antes de utilizar</h3>
+                <p>
+                    Cada cupom possui um valor mínimo de compra e,
+                    em alguns casos, um limite máximo de desconto.
+                    Confira essas condições antes de finalizar seu pedido.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <p>© WeBlue - Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

@@ -23,6 +23,8 @@ const removerCupom = document.getElementById("removerCupom");
 const mensagemPagamento = document.getElementById("mensagemPagamento");
 const botaoCheckout = document.getElementById("botaoCheckout");
 
+let calculoCupom = null;
+
 
 /* ============================================================
    CARRINHO
@@ -41,10 +43,7 @@ function obterCarrinho() {
 }
 
 function salvarCarrinho(carrinho) {
-    localStorage.setItem(
-        CHAVE_CARRINHO,
-        JSON.stringify(carrinho)
-    );
+    localStorage.setItem(CHAVE_CARRINHO, JSON.stringify(carrinho));
 }
 
 function formatarPreco(valor) {
@@ -82,8 +81,7 @@ function atualizarContadorCarrinho() {
     const carrinho = obterCarrinho();
 
     const quantidade = carrinho.reduce(
-        (soma, item) =>
-            soma + Number(item.quantidade || 0),
+        (soma, item) => soma + Number(item.quantidade || 0),
         0
     );
 
@@ -103,8 +101,7 @@ function alterarQuantidade(produtoId, delta) {
     const carrinho = obterCarrinho();
 
     const item = carrinho.find(
-        produto =>
-            String(produto.id) === String(produtoId)
+        produto => String(produto.id) === String(produtoId)
     );
 
     if (!item) return;
@@ -115,7 +112,12 @@ function alterarQuantidade(produtoId, delta) {
     );
 
     salvarCarrinho(carrinho);
-    renderCarrinho();
+
+    if (obterCupom()) {
+        revalidarCupom();
+    } else {
+        renderCarrinho();
+    }
 }
 
 
@@ -125,12 +127,16 @@ function alterarQuantidade(produtoId, delta) {
 
 function removerDoCarrinho(produtoId) {
     const carrinho = obterCarrinho().filter(
-        produto =>
-            String(produto.id) !== String(produtoId)
+        produto => String(produto.id) !== String(produtoId)
     );
 
     salvarCarrinho(carrinho);
-    renderCarrinho();
+
+    if (obterCupom()) {
+        revalidarCupom();
+    } else {
+        renderCarrinho();
+    }
 }
 
 
@@ -160,6 +166,18 @@ function renderCarrinho() {
 
     if (!carrinho.length) {
         listaCarrinho.replaceChildren();
+
+        calculoCupom = null;
+
+        localStorage.removeItem(CHAVE_CUPOM);
+
+        if (codigoCupom) {
+            codigoCupom.value = "";
+        }
+
+        if (removerCupom) {
+            removerCupom.style.display = "none";
+        }
 
         if (mensagemCarrinho) {
             mensagemCarrinho.textContent =
@@ -337,16 +355,30 @@ function renderCarrinho() {
             `${quantidadeTotal} ${quantidadeTotal === 1 ? "item" : "itens"}`;
     }
 
+    /* VALORES DO CARRINHO COM DESCONTO */
+
+    const subtotalFinal = calculoCupom
+        ? Number(calculoCupom.subtotal)
+        : subtotal;
+
+    const descontoFinal = calculoCupom
+        ? Number(calculoCupom.desconto)
+        : 0;
+
+    const totalFinal = calculoCupom
+        ? Number(calculoCupom.total)
+        : subtotal;
+
     if (subtotalCarrinho) {
-        subtotalCarrinho.textContent = formatarPreco(subtotal);
+        subtotalCarrinho.textContent = formatarPreco(subtotalFinal);
     }
 
     if (descontoCarrinho) {
-        descontoCarrinho.textContent = formatarPreco(0);
+        descontoCarrinho.textContent = formatarPreco(descontoFinal);
     }
 
     if (totalCarrinho) {
-        totalCarrinho.textContent = formatarPreco(subtotal);
+        totalCarrinho.textContent = formatarPreco(totalFinal);
     }
 
     atualizarParcelamento();
@@ -394,6 +426,123 @@ function mostrarMensagemCupom(texto, tipo = "") {
     mensagemCupom.className = `coupon-message ${tipo}`;
 }
 
+async function validarCupomNaApi(codigo) {
+    const carrinho = obterCarrinho();
+
+    const itens = carrinho.map(item => ({
+        produto_id: Number(item.id),
+        quantidade: Number(item.quantidade || 1)
+    }));
+
+    try {
+        const resposta = await fetch(
+                   "/api/cupons/validar",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo: codigo,
+                    itens: itens
+                })
+            }
+        );
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(
+                dados.detail || "Não foi possível validar o cupom."
+            );
+        }
+
+        return dados;
+
+    } catch (erro) {
+        console.error("Erro ao validar cupom:", erro);
+        throw erro;
+    }
+}
+
+
+/* ============================================================
+   REVALIDAR CUPOM
+   ============================================================ */
+
+async function revalidarCupom() {
+    const cupom = obterCupom();
+
+    if (!cupom) {
+        calculoCupom = null;
+        renderCarrinho();
+        return;
+    }
+
+    const carrinho = obterCarrinho();
+
+    if (!carrinho.length) {
+        calculoCupom = null;
+
+        localStorage.removeItem(CHAVE_CUPOM);
+
+        if (codigoCupom) {
+            codigoCupom.value = "";
+        }
+
+        if (removerCupom) {
+            removerCupom.style.display = "none";
+        }
+
+        mostrarMensagemCupom(
+            "Cupom removido porque o carrinho está vazio."
+        );
+
+        renderCarrinho();
+        return;
+    }
+
+    try {
+        const dados = await validarCupomNaApi(cupom);
+
+        calculoCupom = dados;
+
+        mostrarMensagemCupom(
+            "Cupom validado com sucesso!",
+            "sucesso"
+        );
+
+        if (removerCupom) {
+            removerCupom.style.display = "inline-block";
+        }
+
+    } catch (erro) {
+        calculoCupom = null;
+
+        localStorage.removeItem(CHAVE_CUPOM);
+
+        if (codigoCupom) {
+            codigoCupom.value = "";
+        }
+
+        if (removerCupom) {
+            removerCupom.style.display = "none";
+        }
+
+        mostrarMensagemCupom(
+            erro.message || "O cupom não pode mais ser aplicado.",
+            "erro"
+        );
+    }
+
+    renderCarrinho();
+}
+
+
+/* ============================================================
+   CARREGAR CUPOM SALVO
+   ============================================================ */
+
 function carregarCupom() {
     const cupom = obterCupom();
 
@@ -403,18 +552,25 @@ function carregarCupom() {
         codigoCupom.value = cupom;
     }
 
-    mostrarMensagemCupom(
-        "Cupom registrado para validação na finalização da compra."
-    );
-
     if (removerCupom) {
         removerCupom.style.display = "inline-block";
     }
+
+    mostrarMensagemCupom("Verificando seu cupom...");
+
+    revalidarCupom();
 }
 
+
+/* ============================================================
+   APLICAR CUPOM
+   ============================================================ */
+
 if (botaoAplicarCupom) {
-    botaoAplicarCupom.addEventListener("click", () => {
-        const cupom = codigoCupom.value.trim().toUpperCase();
+    botaoAplicarCupom.addEventListener("click", async () => {
+        const cupom = codigoCupom
+            ? codigoCupom.value.trim().toUpperCase()
+            : "";
 
         if (!cupom) {
             mostrarMensagemCupom(
@@ -424,22 +580,70 @@ if (botaoAplicarCupom) {
             return;
         }
 
-        localStorage.setItem(CHAVE_CUPOM, cupom);
+        if (!obterCarrinho().length) {
+            mostrarMensagemCupom(
+                "Adicione produtos ao carrinho antes de aplicar um cupom.",
+                "erro"
+            );
+            return;
+        }
 
-        mostrarMensagemCupom(
-            "Cupom registrado! A validade e o desconto serão verificados no checkout.",
-            "sucesso"
-        );
+        botaoAplicarCupom.disabled = true;
 
-        if (removerCupom) {
-            removerCupom.style.display = "inline-block";
+        mostrarMensagemCupom("Validando seu cupom...");
+
+        try {
+            const dados = await validarCupomNaApi(cupom);
+
+            calculoCupom = dados;
+
+            localStorage.setItem(CHAVE_CUPOM, cupom);
+
+            mostrarMensagemCupom(
+                "Cupom validado com sucesso!",
+                "sucesso"
+            );
+
+            if (removerCupom) {
+                removerCupom.style.display = "inline-block";
+            }
+
+            renderCarrinho();
+
+            console.log("Resultado da validação:", dados);
+
+        } catch (erro) {
+            calculoCupom = null;
+
+            localStorage.removeItem(CHAVE_CUPOM);
+
+            renderCarrinho();
+
+            mostrarMensagemCupom(
+                erro.message || "Não foi possível validar o cupom.",
+                "erro"
+            );
+
+            if (removerCupom) {
+                removerCupom.style.display = "none";
+            }
+
+        } finally {
+            botaoAplicarCupom.disabled = false;
         }
     });
 }
 
+
+/* ============================================================
+   REMOVER CUPOM
+   ============================================================ */
+
 if (removerCupom) {
     removerCupom.addEventListener("click", () => {
         localStorage.removeItem(CHAVE_CUPOM);
+
+        calculoCupom = null;
 
         if (codigoCupom) {
             codigoCupom.value = "";
@@ -448,6 +652,8 @@ if (removerCupom) {
         removerCupom.style.display = "none";
 
         mostrarMensagemCupom("Cupom removido.");
+
+        renderCarrinho();
     });
 }
 
@@ -456,21 +662,84 @@ if (removerCupom) {
    ENDEREÇO DE ENTREGA
    ============================================================ */
 
-function obterEndereco() {
+// Lê os dados diretamente do formulário.
+function obterEnderecoDoFormulario() {
+    const form = document.getElementById("formEndereco");
+
+    if (!form) return {};
+
+    const campos = [
+        "nome",
+        "cep",
+        "numero",
+        "rua",
+        "complemento",
+        "bairro",
+        "cidade",
+        "estado"
+    ];
+
+    const endereco = {};
+
+    campos.forEach(campo => {
+        const elemento = form.elements.namedItem(campo);
+
+        endereco[campo] = elemento
+            ? elemento.value.trim()
+            : "";
+    });
+
+    return endereco;
+}
+
+// Salva o endereço preenchido no navegador.
+function salvarEndereco() {
+    const endereco = obterEnderecoDoFormulario();
+
     try {
-        return JSON.parse(
-            localStorage.getItem(CHAVE_ENDERECO)
-        ) || {};
+        localStorage.setItem(
+            CHAVE_ENDERECO,
+            JSON.stringify(endereco)
+        );
+
+        return true;
     } catch (erro) {
-        console.error("Erro ao recuperar endereço:", erro);
-        return {};
+        console.error("Erro ao salvar endereço:", erro);
+        alert("Não foi possível salvar seu endereço. Tente novamente.");
+        return false;
     }
 }
 
+// Recupera o endereço salvo e preenche os campos.
+function carregarEndereco() {
+    const form = document.getElementById("formEndereco");
+
+    if (!form) return;
+
+    try {
+        const enderecoSalvo = JSON.parse(
+            localStorage.getItem(CHAVE_ENDERECO) || "{}"
+        );
+
+        Object.keys(enderecoSalvo).forEach(campo => {
+            const elemento = form.elements.namedItem(campo);
+
+            if (elemento && !elemento.value) {
+                elemento.value = enderecoSalvo[campo] || "";
+            }
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar endereço:", erro);
+    }
+}
+
+// Valida e salva o endereço antes de continuar.
 function validarEndereco() {
     const form = document.getElementById("formEndereco");
 
     if (!form) {
+        alert("Não foi possível localizar o formulário de endereço.");
         return false;
     }
 
@@ -484,7 +753,9 @@ function validarEndereco() {
         return false;
     }
 
-    const endereco = obterEndereco();
+    // Captura os dados atuais, mesmo que o navegador
+    // não tenha disparado os eventos de preenchimento.
+    const endereco = obterEnderecoDoFormulario();
 
     const camposObrigatorios = [
         "nome",
@@ -501,7 +772,7 @@ function validarEndereco() {
     );
 
     if (!preenchido) {
-        alert("Preencha e salve seu endereço de entrega antes de continuar.");
+        alert("Preencha todos os campos obrigatórios do endereço.");
         return false;
     }
 
@@ -513,7 +784,30 @@ function validarEndereco() {
         return false;
     }
 
+    // Salva antes de liberar o checkout.
+    try {
+        localStorage.setItem(
+            CHAVE_ENDERECO,
+            JSON.stringify(endereco)
+        );
+    } catch (erro) {
+        console.error("Erro ao salvar endereço:", erro);
+        alert("Não foi possível salvar o endereço. Tente novamente.");
+        return false;
+    }
+
     return true;
+}
+
+// Carrega o endereço quando a página abre.
+carregarEndereco();
+
+// Salva automaticamente quando o usuário altera os campos.
+const formularioEndereco = document.getElementById("formEndereco");
+
+if (formularioEndereco) {
+    formularioEndereco.addEventListener("input", salvarEndereco);
+    formularioEndereco.addEventListener("change", salvarEndereco);
 }
 
 

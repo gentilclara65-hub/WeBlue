@@ -1,8 +1,8 @@
+
 # ============================================================
 # IMPORTAÇÕES PADRÃO DO PYTHON
 # ============================================================
 
-# Facilita a construção dos caminhos das pastas.
 from pathlib import Path
 
 
@@ -10,27 +10,14 @@ from pathlib import Path
 # IMPORTAÇÕES DO FASTAPI
 # ============================================================
 
-# FastAPI:
-# cria a aplicação.
-#
-# HTTPException:
-# permite retornar erros HTTP personalizados.
-#
-# status:
-# fornece constantes de códigos HTTP.
 from fastapi import (
     FastAPI,
     HTTPException,
     status,
 )
 
-# Middleware responsável pelo CORS.
 from fastapi.middleware.cors import CORSMiddleware
-
-# Permite retornar arquivos HTML.
 from fastapi.responses import FileResponse
-
-# Permite disponibilizar CSS, JavaScript e imagens.
 from fastapi.staticfiles import StaticFiles
 
 
@@ -38,9 +25,6 @@ from fastapi.staticfiles import StaticFiles
 # SQLALCHEMY
 # ============================================================
 
-# Permite executar comandos SQL simples.
-#
-# Neste projeto é utilizado no healthcheck do banco.
 from sqlalchemy import text
 
 
@@ -48,8 +32,6 @@ from sqlalchemy import text
 # BANCO DE DADOS
 # ============================================================
 
-# engine:
-# conexão principal com o MySQL.
 from .database import engine
 
 
@@ -57,32 +39,13 @@ from .database import engine
 # ROUTER PRINCIPAL DA API
 # ============================================================
 
-# Todos os routers da Weblue agora ficam centralizados
-# no arquivo:
-#
-# src/backend/app/api.py
-#
-# Portanto, o main.py não precisa mais importar
-# clientes_router, login_router, produtos_router etc.
 from .api import api_router
+
 
 # ============================================================
 # CAMINHO DO FRONTEND
 # ============================================================
 
-# Este arquivo está em:
-#
-# src/backend/app/main.py
-#
-# parents[2] leva até:
-#
-# src/
-#
-# Depois acrescentamos "frontend".
-#
-# Resultado:
-#
-# src/frontend/
 FRONTEND_DIR = (
     Path(__file__).resolve().parents[2]
     / "frontend"
@@ -94,16 +57,8 @@ FRONTEND_DIR = (
 # ============================================================
 
 app = FastAPI(
-
-    # Nome apresentado no Swagger.
     title="API Weblue",
-
-    # Descrição apresentada na documentação.
-    description=(
-        "API do e-commerce de cosméticos Weblue."
-    ),
-
-    # Versão atual da API.
+    description="API do e-commerce de cosméticos Weblue.",
     version="1.0.0",
 )
 
@@ -113,30 +68,18 @@ app = FastAPI(
 # ============================================================
 
 app.add_middleware(
-
     CORSMiddleware,
 
-    # Endereços que podem acessar a API.
     allow_origins=[
-
-        # Live Server.
         "http://127.0.0.1:5500",
         "http://localhost:5500",
-
-        # FastAPI local.
         "http://127.0.0.1:8000",
         "http://localhost:8000",
-
-        # Aplicação publicada no Railway.
         "https://weblue-production.up.railway.app",
     ],
 
-    # Atualmente a autenticação utiliza JWT
-    # pelo cabeçalho Authorization,
-    # e não cookies.
     allow_credentials=False,
 
-    # Métodos HTTP permitidos.
     allow_methods=[
         "GET",
         "POST",
@@ -146,7 +89,6 @@ app.add_middleware(
         "OPTIONS",
     ],
 
-    # Permite os cabeçalhos necessários.
     allow_headers=["*"],
 )
 
@@ -155,40 +97,14 @@ app.add_middleware(
 # ROTAS DA API
 # ============================================================
 
-# Agora todas as rotas são registradas através
-# de um único router principal.
-#
-# O api_router está definido em:
-#
-# src/backend/app/api.py
-#
-# IMPORTANTE:
-#
-# Nesta etapa ainda não adicionamos prefix="/api".
-#
-# Portanto as URLs existentes continuam funcionando:
-#
-# /clientes
-# /auth/login
-# /auth/recuperar-senha
-# /perfil
-# /produtos
-#
-# Assim reorganizamos o backend sem quebrar
-# o frontend atual.
-
-app.include_router(
-    api_router
-)
+app.include_router(api_router)
 
 
 # ============================================================
 # ARQUIVOS ESTÁTICOS
 # ============================================================
 
-# Disponibiliza os arquivos CSS através de:
-#
-# /css/arquivo.css
+# CSS
 app.mount(
     "/css",
     StaticFiles(
@@ -197,10 +113,7 @@ app.mount(
     name="css",
 )
 
-
-# Disponibiliza os arquivos JavaScript através de:
-#
-# /js/arquivo.js
+# JavaScript
 app.mount(
     "/js",
     StaticFiles(
@@ -209,10 +122,7 @@ app.mount(
     name="js",
 )
 
-
-# Disponibiliza as imagens através de:
-#
-# /img/arquivo.png
+# Imagens
 app.mount(
     "/img",
     StaticFiles(
@@ -225,6 +135,33 @@ app.mount(
 # ============================================================
 # PÁGINAS DO FRONTEND
 # ============================================================
+
+
+# ============================================================
+# PÁGINA DE CUPONS
+# ============================================================
+
+@app.get(
+    "/cupons",
+    include_in_schema=False,
+)
+@app.get(
+    "/cupons.html",
+    include_in_schema=False,
+)
+def pagina_cupons():
+
+    arquivo = FRONTEND_DIR / "cupons.html"
+
+    if not arquivo.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Página de cupons não encontrada."
+        )
+
+    return FileResponse(arquivo)
+
+
 # ============================================================
 # PÁGINA DE DETALHES DO PRODUTO
 # ============================================================
@@ -238,7 +175,8 @@ def pagina_produto():
     return FileResponse(
         FRONTEND_DIR / "produto.html"
     )
-    
+
+
 # ============================================================
 # PÁGINA DE CATEGORIAS
 # ============================================================
@@ -251,8 +189,7 @@ def pagina_categoria():
 
     return FileResponse(
         FRONTEND_DIR / "categoria.html"
-    )    
-
+    )
 
 
 # ============================================================
@@ -290,7 +227,6 @@ def pagina_vale_compras():
 )
 def pagina_inicial():
 
-    # Retorna a página inicial da Weblue.
     return FileResponse(
         FRONTEND_DIR / "index.html"
     )
@@ -329,14 +265,6 @@ def pagina_index():
 )
 def pagina_home():
 
-    """
-    Retorna a página Home da Weblue.
-
-    Arquivo utilizado:
-
-    src/frontend/home.html
-    """
-
     return FileResponse(
         FRONTEND_DIR / "home.html"
     )
@@ -356,7 +284,6 @@ def pagina_home():
 )
 def pagina_cadastro():
 
-    # Retorna a página de cadastro.
     return FileResponse(
         FRONTEND_DIR / "cadastro.html"
     )
@@ -376,7 +303,6 @@ def pagina_cadastro():
 )
 def pagina_login():
 
-    # Retorna a página de login.
     return FileResponse(
         FRONTEND_DIR / "login.html"
     )
@@ -396,7 +322,6 @@ def pagina_login():
 )
 def pagina_recuperar_senha():
 
-    # Retorna a página de recuperação de senha.
     return FileResponse(
         FRONTEND_DIR / "recuperar-senha.html"
     )
@@ -416,7 +341,6 @@ def pagina_recuperar_senha():
 )
 def pagina_cliente():
 
-    # Retorna a área do cliente.
     return FileResponse(
         FRONTEND_DIR / "cliente.html"
     )
@@ -435,6 +359,7 @@ def pagina_cliente():
     include_in_schema=False,
 )
 def pagina_carrinho():
+
     return FileResponse(
         FRONTEND_DIR / "carrinho.html"
     )
@@ -453,6 +378,7 @@ def pagina_carrinho():
     include_in_schema=False,
 )
 def pagina_checkout():
+
     return FileResponse(
         FRONTEND_DIR / "checkout.html"
     )
@@ -471,6 +397,7 @@ def pagina_checkout():
     include_in_schema=False,
 )
 def pagina_pedidos():
+
     return FileResponse(
         FRONTEND_DIR / "pedidos.html"
     )
@@ -490,17 +417,10 @@ def pagina_pedidos():
 )
 def pagina_admin_produtos():
 
-    """
-    Retorna a página administrativa de produtos.
-
-    Arquivo utilizado:
-
-    src/frontend/admin-produtos.html
-    """
-
     return FileResponse(
         FRONTEND_DIR / "admin-produtos.html"
     )
+
 
 # ============================================================
 # DASHBOARD ADMINISTRATIVO
@@ -526,8 +446,9 @@ def pagina_admin_dashboard():
 
     return FileResponse(arquivo)
 
+
 # ============================================================
-# PÁGINA - LOGIN ADMINISTRATIVO
+# PÁGINA DE LOGIN ADMINISTRATIVO
 # ============================================================
 
 @app.get(
@@ -536,12 +457,9 @@ def pagina_admin_dashboard():
 )
 @app.get(
     "/admin-login.html",
-    include_in_schema=False
+    include_in_schema=False,
 )
 def pagina_admin_login():
-    """
-    Retorna a página de login do administrador.
-    """
 
     arquivo = FRONTEND_DIR / "admin-login.html"
 
@@ -553,6 +471,7 @@ def pagina_admin_login():
 
     return FileResponse(arquivo)
 
+
 # ============================================================
 # INFORMAÇÕES DA API
 # ============================================================
@@ -563,8 +482,6 @@ def pagina_admin_login():
 )
 def informacoes_api():
 
-    # Endpoint simples para verificar
-    # se a API está respondendo.
     return {
         "sistema": "Weblue",
         "mensagem": "API funcionando com sucesso",
@@ -581,7 +498,6 @@ def informacoes_api():
 )
 def verificar_saude():
 
-    # Indica que o FastAPI está funcionando.
     return {
         "status": "online"
     }
@@ -599,19 +515,12 @@ def verificar_banco():
 
     try:
 
-        # Abre uma conexão temporária
-        # com o banco MySQL.
         with engine.connect() as connection:
 
-            # Executa uma consulta simples.
-            #
-            # Se o MySQL responder ao SELECT 1,
-            # consideramos a conexão funcionando.
             connection.execute(
                 text("SELECT 1")
             )
 
-        # Retorno em caso de sucesso.
         return {
             "status": "online",
             "banco": "MySQL",
@@ -620,11 +529,7 @@ def verificar_banco():
 
     except Exception:
 
-        # Se houver problema de conexão,
-        # retornamos HTTP 503.
         raise HTTPException(
-            status_code=(
-                status.HTTP_503_SERVICE_UNAVAILABLE
-            ),
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Banco de dados indisponível",
         )

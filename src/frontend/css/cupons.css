@@ -1,0 +1,297 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f8ff;
+    color: #031b48;
+    min-height: 100vh;
+}
+
+.topo {
+    width: 100%;
+    min-height: 75px;
+    padding: 15px 7%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 15px rgba(3, 27, 72, 0.06);
+}
+
+.logo {
+    color: #0869dc;
+    font-size: 28px;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.voltar {
+    color: #0869dc;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.voltar:hover {
+    color: #031b48;
+}
+
+main {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+}
+
+.apresentacao {
+    text-align: center;
+    padding: 65px 15px 45px;
+}
+
+.etiqueta {
+    display: inline-block;
+    color: #0869dc;
+    background: #e3efff;
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 18px;
+}
+
+.apresentacao h1 {
+    font-size: clamp(30px, 5vw, 43px);
+    margin-bottom: 15px;
+    color: #031b48;
+}
+
+.apresentacao p {
+    max-width: 600px;
+    margin: 0 auto;
+    color: #62718a;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.secao-cupons {
+    padding-bottom: 35px;
+}
+
+.titulo-secao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.titulo-secao h2 {
+    font-size: 24px;
+    margin-bottom: 7px;
+}
+
+.titulo-secao p {
+    color: #71809a;
+    font-size: 14px;
+}
+
+.contador {
+    background: #e3efff;
+    color: #0869dc;
+    padding: 9px 15px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.lista-cupons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.cupom-card {
+    background: #ffffff;
+    border: 1px solid #e1eaf7;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(3, 27, 72, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cupom-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(3, 27, 72, 0.10);
+}
+
+.cupom-desconto {
+    color: #0869dc;
+    font-size: 27px;
+    font-weight: 800;
+    margin-bottom: 17px;
+}
+
+.cupom-codigo-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #f1f6ff;
+    border: 1px dashed #8bb8ef;
+    border-radius: 10px;
+    padding: 13px;
+    margin-bottom: 18px;
+}
+
+.cupom-codigo {
+    color: #031b48;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    overflow-wrap: anywhere;
+}
+
+.botao-copiar {
+    border: none;
+    border-radius: 8px;
+    background: #0869dc;
+    color: #ffffff;
+    padding: 10px 13px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.botao-copiar:hover {
+    background: #031b48;
+}
+
+.botao-copiar:focus-visible,
+.voltar:focus-visible {
+    outline: 3px solid #80b7ff;
+    outline-offset: 3px;
+}
+
+.cupom-condicoes {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    color: #65748d;
+    font-size: 13px;
+}
+
+.cupom-condicoes strong {
+    color: #031b48;
+}
+
+.mensagem {
+    padding: 22px;
+    text-align: center;
+    color: #62718a;
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.erro {
+    color: #b42318;
+    background: #fff1f0;
+}
+
+.aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: #eaf3ff;
+    border: 1px solid #d5e6fc;
+    border-radius: 14px;
+    padding: 22px;
+    margin: 15px 0 55px;
+}
+
+.aviso-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #0869dc;
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.aviso h3 {
+    margin-bottom: 7px;
+    font-size: 15px;
+}
+
+.aviso p {
+    color: #62718a;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.rodape {
+    background: #031b48;
+    color: #ffffff;
+    text-align: center;
+    padding: 22px 15px;
+    font-size: 13px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 650px) {
+    .topo {
+        padding: 15px 5%;
+    }
+
+    .apresentacao {
+        padding: 45px 5px 35px;
+    }
+
+    .lista-cupons {
+        grid-template-columns: 1fr;
+    }
+
+    .titulo-secao {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cupom-card {
+        padding: 20px;
+    }
+
+    .cupom-desconto {
+        font-size: 24px;
+    }
+
+    .aviso {
+        padding: 17px;
+    }
+}
+
+@media (max-width: 380px) {
+    .cupom-codigo-area {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .botao-copiar {
+        width: 100%;
+    }
+}

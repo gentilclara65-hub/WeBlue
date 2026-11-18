@@ -3,7 +3,7 @@
 # ROTAS DO FLUXO DE VENDAS
 # ============================================================
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -26,6 +26,10 @@ router = APIRouter(tags=["Pedidos e Vendas"])
 seguranca_admin = HTTPBearer()
 seguranca_cliente = HTTPBearer(auto_error=False)
 
+
+# ============================================================
+# AUTENTICAÇÃO DO CLIENTE
+# ============================================================
 
 def exigir_cliente_autenticado(
     credenciais: HTTPAuthorizationCredentials | None = Depends(seguranca_cliente),
@@ -69,6 +73,10 @@ def exigir_cliente_autenticado(
     return cliente
 
 
+# ============================================================
+# AUTENTICAÇÃO DO ADMINISTRADOR
+# ============================================================
+
 def exigir_admin_autenticado(
     credenciais: HTTPAuthorizationCredentials = Depends(seguranca_admin),
     database: Session = Depends(get_database),
@@ -88,28 +96,71 @@ def exigir_admin_autenticado(
     return admin_id
 
 
+# ============================================================
+# SIMULAÇÃO DE PAGAMENTO
+# ============================================================
+
 def simular_pagamento(
     metodo_pagamento: str,
-    numero_cartao: str | None
+    numero_cartao: str | None = None
 ) -> bool:
-    """Simula o resultado do pagamento sem depender de gateway real."""
+    """
+    Simula a aprovação do pagamento.
 
-    if metodo_pagamento == "PIX":
-        return True
+    Aceita PIX e CARTAO sem coletar ou armazenar
+    dados reais de cartão.
 
-    if not numero_cartao:
-        return False
+    Esta função não realiza uma cobrança real.
+    """
 
-    numeros = "".join(
-        ch for ch in numero_cartao if ch.isdigit()
+    metodo = metodo_pagamento.strip().upper()
+
+    return metodo in {"PIX", "CARTAO"}
+
+
+# ============================================================
+# CALCULAR VALORES DAS PARCELAS
+# ============================================================
+
+def calcular_parcelas(
+    valor_total: Decimal,
+    quantidade_parcelas: int
+) -> list[Decimal]:
+    """
+    Divide o valor total em parcelas sem juros.
+
+    Eventuais diferenças de centavos são distribuídas
+    entre as primeiras parcelas para que a soma seja
+    exatamente igual ao total da compra.
+    """
+
+    total_centavos = int(
+        (valor_total * 100).quantize(
+            Decimal("1"),
+            rounding=ROUND_HALF_UP
+        )
     )
 
-    if len(numeros) < 13:
-        return False
-
-    return not all(
-        digito == numeros[0] for digito in numeros
+    valor_base, resto = divmod(
+        total_centavos,
+        quantidade_parcelas
     )
+
+    parcelas = []
+
+    for indice in range(quantidade_parcelas):
+        centavos = valor_base
+
+        if indice < resto:
+            centavos += 1
+
+        parcelas.append(
+            (Decimal(centavos) / Decimal("100")).quantize(
+                Decimal("0.01")
+            )
+        )
+
+    return parcelas
 
 
 # ============================================================
@@ -136,6 +187,29 @@ def finalizar_compra(
         )
 
     try:
+        # ----------------------------------------------------
+        # VALIDAR PARCELAMENTO
+        # ----------------------------------------------------
+
+        metodo_pagamento = dados.metodo_pagamento
+        quantidade_parcelas = dados.quantidade_parcelas
+
+        if metodo_pagamento == "PIX" and quantidade_parcelas != 1:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="O pagamento via PIX deve ser realizado à vista.",
+            )
+
+        if quantidade_parcelas < 1 or quantidade_parcelas > 6:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="O cartão permite de 1 a 6 parcelas.",
+            )
+
+        # ----------------------------------------------------
+        # CONSULTAR E VALIDAR PRODUTOS
+        # ----------------------------------------------------
+
         produtos = database.execute(
             select(Produto)
             .where(Produto.id.in_(quantidades))
@@ -218,20 +292,28 @@ def finalizar_compra(
 
         total_pedido = subtotal_pedido - valor_desconto
 
+        total_pedido = total_pedido.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # ----------------------------------------------------
+        # CALCULAR PARCELAS
+        # ----------------------------------------------------
+
+        parcelas = calcular_parcelas(
+            total_pedido,
+            quantidade_parcelas
+        )
+
         # ----------------------------------------------------
         # SIMULAR PAGAMENTO
         # ----------------------------------------------------
 
-        if not simular_pagamento(
-            dados.metodo_pagamento,
-            dados.numero_cartao
-        ):
+        if not simular_pagamento(metodo_pagamento):
             raise HTTPException(
                 status_code=status.HTTP_402_PAYMENT_REQUIRED,
-                detail=(
-                    "Pagamento recusado. Verifique os dados "
-                    "do pagamento e tente novamente."
-                ),
+                detail="Forma de pagamento inválida ou não aceita.",
             )
 
         # ----------------------------------------------------
@@ -277,6 +359,8 @@ def finalizar_compra(
             cupom_codigo=codigo_cupom,
             valor_subtotal=subtotal_pedido,
             valor_desconto=valor_desconto,
+            metodo_pagamento=metodo_pagamento,
+            quantidade_parcelas=quantidade_parcelas,
         )
 
         database.add(pedido)
@@ -313,7 +397,10 @@ def finalizar_compra(
                 "valor_subtotal": str(pedido.valor_subtotal),
                 "valor_desconto": str(pedido.valor_desconto),
                 "cupom_codigo": pedido.cupom_codigo,
-                "metodo_pagamento": dados.metodo_pagamento,
+                "metodo_pagamento": pedido.metodo_pagamento,
+                "quantidade_parcelas": pedido.quantidade_parcelas,
+                "valor_parcela": str(parcelas[0]),
+                "parcelas": [str(valor) for valor in parcelas],
                 "endereco": dados.endereco,
                 "criado_em": (
                     pedido.criado_em.isoformat()
@@ -400,6 +487,8 @@ def listar_pedidos_cliente(
                     else None
                 ),
                 "cupom_codigo": pedido.cupom_codigo,
+                "metodo_pagamento": pedido.metodo_pagamento,
+                "quantidade_parcelas": pedido.quantidade_parcelas,
                 "criado_em": (
                     pedido.criado_em.isoformat()
                     if pedido.criado_em
@@ -458,6 +547,8 @@ def listar_pedidos(
                     else None
                 ),
                 "cupom_codigo": pedido.cupom_codigo,
+                "metodo_pagamento": pedido.metodo_pagamento,
+                "quantidade_parcelas": pedido.quantidade_parcelas,
                 "criado_em": (
                     pedido.criado_em.isoformat()
                     if pedido.criado_em

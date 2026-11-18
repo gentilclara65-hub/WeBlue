@@ -56,9 +56,9 @@ const imagensBanner = [
         destaque: true
     },
     {
-    imagem: "/img/produtos/bannermontekit.jpeg",
-    descricao: "Monte seu kit de beleza Weblue"
-    } 
+        imagem: "/img/produtos/bannermontekit.jpeg",
+        descricao: "Monte seu kit de beleza Weblue"
+    }
 ];
 
 let slideAtual = 0;
@@ -628,7 +628,11 @@ function criarCardProduto(produto) {
         precoPromocional.classList.add("product-card__price-promotion");
         precoPromocional.textContent = formatarPreco(precoAtual);
 
-        preco.replaceChildren(precoAntigo, document.createTextNode(" "), precoPromocional);
+        preco.replaceChildren(
+            precoAntigo,
+            document.createTextNode(" "),
+            precoPromocional
+        );
     } else {
         preco.textContent = formatarPreco(produto.preco);
     }
@@ -804,12 +808,20 @@ function abrirCategoria(categoria) {
 // ============================================================
 
 botoesCategoria.forEach((botao) => {
-    botao.addEventListener("click", () => {
+    botao.addEventListener("click", (evento) => {
         const categoriaSelecionada =
             botao.dataset.categoria;
 
         if (!categoriaSelecionada) return;
 
+        // CUpons: abrir a página exclusiva
+        if (normalizarTexto(categoriaSelecionada) === "cupons") {
+            evento.preventDefault();
+            window.location.href = "/cupons";
+            return;
+        }
+
+        // Demais categorias: manter o funcionamento original
         abrirCategoria(categoriaSelecionada);
     });
 });

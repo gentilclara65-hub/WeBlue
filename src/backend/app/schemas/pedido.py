@@ -1,16 +1,5 @@
 
-# ============================================================
-# SCHEMAS DO FLUXO DE VENDAS
-# ============================================================
-#
-# Este arquivo define os dados esperados pelo checkout,
-# pelo histórico de pedidos e pela validação de estoque.
-#
-# Utilizamos Pydantic para manter a entrada da API consistente
-# e evitar que o backend aceite dados inválidos.
-# ============================================================
-
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class ItemCarrinhoRequest(BaseModel):
@@ -26,6 +15,7 @@ class CheckoutRequest(BaseModel):
     endereco: str = Field(min_length=5, max_length=250)
     metodo_pagamento: str = Field(default="PIX")
     numero_cartao: str | None = Field(default=None, max_length=40)
+    quantidade_parcelas: int = Field(default=1, ge=1, le=6)
     cupom_codigo: str | None = Field(default=None, max_length=40)
     itens: list[ItemCarrinhoRequest] = Field(min_length=1)
 
@@ -48,8 +38,16 @@ class CheckoutRequest(BaseModel):
             return None
 
         valor = valor.strip().upper()
-
         return valor or None
+
+    @model_validator(mode="after")
+    def validar_parcelamento(self):
+        if self.metodo_pagamento == "PIX" and self.quantidade_parcelas != 1:
+            raise ValueError(
+                "O pagamento via PIX deve ser realizado à vista."
+            )
+
+        return self
 
 
 class ResumoPedido(BaseModel):

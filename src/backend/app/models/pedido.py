@@ -75,6 +75,18 @@ class Pedido(Base):
         nullable=True
     )
 
+    metodo_pagamento: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True
+    )
+
+    quantidade_parcelas: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=1,
+        server_default=text("1")
+    )
+
     criado_em: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,

@@ -8,10 +8,50 @@ from sqlalchemy.orm import Session
 from ..database import get_database
 from ..models.produto import Produto
 from ..schemas.cupom import ValidarCupomRequest
-from ..services.cupons import calcular_desconto
+from ..services.cupons import CUPONS, calcular_desconto
 
 
 router = APIRouter()
+
+
+@router.get("")
+def listar_cupons():
+    """
+    Retorna os cupons cadastrados no sistema
+    para exibição na página de cupons.
+    """
+
+    lista_cupons = []
+
+    for codigo, cupom in CUPONS.items():
+
+        tipo = cupom["tipo"]
+        valor = cupom["valor"]
+        minimo = cupom["minimo"]
+        limite = cupom["limite"]
+
+        if tipo == "percentual":
+            descricao = f"{valor}% de desconto"
+        else:
+            descricao = f"R$ {valor:.2f} de desconto"
+
+        lista_cupons.append({
+            "codigo": codigo,
+            "tipo": tipo,
+            "valor": float(valor),
+            "descricao": descricao,
+            "minimo": float(minimo),
+            "limite": (
+                float(limite)
+                if limite is not None
+                else None
+            ),
+        })
+
+    return {
+        "total": len(lista_cupons),
+        "cupons": lista_cupons,
+    }
 
 
 @router.post("/validar")
@@ -23,7 +63,8 @@ def validar_cupom(
 
     for item in dados.itens:
         quantidades[item.produto_id] = (
-            quantidades.get(item.produto_id, 0) + item.quantidade
+            quantidades.get(item.produto_id, 0)
+            + item.quantidade
         )
 
     produto_ids = list(quantidades.keys())
@@ -32,7 +73,10 @@ def validar_cupom(
         select(Produto).where(Produto.id.in_(produto_ids))
     ).all()
 
-    produtos_por_id = {produto.id: produto for produto in produtos}
+    produtos_por_id = {
+        produto.id: produto
+        for produto in produtos
+    }
 
     if len(produtos_por_id) != len(produto_ids):
         raise HTTPException(
@@ -54,13 +98,12 @@ def validar_cupom(
         preco = Decimal(str(produto.preco))
         subtotal += preco * quantidade
 
-       
-
     try:
         resultado = calcular_desconto(
             dados.codigo,
             subtotal,
         )
+
     except ValueError as erro:
         raise HTTPException(
             status_code=400,
